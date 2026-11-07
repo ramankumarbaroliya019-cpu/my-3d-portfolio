@@ -351,10 +351,10 @@
             </div>
         </div>
     </div>
-    <!-- Firebase App & Realtime Database CDN -->
+   <!-- Firebase Script & Global Window Binding -->
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
-    import { getDatabase, ref, set, get, update, remove, child } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-database.js";
+    import { getDatabase, ref, set, get, child } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-database.js";
 
     const firebaseConfig = {
         apiKey: "AIzaSyASHajXHzthBKVBvKPAnJCnW5czbeVLT1w",
@@ -366,14 +366,19 @@
     };
 
     const app = initializeApp(firebaseConfig);
-    window.db = getDatabase(app);
     
-    // जैसे ही Firebase लोड हो, डेटा फेच करना शुरू करें
+    // इन्हें ग्लोबल window पर असाइन करना ज़रूरी है ताकि script.js इन्हें यूज़ कर सके
+    window.db = getDatabase(app);
+    window.ref = ref;
+    window.set = set;
+    window.get = get;
+    window.child = child;
+    
+    // डेटा सिंक शुरू करें
     if (typeof initFirebaseSync === 'function') {
         initFirebaseSync();
     }
 </script>
-
     <!-- JavaScript Link -->
     <script src="script.js"></script>
 </body>
