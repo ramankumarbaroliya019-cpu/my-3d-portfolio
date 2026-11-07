@@ -1,224 +1,20 @@
-<!DOCTYPE html>
-<html lang="hi" class="dark">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Raman Kumar Barolia | 3D Portfolio & Digital Store</title>
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    colors: {
-                        primary: '#3b82f6',
-                        darkbg: '#0f172a',
-                    }
-                }
-            }
-        }
-    </script>
-    <!-- FontAwesome Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Custom CSS -->
-    <link rel="stylesheet" href="style.css">
-</head>
-<body class="bg-slate-950 text-slate-100 font-sans antialiased selection:bg-blue-500 selection:text-white">
-
-    <!-- Navbar -->
-    <nav class="sticky top-0 z-50 bg-slate-900/80 backdrop-blur-md border-b border-slate-800">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex items-center justify-between h-16">
-                <div class="flex items-center space-x-3">
-                    <div class="w-10 h-10 rounded-full overflow-hidden border-2 border-blue-500 bg-slate-800">
-                        <img id="nav-profile-img" src="1000209783.png" alt="Raman Kumar Barolia" class="w-full h-full object-cover">
-                    </div>
-                    <span class="font-bold text-lg tracking-wider">RAMAN <span class="text-blue-500">BAROLIYA</span></span>
-                </div>
-                <div class="hidden md:flex items-center space-x-6">
-                    <a href="#home" class="hover:text-blue-400 transition">Home</a>
-                    <a href="#products" class="hover:text-blue-400 transition">Store & Models</a>
-                    <a href="#about" class="hover:text-blue-400 transition">About & Skills</a>
-                    <a href="#contact" class="hover:text-blue-400 transition">Contact</a>
-                    <button onclick="openAdminModal()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition shadow-lg shadow-blue-500/20">
-                        <i class="fa-solid fa-lock mr-1"></i> Admin Panel
-                    </button>
-                </div>
-                <div class="md:hidden flex items-center space-x-2">
-                    <button onclick="openAdminModal()" class="bg-blue-600 text-white px-3 py-1.5 rounded text-xs">Admin</button>
-                    <button id="mobile-menu-btn" class="text-slate-300 hover:text-white focus:outline-none">
-                        <i class="fa-solid fa-bars text-xl"></i>
-                    </button>
-                </div>
-            </div>
-        </div>
-        <div id="mobile-menu" class="hidden md:hidden bg-slate-900 border-b border-slate-800 px-4 pt-2 pb-4 space-y-2">
-            <a href="#home" class="block py-2 hover:text-blue-400">Home</a>
-            <a href="#products" class="block py-2 hover:text-blue-400">Store & Models</a>
-            <a href="#about" class="block py-2 hover:text-blue-400">About & Skills</a>
-            <a href="#contact" class="block py-2 hover:text-blue-400">Contact</a>
-        </div>
-    </nav>
-
-    <!-- Hero Section -->
-    <header id="home" class="relative overflow-hidden py-20 lg:py-32 bg-gradient-to-b from-slate-900 to-slate-950 border-b border-slate-800/50">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-                <div class="space-y-6 text-center lg:text-left">
-                    <span class="inline-block bg-blue-500/10 text-blue-400 border border-blue-500/20 px-3 py-1 rounded-full text-xs font-semibold tracking-wide uppercase">
-                        B.Tech IT Student & 3D Artist
-                    </span>
-                    <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight">
-                        Hi, I'm <span id="hero-name" class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-500">Raman Kumar Baroliya</span>
-                    </h1>
-                    <p id="hero-tagline" class="text-slate-400 text-lg max-w-xl mx-auto lg:mx-0">
-                        Crafting high-end 3D hard-surface models in Blender, developing responsive web applications, and building smart digital tools.
-                    </p>
-                    <div class="flex flex-wrap justify-center lg:justify-start gap-4 pt-2">
-                        <a href="#products" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-3 rounded-xl transition shadow-lg shadow-blue-600/30 flex items-center gap-2">
-                            <i class="fa-solid fa-store"></i> Explore Digital Store
-                        </a>
-                        <a href="#about" class="bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold px-6 py-3 rounded-xl transition border border-slate-700 flex items-center gap-2">
-                            <i class="fa-solid fa-user-gear"></i> Qualifications
-                        </a>
-                    </div>
-                </div>
-                <div class="flex justify-center">
-                    <div class="relative w-72 h-72 sm:w-80 sm:h-80 rounded-2xl overflow-hidden border-4 border-blue-500/30 shadow-2xl shadow-blue-500/10 bg-slate-900">
-                        <img id="hero-profile-img" src="1000209783.png" alt="Raman Kumar Baroliya Profile" class="w-full h-full object-cover">
-                    </div>
-                </div>
-            </div>
-        </div>
-    </header>
-
-    <!-- Store Section -->
-    <section id="products" class="py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex flex-col md:flex-row justify-between items-center mb-10">
-            <div>
-                <h2 class="text-3xl font-bold tracking-tight">Digital Store & Assets</h2>
-                <p class="text-slate-400 text-sm mt-1">Download Blender 3D models, e-books, and presentation files instantly.</p>
-            </div>
-            <div class="flex flex-wrap gap-2 mt-4 md:mt-0">
-                <button onclick="filterProducts('all', this)" class="filter-btn active-tab px-4 py-2 rounded-lg text-sm font-medium transition">All Items</button>
-                <button onclick="filterProducts('3d', this)" class="filter-btn bg-slate-900 text-slate-300 hover:bg-slate-800 border border-slate-800 px-4 py-2 rounded-lg text-sm font-medium transition">3D Models</button>
-                <button onclick="filterProducts('book', this)" class="filter-btn bg-slate-900 text-slate-300 hover:bg-slate-800 border border-slate-800 px-4 py-2 rounded-lg text-sm font-medium transition">Books & Guides</button>
-                <button onclick="filterProducts('ppt', this)" class="filter-btn bg-slate-900 text-slate-300 hover:bg-slate-800 border border-slate-800 px-4 py-2 rounded-lg text-sm font-medium transition">PPTs & Files</button>
-            </div>
-        </div>
-        <div id="product-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"></div>
-    </section>
-
-    <!-- About Section -->
-    <section id="about" class="py-16 bg-slate-900/50 border-t border-slate-800/50">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center max-w-3xl mx-auto mb-12">
-                <h2 class="text-3xl font-bold">About Me & Qualifications</h2>
-                <p class="text-slate-400 mt-2">Information Technology student at Government Engineering College Ajmer.</p>
-            </div>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                <div class="bg-slate-900 border border-slate-800 p-6 rounded-2xl">
-                    <div class="w-12 h-12 bg-blue-500/10 text-blue-400 rounded-xl flex items-center justify-center text-xl mb-4">
-                        <i class="fa-solid fa-graduation-cap"></i>
-                    </div>
-                    <h3 class="text-xl font-semibold mb-2">Education</h3>
-                    <p class="text-slate-400 text-sm leading-relaxed">
-                        B.Tech IT at <strong>Government Engineering College Ajmer</strong> (BTU). 86% in 12th Senior Secondary.
-                    </p>
-                </div>
-                <div class="bg-slate-900 border border-slate-800 p-6 rounded-2xl">
-                    <div class="w-12 h-12 bg-indigo-500/10 text-indigo-400 rounded-xl flex items-center justify-center text-xl mb-4">
-                        <i class="fa-solid fa-cube"></i>
-                    </div>
-                    <h3 class="text-xl font-semibold mb-2">3D & Tech Skills</h3>
-                    <p class="text-slate-400 text-sm leading-relaxed">
-                        Blender 3D Modeling, Hard-Surface Design, C++, Python, JavaScript, HTML/CSS, and Microcontroller projects.
-                    </p>
-                </div>
-                <div class="bg-slate-900 border border-slate-800 p-6 rounded-2xl">
-                    <div class="w-12 h-12 bg-emerald-500/10 text-emerald-400 rounded-xl flex items-center justify-center text-xl mb-4">
-                        <i class="fa-solid fa-certificate"></i>
-                    </div>
-                    <h3 class="text-xl font-semibold mb-2">Certifications</h3>
-                    <p class="text-slate-400 text-sm leading-relaxed">
-                        Google Kubernetes, Canva Digital Design, SEO, Google Ads, and Embedded IoT Certification.
-                    </p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Contact Section -->
-    <section id="contact" class="py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="bg-gradient-to-r from-blue-900/30 to-indigo-900/30 border border-blue-500/20 rounded-3xl p-8 lg:p-12 text-center">
-            <h2 class="text-3xl font-bold mb-4">Get In Touch</h2>
-            <p class="text-slate-300 max-w-xl mx-auto mb-8">Available for 3D modeling commissions, file requests, and technical development.</p>
-            <div class="flex flex-wrap justify-center gap-6">
-                <a id="contact-email-btn" href="mailto:Lalr13031@gmail.com" class="bg-slate-900 hover:bg-slate-800 border border-slate-700 px-6 py-3 rounded-xl flex items-center gap-3 transition">
-                    <i class="fa-solid fa-envelope text-blue-400"></i> <span id="display-email">Lalr13031@gmail.com</span>
-                </a>
-                <a id="contact-phone-btn" href="https://wa.me/917742987003" target="_blank" class="bg-slate-900 hover:bg-slate-800 border border-slate-700 px-6 py-3 rounded-xl flex items-center gap-3 transition">
-                    <i class="fa-brands fa-whatsapp text-emerald-400"></i> <span id="display-phone">+91 7742987003</span>
-                </a>
-            </div>
-        </div>
-    </section>
-
-    <!-- Footer -->
-    <footer class="bg-slate-900 border-t border-slate-800 py-8 text-center text-slate-500 text-sm">
-        <p>&copy; 2026 Raman Kumar Baroliya. All rights reserved.</p>
-    </footer>
-
-    <!-- Checkout Modal -->
-    <div id="checkout-modal" class="fixed inset-0 z-50 hidden bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
-        <div class="bg-slate-900 border border-slate-800 w-full max-w-md rounded-2xl p-6 relative shadow-2xl">
-            <button onclick="closeCheckoutModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white text-lg">
-                <i class="fa-solid fa-xmark"></i>
-            </button>
-            <div class="text-center mb-6">
-                <h3 id="modal-product-title" class="text-xl font-bold">Product Title</h3>
-                <p id="modal-product-price" class="text-blue-400 font-semibold text-lg mt-1">₹0</p>
-            </div>
-            
-            <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 text-center mb-6">
-                <p class="text-xs text-slate-400 mb-2">Scan QR code to pay via GPay / PhonePe / Paytm</p>
-                <div class="bg-white p-3 inline-block rounded-lg mx-auto">
-                    <img id="upi-qr-img" src="" alt="UPI QR Code" class="w-40 h-40 object-contain mx-auto">
-                </div>
-                <p class="text-xs text-emerald-400 mt-2 font-mono">UPI ID: <span id="display-upi-id">Lalr13031-1@oksbi</span></p>
-            </div>
-
-            <div class="space-y-3">
-                <button onclick="verifyPayment()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-3 rounded-xl transition shadow-lg shadow-emerald-600/20 flex items-center justify-center gap-2">
-                    <i class="fa-solid fa-circle-check"></i> I Have Paid - Unlock Download
-                </button>
-                <div id="download-section" class="hidden text-center pt-2">
-                    <a id="file-download-link" href="#" target="_blank" class="block w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-xl transition shadow-lg shadow-blue-600/20">
-                        <i class="fa-solid fa-download mr-2"></i> Download File Now
-                    </a>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Multi-Tab Admin Panel Modal -->
+<!-- Multi-Tab Admin Panel Modal -->
     <div id="admin-modal" class="fixed inset-0 z-50 hidden bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
         <div class="bg-slate-900 border border-slate-800 w-full max-w-2xl rounded-2xl p-6 relative shadow-2xl max-h-[90vh] flex flex-col">
             <button onclick="closeAdminModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white text-lg z-10">
                 <i class="fa-solid fa-xmark"></i>
             </button>
             
-            <!-- Admin Login View -->
+            <!-- Admin Login View (No default password hint displayed) -->
             <div id="admin-login-view" class="my-auto">
                 <h3 class="text-xl font-bold mb-4"><i class="fa-solid fa-lock text-blue-500 mr-2"></i> Admin Authentication</h3>
-                <p class="text-slate-400 text-sm mb-6">Enter admin password to manage products and profile settings.</p>
+                <p class="text-slate-400 text-sm mb-6">Enter your security password to access control panel.</p>
                 <div class="space-y-4">
                     <div>
-                        <label class="block text-xs text-slate-400 mb-1">Password</label>
-                        <input type="password" id="admin-pass-input" placeholder="Enter password (default: admin123)" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-blue-500">
+                        <label class="block text-xs text-slate-400 mb-1">Security Password</label>
+                        <input type="password" id="admin-pass-input" placeholder="Enter password" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-blue-500">
                     </div>
-                    <button onclick="authenticateAdmin()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-xl transition">Login to Panel</button>
+                    <button onclick="authenticateAdmin()" class="w-full gradient-btn font-semibold py-3 rounded-xl transition">Login to Panel</button>
                 </div>
             </div>
 
@@ -232,7 +28,10 @@
                 <!-- Admin Tab Bar -->
                 <div class="flex border-b border-slate-800 mb-4 overflow-x-auto gap-2 pb-2">
                     <button onclick="switchAdminTab('profile')" id="tab-btn-profile" class="admin-tab-btn active-admin-tab text-xs font-semibold px-4 py-2 rounded-lg transition whitespace-nowrap">
-                        <i class="fa-solid fa-user-gear mr-1"></i> Profile & Contacts
+                        <i class="fa-solid fa-user-gear mr-1"></i> Profile & Photo
+                    </button>
+                    <button onclick="switchAdminTab('about')" id="tab-btn-about" class="admin-tab-btn text-xs font-semibold px-4 py-2 rounded-lg transition whitespace-nowrap bg-slate-950 text-slate-400">
+                        <i class="fa-solid fa-graduation-cap mr-1"></i> Qualifications & Skills
                     </button>
                     <button onclick="switchAdminTab('3d')" id="tab-btn-3d" class="admin-tab-btn text-xs font-semibold px-4 py-2 rounded-lg transition whitespace-nowrap bg-slate-950 text-slate-400">
                         <i class="fa-solid fa-cube mr-1"></i> 3D Models
@@ -247,12 +46,12 @@
 
                 <!-- Tab Contents -->
                 <div class="overflow-y-auto pr-2 space-y-4 flex-1">
-                    <!-- Profile Tab -->
+                    <!-- Profile Tab (With Password Change Option) -->
                     <div id="admin-tab-profile" class="admin-tab-content space-y-4">
-                        <h4 class="text-sm font-semibold text-blue-400">Update Profile Details & UPI</h4>
+                        <h4 class="text-sm font-semibold text-blue-400">Profile Photo & Contacts</h4>
                         <div>
-                            <label class="block text-xs text-slate-400 mb-1">Profile Image URL (Paste image link)</label>
-                            <input type="text" id="admin-input-photo" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 text-white text-sm focus:outline-none focus:border-blue-500">
+                            <label class="block text-xs text-slate-400 mb-1">Profile Image URL (अपनी फोटो का लिंक)</label>
+                            <input type="text" id="admin-input-photo" placeholder="https://..." class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 text-white text-sm focus:outline-none focus:border-blue-500">
                         </div>
                         <div>
                             <label class="block text-xs text-slate-400 mb-1">Full Name</label>
@@ -263,12 +62,12 @@
                             <input type="text" id="admin-input-tagline" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 text-white text-sm focus:outline-none focus:border-blue-500">
                         </div>
                         <div>
-                            <label class="block text-xs text-slate-400 mb-1">UPI ID (For automatic QR payment)</label>
+                            <label class="block text-xs text-slate-400 mb-1">UPI ID (For dynamic QR payment)</label>
                             <input type="text" id="admin-input-upi" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 text-white text-sm focus:outline-none focus:border-blue-500">
                         </div>
                         <div class="grid grid-cols-2 gap-4">
                             <div>
-                                <label class="block text-xs text-slate-400 mb-1">WhatsApp / Contact Number</label>
+                                <label class="block text-xs text-slate-400 mb-1">WhatsApp / Phone</label>
                                 <input type="text" id="admin-input-phone" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 text-white text-sm focus:outline-none focus:border-blue-500">
                             </div>
                             <div>
@@ -276,7 +75,35 @@
                                 <input type="text" id="admin-input-email" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 text-white text-sm focus:outline-none focus:border-blue-500">
                             </div>
                         </div>
-                        <button onclick="saveProfileSettings()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-xl transition text-sm">Save Profile Settings</button>
+
+                        <!-- Security Password Change Section -->
+                        <div class="pt-4 border-t border-slate-800">
+                            <h4 class="text-sm font-semibold text-pink-400 mb-2"><i class="fa-solid fa-key mr-1"></i> Change Admin Password</h4>
+                            <div>
+                                <label class="block text-xs text-slate-400 mb-1">New Password</label>
+                                <input type="password" id="admin-input-newpass" placeholder="Enter new password" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 text-white text-sm focus:outline-none focus:border-pink-500">
+                            </div>
+                        </div>
+
+                        <button onclick="saveProfileSettings()" class="w-full gradient-btn font-semibold py-3 rounded-xl transition text-sm">Save Profile & Password</button>
+                    </div>
+
+                    <!-- About & Qualifications Tab -->
+                    <div id="admin-tab-about" class="admin-tab-content hidden space-y-4">
+                        <h4 class="text-sm font-semibold text-blue-400">Manage Education, Skills & Certificates</h4>
+                        <div>
+                            <label class="block text-xs text-slate-400 mb-1">Education Details</label>
+                            <textarea id="admin-input-education" rows="3" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 text-white text-sm focus:outline-none focus:border-blue-500"></textarea>
+                        </div>
+                        <div>
+                            <label class="block text-xs text-slate-400 mb-1">3D & Tech Skills</label>
+                            <textarea id="admin-input-skills" rows="3" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 text-white text-sm focus:outline-none focus:border-blue-500"></textarea>
+                        </div>
+                        <div>
+                            <label class="block text-xs text-slate-400 mb-1">Certifications</label>
+                            <textarea id="admin-input-cert" rows="3" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 text-white text-sm focus:outline-none focus:border-blue-500"></textarea>
+                        </div>
+                        <button onclick="saveAboutSettings()" class="w-full gradient-btn font-semibold py-3 rounded-xl transition text-sm">Save Qualifications & Skills</button>
                     </div>
 
                     <!-- 3D Models Tab -->
@@ -315,8 +142,3 @@
             </div>
         </div>
     </div>
-
-    <!-- JavaScript Link -->
-    <script src="script.js"></script>
-</body>
-</html>
