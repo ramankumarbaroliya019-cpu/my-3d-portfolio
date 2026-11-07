@@ -129,32 +129,44 @@
         </div>
     </section>
 
-    <!-- Checkout Modal -->
-    <div id="checkout-modal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
-        <div class="bg-slate-900 border border-slate-800 w-full max-w-md rounded-3xl p-6 relative shadow-2xl space-y-4">
-            <button onclick="closeCheckoutModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
-            <h3 class="text-xl font-bold text-white">Complete Purchase</h3>
-            <div class="bg-slate-950 border border-slate-800 p-4 rounded-2xl flex justify-between items-center">
-                <div>
-                    <h4 id="modal-product-title" class="font-semibold text-white text-sm">Product Name</h4>
-                    <span id="modal-product-price" class="text-blue-400 font-bold text-lg">₹0</span>
-                </div>
-                <div class="bg-white p-2 rounded-xl">
-                    <img id="upi-qr-img" src="" alt="QR Code" class="w-24 h-24 object-contain">
-                </div>
-            </div>
-            <p class="text-xs text-slate-400">Scan QR code via any UPI app and pay the exact amount. After payment, enter your 12-digit UTR/Transaction ID below.</p>
+   <!-- Checkout Modal Content -->
+<div id="checkout-modal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="bg-slate-900 border border-slate-800 w-full max-w-md rounded-3xl p-6 relative shadow-2xl space-y-4">
+        <button onclick="closeCheckoutModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
+        <h3 class="text-xl font-bold text-white">Complete Purchase</h3>
+        
+        <div class="bg-slate-950 border border-slate-800 p-4 rounded-2xl flex flex-col sm:flex-row justify-between items-center gap-4">
             <div>
-                <label class="block text-xs font-medium text-slate-300 mb-1">Enter UTR / Transaction ID</label>
-                <input type="text" id="user-utr-input" placeholder="e.g. 4321XXXXXXXX" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-blue-500">
+                <h4 id="modal-product-title" class="font-semibold text-white text-sm">Product Name</h4>
+                <span id="modal-product-price" class="text-blue-400 font-bold text-lg">₹0</span>
+                <p class="text-[11px] text-slate-400 mt-2">स्कैन करें या नीचे दिए गए बटन से सीधे पेमेंट करें:</p>
             </div>
-            <button onclick="submitOrderForApproval()" class="w-full gradient-btn py-3 rounded-xl font-semibold text-sm transition shadow-lg">Submit UTR for Verification</button>
-            <div id="order-status-msg" class="hidden text-xs text-amber-400 text-center font-medium">Order submitted! Pending admin verification.</div>
-            <div id="download-section" class="hidden pt-2 border-t border-slate-800 text-center">
-                <a id="file-download-link" href="#" target="_blank" class="inline-block bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold px-4 py-2.5 rounded-xl transition">Download File Now <i class="fa-solid fa-download ml-1"></i></a>
+            <!-- QR Code Box -->
+            <div class="bg-white p-2 rounded-xl shrink-0">
+                <img id="upi-qr-img" src="" alt="QR Code" class="w-24 h-24 object-contain">
             </div>
         </div>
+
+        <!-- Direct UPI App Pay Button (दोनों ऑप्शन साथ में) -->
+        <div>
+            <a id="direct-upi-pay-btn" href="#" class="flex items-center justify-center gap-2 w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded-xl text-sm transition shadow-lg">
+                <i class="fa-solid fa-mobile-screen-button"></i> Pay via GPay / PhonePe / Paytm
+            </a>
+        </div>
+
+        <p class="text-xs text-slate-400">पेमेंट पूरा करने के बाद अपनी 12-डिफ़िट UTR / Transaction ID नीचे दर्ज करें:</p>
+        <div>
+            <label class="block text-xs font-medium text-slate-300 mb-1">Enter UTR / Transaction ID</label>
+            <input type="text" id="user-utr-input" placeholder="e.g. 4321XXXXXXXX" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-blue-500">
+        </div>
+        <button onclick="submitOrderForApproval()" class="w-full gradient-btn py-3 rounded-xl font-semibold text-sm transition shadow-lg">Submit UTR for Verification</button>
+        <div id="order-status-msg" class="hidden text-xs text-amber-400 text-center font-medium">Order submitted! Pending admin verification.</div>
+        <div id="download-section" class="hidden pt-2 border-t border-slate-800 text-center">
+            <a id="file-download-link" href="#" target="_blank" class="inline-block bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold px-4 py-2.5 rounded-xl transition">Download File Now <i class="fa-solid fa-download ml-1"></i></a>
+        </div>
     </div>
+</div>
+        
 
     <!-- Admin Panel Modal -->
     <div id="admin-modal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
