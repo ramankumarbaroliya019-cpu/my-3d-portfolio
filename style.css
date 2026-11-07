@@ -1,0 +1,61 @@
+/* Custom Styles for Smooth Scrolling & Gradient Buttons */
+
+html {
+    scroll-behavior: smooth;
+}
+
+/* Custom Scrollbar for Dark Theme */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #0f172a;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #1e293b;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #334155;
+}
+
+/* Stunning Rainbow / Blue-to-Pink Gradient Buttons */
+.gradient-btn {
+    background: linear-gradient(135deg, #3b82f6 0%, #ec4899 100%);
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(236, 72, 153, 0.3);
+    color: #ffffff;
+    border: none;
+}
+
+.gradient-btn:hover {
+    background: linear-gradient(135deg, #2563eb 0%, #db2777 100%);
+    box-shadow: 0 6px 20px rgba(236, 72, 153, 0.5);
+    transform: translateY(-1px);
+}
+
+/* Active Category Filter Tab */
+.active-tab {
+    background: linear-gradient(135deg, #3b82f6 0%, #ec4899 100%) !important;
+    color: #ffffff !important;
+    border: none !important;
+}
+
+/* Active Admin Panel Tab */
+.active-admin-tab {
+    background: linear-gradient(135deg, #3b82f6 0%, #ec4899 100%) !important;
+    color: #ffffff !important;
+}
+
+/* Smooth Image Hover Effect */
+.product-card-img {
+    transition: transform 0.5s ease;
+}
+
+.product-card:hover .product-card-img {
+    transform: scale(1.05);
+}
