@@ -1,5 +1,5 @@
 let profileData = {
-    photo: "raman-profile.jpg", // GitHub रिपॉजिटरी से अपने आप उठेगी फोटो
+    photo: "raman-profile.jpg",
     name: "Raman Kumar Baroliya",
     tagline: "Crafting high-end 3D hard-surface models in Blender, developing responsive web applications, and building smart digital tools.",
     upi: "Lalr13031-1@oksbi",
@@ -15,17 +15,51 @@ let products = [];
 let orders = [];
 let currentCheckoutProductId = null;
 
-function loadSavedData() {
-    const savedProfile = localStorage.getItem('raman_portfolio_profile');
-    if (savedProfile) { try { profileData = JSON.parse(savedProfile); } catch (e) {} }
+// Firebase Sync Initialization
+function initFirebaseSync() {
+    if (!window.db) return;
+    const { ref, get, child } = window.DB_MODULE || {}; // handled via global scope
     
-    const savedProducts = localStorage.getItem('raman_portfolio_products');
-    if (savedProducts) { try { products = JSON.parse(savedProducts); } catch (e) {} }
+    const dbRef = window.ref(window.db);
+    
+    // Fetch Profile
+    window.get(window.child(dbRef, "profile")).then((snapshot) => {
+        if (snapshot.exists()) {
+            profileData = snapshot.val();
+            updateProfileUI();
+        } else {
+            saveDataToFirebase('profile', profileData);
+        }
+    }).catch((error) => { console.error(error); });
 
-    const savedOrders = localStorage.getItem('raman_portfolio_orders');
-    if (savedOrders) { try { orders = JSON.parse(savedOrders); } catch (e) {} }
+    // Fetch Products
+    window.get(window.child(dbRef, "products")).then((snapshot) => {
+        if (snapshot.exists()) {
+            products = snapshot.val() || [];
+            renderProducts('all');
+        }
+    });
 
+    // Fetch Orders
+    window.get(window.child(dbRef, "orders")).then((snapshot) => {
+        if (snapshot.exists()) {
+            orders = snapshot.val() || [];
+        }
+    });
+}
+
+// Fallback load data if firebase takes time
+function loadSavedData() {
     updateProfileUI();
+    renderProducts('all');
+}
+
+// Helper to save to Firebase & LocalStorage
+function saveDataToFirebase(path, data) {
+    if (window.db && window.ref && window.set) {
+        window.set(window.ref(window.db, path), data).catch(err => console.log(err));
+    }
+    localStorage.setItem(`raman_portfolio_${path}`, JSON.stringify(data));
 }
 
 function updateProfileUI() {
@@ -51,6 +85,7 @@ function updateProfileUI() {
 // Render Products Grid
 function renderProducts(filter = 'all') {
     const grid = document.getElementById('product-grid');
+    if (!grid) return;
     grid.innerHTML = '';
     
     const filtered = filter === 'all' ? products : products.filter(p => p.category === filter);
@@ -150,7 +185,7 @@ function submitOrderForApproval() {
     };
 
     orders.unshift(newOrder);
-    localStorage.setItem('raman_portfolio_orders', JSON.stringify(orders));
+    saveDataToFirebase('orders', orders);
 
     document.getElementById('order-status-msg').classList.remove('hidden');
     alert("ऑर्डर सबमिट हो गया है! एडमिन द्वारा UTR वेरीफाई होने के बाद डाउनलोड लिंक अनलॉक कर दिया जाएगा।");
@@ -240,6 +275,7 @@ function switchAdminTab(tabName) {
 // Render Orders in Admin Panel
 function renderAdminOrdersList() {
     const listContainer = document.getElementById('admin-orders-list');
+    if (!listContainer) return;
     listContainer.innerHTML = '';
 
     if (orders.length === 0) {
@@ -272,7 +308,7 @@ function approveOrder(orderId) {
     const order = orders.find(o => o.orderId === orderId);
     if (order) {
         order.status = "Approved";
-        localStorage.setItem('raman_portfolio_orders', JSON.stringify(orders));
+        saveDataToFirebase('orders', orders);
         renderAdminOrdersList();
         alert(`आर्डर स्वीकृत कर दिया गया है! UTR: ${order.utr}`);
     }
@@ -280,13 +316,14 @@ function approveOrder(orderId) {
 
 function deleteOrder(orderId) {
     orders = orders.filter(o => o.orderId !== orderId);
-    localStorage.setItem('raman_portfolio_orders', JSON.stringify(orders));
+    saveDataToFirebase('orders', orders);
     renderAdminOrdersList();
 }
 
 // Render Catalog for Editing & Deleting
 function renderAdminItemsList() {
     const container = document.getElementById('admin-items-list');
+    if (!container) return;
     container.innerHTML = '';
 
     if (products.length === 0) {
@@ -329,7 +366,7 @@ function saveProductEdit(id) {
         product.price = parseFloat(document.getElementById(`edit-price-${id}`).value) || 0;
         product.fileLink = document.getElementById(`edit-file-${id}`).value;
 
-        localStorage.setItem('raman_portfolio_products', JSON.stringify(products));
+        saveDataToFirebase('products', products);
         renderProducts('all');
         renderAdminItemsList();
         alert("प्रोडक्ट अपडेट हो गया!");
@@ -339,7 +376,7 @@ function saveProductEdit(id) {
 function deleteProduct(id) {
     if (confirm("क्या आप वाकई इस प्रोडक्ट को डिलीट करना चाहते हैं?")) {
         products = products.filter(p => p.id !== id);
-        localStorage.setItem('raman_portfolio_products', JSON.stringify(products));
+        saveDataToFirebase('products', products);
         renderProducts('all');
         renderAdminItemsList();
     }
@@ -358,7 +395,7 @@ function saveProfileSettings() {
     if (newPass && newPass.trim() !== '') {
         profileData.password = newPass.trim();
     }
-    localStorage.setItem('raman_portfolio_profile', JSON.stringify(profileData));
+    saveDataToFirebase('profile', profileData);
     updateProfileUI();
     alert("प्रोफाइल सेटिंग्स सफलतापूर्वक सेव हो गई हैं!");
     closeAdminModal();
@@ -369,12 +406,12 @@ function saveAboutSettings() {
     profileData.skills = document.getElementById('admin-input-skills').value || profileData.skills;
     profileData.certifications = document.getElementById('admin-input-cert').value || profileData.certifications;
 
-    localStorage.setItem('raman_portfolio_profile', JSON.stringify(profileData));
+    saveDataToFirebase('profile', profileData);
     updateProfileUI();
     alert("क्वालिफिकेशंस अपडेट हो गई हैं!");
 }
 
-// Add New Product with Direct Image File Upload
+// Add New Product
 function addNewProduct() {
     const category = document.getElementById('add-item-category').value;
     const title = document.getElementById('add-item-title').value;
@@ -414,12 +451,12 @@ function saveNewProductObject(category, title, price, desc, image, fileLink) {
 
     products.unshift(newProd);
     try {
-        localStorage.setItem('raman_portfolio_products', JSON.stringify(products));
+        saveDataToFirebase('products', products);
         renderProducts('all');
         closeAdminModal();
         alert(`₹${price} का नया प्रोडक्ट सफलतापूर्वक पब्लिश हो गया!`);
     } catch (err) {
-        alert("इमेज साइज बहुत बड़ी है! कृपया छोटी साइज की इमेज चुनें।");
+        alert("इमेज सेव करने में समस्या आई!");
     }
 }
 
@@ -429,5 +466,4 @@ document.getElementById('mobile-menu-btn').addEventListener('click', () => {
 
 window.onload = () => {
     loadSavedData();
-    renderProducts('all');
 };
