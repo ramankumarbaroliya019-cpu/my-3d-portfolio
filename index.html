@@ -1,0 +1,893 @@
+<!DOCTYPE html>
+<html lang="hi" class="dark scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Raman Kumar Barolia | 3D Portfolio & Digital Store</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#eef2ff',
+                            100: '#e0e7ff',
+                            500: '#6366f1',
+                            600: '#4f46e5',
+                            700: '#4338ca',
+                            900: '#312e81',
+                        },
+                        accent: '#06b6d4',
+                        neon: '#a855f7'
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- FontAwesome & Google Fonts -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .glass {
+            background: rgba(15, 23, 42, 0.75);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .gradient-text {
+            background: linear-gradient(135deg, #6366f1 0%, #a855f7 50%, #06b6d4 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .gradient-bg {
+            background: linear-gradient(135deg, #4f46e5 0%, #a855f7 100%);
+        }
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #090d16; }
+        ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #334155; }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col transition-colors duration-300 antialiased selection:bg-brand-500 selection:text-white">
+
+    <!-- Toast Notification Container -->
+    <div id="toast-container" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
+
+    <!-- Navigation Bar -->
+    <nav class="sticky top-0 z-40 w-full glass bg-slate-950/80 border-b border-slate-800/80 backdrop-blur-md">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                
+                <!-- Logo -->
+                <div class="flex items-center gap-3 cursor-pointer" onclick="switchTab('home')">
+                    <div class="w-10 h-10 rounded-xl gradient-bg flex items-center justify-center text-white font-bold text-xl shadow-lg shadow-brand-500/20">
+                        R
+                    </div>
+                    <div>
+                        <span class="font-extrabold text-lg tracking-tight text-white">RAMAN<span class="text-brand-500">.3D</span></span>
+                        <span class="hidden sm:block text-[10px] text-slate-400 font-mono tracking-widest uppercase">B.Tech IT | GEC Ajmer</span>
+                    </div>
+                </div>
+
+                <!-- Desktop Nav Links -->
+                <div class="hidden md:flex items-center space-x-1 lg:space-x-4 text-sm font-medium">
+                    <button onclick="switchTab('home')" class="nav-link px-3 py-2 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800/50 transition">Home</button>
+                    <button onclick="switchTab('store')" class="nav-link px-3 py-2 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800/50 transition flex items-center gap-1.5">
+                        <i class="fa-solid fa-store text-brand-400"></i> Digital Store
+                    </button>
+                    <button onclick="switchTab('portfolio')" class="nav-link px-3 py-2 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800/50 transition">3D Portfolio</button>
+                    <button onclick="switchTab('about')" class="nav-link px-3 py-2 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800/50 transition">Qualifications</button>
+                    <button onclick="openAdminModal()" class="px-3 py-2 rounded-lg text-amber-400 hover:bg-amber-500/10 transition flex items-center gap-1 font-semibold border border-amber-500/30">
+                        <i class="fa-solid fa-lock text-xs"></i> Admin Panel
+                    </button>
+                </div>
+
+                <!-- Right Controls -->
+                <div class="flex items-center gap-3">
+                    <!-- Search Trigger -->
+                    <div class="relative hidden sm:block w-40 lg:w-56">
+                        <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+                        <input type="text" id="global-search" onkeyup="handleGlobalSearch(event)" placeholder="Search models, books..." class="w-full bg-slate-900/90 text-slate-200 text-xs rounded-full pl-9 pr-4 py-2 border border-slate-700 focus:outline-none focus:border-brand-500 transition">
+                    </div>
+
+                    <!-- Cart Button -->
+                    <button onclick="toggleCartDrawer()" class="relative p-2.5 rounded-xl bg-slate-900 border border-slate-700/80 text-slate-300 hover:text-white hover:border-slate-500 transition">
+                        <i class="fa-solid fa-cart-shopping text-base"></i>
+                        <span id="cart-badge" class="absolute -top-1.5 -right-1.5 bg-brand-500 text-white text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center border-2 border-slate-950 shadow">0</span>
+                    </button>
+
+                    <!-- Mobile Menu Trigger -->
+                    <button onclick="toggleMobileMenu()" class="md:hidden p-2.5 rounded-xl bg-slate-900 border border-slate-800 text-slate-300">
+                        <i class="fa-solid fa-bars text-lg" id="mobile-menu-icon"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Menu Drawer -->
+        <div id="mobile-menu" class="hidden md:hidden border-b border-slate-800 bg-slate-950/95 px-4 pt-2 pb-6 space-y-2">
+            <input type="text" id="mobile-search" onkeyup="handleGlobalSearch(event)" placeholder="Search models, files, books..." class="w-full bg-slate-900 text-slate-200 text-sm rounded-lg px-4 py-2 border border-slate-700 mb-3">
+            <button onclick="switchTab('home'); toggleMobileMenu()" class="block w-full text-left px-4 py-2.5 rounded-lg text-slate-200 hover:bg-slate-800">Home</button>
+            <button onclick="switchTab('store'); toggleMobileMenu()" class="block w-full text-left px-4 py-2.5 rounded-lg text-slate-200 hover:bg-slate-800"><i class="fa-solid fa-store text-brand-400 mr-2"></i> Digital Store</button>
+            <button onclick="switchTab('portfolio'); toggleMobileMenu()" class="block w-full text-left px-4 py-2.5 rounded-lg text-slate-200 hover:bg-slate-800">3D Portfolio Showcase</button>
+            <button onclick="switchTab('about'); toggleMobileMenu()" class="block w-full text-left px-4 py-2.5 rounded-lg text-slate-200 hover:bg-slate-800">Qualifications & Skills</button>
+            <button onclick="openAdminModal(); toggleMobileMenu()" class="block w-full text-left px-4 py-2.5 rounded-lg text-amber-400 hover:bg-amber-500/10 border border-amber-500/20"><i class="fa-solid fa-lock mr-2"></i> Admin Panel (Add Assets)</button>
+        </div>
+    </nav>
+
+    <!-- MAIN CONTENT CONTAINER -->
+    <main class="flex-grow">
+
+        <!-- TAB 1: HOME PAGE HERO & PROFILES -->
+        <section id="tab-home" class="tab-content block">
+            <!-- Hero Banner -->
+            <div class="relative overflow-hidden py-12 lg:py-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+                <div class="absolute -top-24 -left-24 w-96 h-96 bg-brand-600/15 rounded-full blur-3xl pointer-events-none"></div>
+                <div class="absolute -bottom-24 -right-24 w-96 h-96 bg-neon/15 rounded-full blur-3xl pointer-events-none"></div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
+                    
+                    <!-- Bio Info Column -->
+                    <div class="lg:col-span-7 space-y-6 text-center lg:text-left">
+                        <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-brand-500/10 border border-brand-500/20 text-brand-400 text-xs font-semibold tracking-wide">
+                            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span> Open for Freelance & Technical Roles
+                        </div>
+
+                        <h1 class="text-3xl sm:text-5xl font-extrabold tracking-tight text-white leading-tight">
+                            Raman Kumar Barolia<br>
+                            <span class="gradient-text">3D Artist & IT Developer</span>
+                        </h1>
+
+                        <p class="text-slate-400 text-sm sm:text-base max-w-2xl mx-auto lg:mx-0 leading-relaxed">
+                            B.Tech Information Technology Student at <strong>Government Engineering College Ajmer (GEC Ajmer)</strong>. Specializing in Blender 3D Hard-Surface & Scale Architecture Modeling, Engineering E-Books, and Full-Stack Web Development.
+                        </p>
+
+                        <!-- Contact Badges -->
+                        <div class="flex flex-wrap items-center justify-center lg:justify-start gap-3 text-xs">
+                            <a href="mailto:Lalr13031@gmail.com" class="px-3.5 py-2 rounded-xl bg-slate-900 border border-slate-700 text-slate-300 hover:text-white flex items-center gap-2 transition">
+                                <i class="fa-solid fa-envelope text-brand-400"></i> Lalr13031@gmail.com
+                            </a>
+                            <a href="https://wa.me/917742987003" target="_blank" class="px-3.5 py-2 rounded-xl bg-slate-900 border border-slate-700 text-slate-300 hover:text-white flex items-center gap-2 transition">
+                                <i class="fa-brands fa-whatsapp text-emerald-400"></i> +91 7742987003
+                            </a>
+                            <span class="px-3.5 py-2 rounded-xl bg-slate-900 border border-slate-700 text-slate-300 flex items-center gap-2">
+                                <i class="fa-solid fa-qrcode text-amber-400"></i> UPI: Lalr13031-1@oksbi
+                            </span>
+                        </div>
+
+                        <div class="flex flex-wrap items-center justify-center lg:justify-start gap-4 pt-2">
+                            <button onclick="switchTab('store')" class="gradient-bg text-white font-semibold px-6 py-3.5 rounded-xl shadow-lg shadow-brand-500/20 hover:opacity-95 transition flex items-center gap-2 text-sm">
+                                <i class="fa-solid fa-bag-shopping"></i> Browse Digital Store
+                            </button>
+                            <button onclick="switchTab('portfolio')" class="bg-slate-900 text-slate-200 border border-slate-700 font-semibold px-6 py-3.5 rounded-xl hover:bg-slate-800 transition flex items-center gap-2 text-sm">
+                                <i class="fa-solid fa-cube text-brand-400"></i> View 3D Portfolio
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Profile Image Card -->
+                    <div class="lg:col-span-5 flex justify-center">
+                        <div class="relative w-full max-w-sm p-4 rounded-3xl glass shadow-2xl border border-slate-700/60 group text-center">
+                            <div class="relative h-80 rounded-2xl overflow-hidden bg-slate-900 border border-slate-800">
+                                <!-- Developer Photo Placeholder / Embedded Avatar -->
+                                <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=800&q=80" alt="Raman Kumar Barolia" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                                <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/20 to-transparent"></div>
+                                <span class="absolute top-3 left-3 bg-slate-900/90 text-brand-400 text-[11px] font-bold px-3 py-1 rounded-full border border-slate-700">GEC Ajmer (B.Tech IT)</span>
+                            </div>
+
+                            <div class="mt-4 text-left px-2">
+                                <h3 class="text-base font-bold text-white">Raman Kumar Barolia</h3>
+                                <p class="text-xs text-slate-400">Blender 3D Generalist & Software Engineer</p>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Core Skill Cards -->
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div class="p-5 rounded-2xl glass border border-slate-800 hover:border-brand-500/40 transition">
+                        <i class="fa-solid fa-cube text-2xl text-brand-400 mb-2"></i>
+                        <h4 class="text-base font-bold text-white">Blender 3D Modeling</h4>
+                        <p class="text-xs text-slate-400 mt-1">Hard-surface electronics, beveling, UV unwrapping & 3D print accuracy.</p>
+                    </div>
+
+                    <div class="p-5 rounded-2xl glass border border-slate-800 hover:border-neon/40 transition">
+                        <i class="fa-solid fa-book-journal-whills text-2xl text-neon mb-2"></i>
+                        <h4 class="text-base font-bold text-white">Author & Educator</h4>
+                        <p class="text-xs text-slate-400 mt-1">Authoring technical e-books, RBSE science guides, and study blueprints.</p>
+                    </div>
+
+                    <div class="p-5 rounded-2xl glass border border-slate-800 hover:border-accent/40 transition">
+                        <i class="fa-solid fa-code text-2xl text-accent mb-2"></i>
+                        <h4 class="text-base font-bold text-white">C++ & Python Dev</h4>
+                        <p class="text-xs text-slate-400 mt-1">Data structures, microcontrollers, IoT hardware logic & algorithms.</p>
+                    </div>
+
+                    <div class="p-5 rounded-2xl glass border border-slate-800 hover:border-emerald-500/40 transition">
+                        <i class="fa-solid fa-globe text-2xl text-emerald-400 mb-2"></i>
+                        <h4 class="text-base font-bold text-white">Web Apps & SEO</h4>
+                        <p class="text-xs text-slate-400 mt-1">Responsive HTML/Tailwind web applications, state management & search optimization.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 2: DIGITAL STORE CATALOG -->
+        <section id="tab-store" class="tab-content hidden py-8 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-slate-800">
+                <div>
+                    <h1 class="text-2xl sm:text-3xl font-extrabold text-white">Digital Assets Store</h1>
+                    <p class="text-slate-400 text-xs sm:text-sm mt-1">Instant download 3D models, e-books, and presentation files.</p>
+                </div>
+
+                <!-- Category Filters -->
+                <div class="flex flex-wrap items-center gap-2">
+                    <button onclick="filterProducts('All')" class="cat-btn active px-3.5 py-1.5 rounded-xl text-xs font-semibold bg-brand-600 text-white transition" data-cat="All">All Assets</button>
+                    <button onclick="filterProducts('3D Models')" class="cat-btn px-3.5 py-1.5 rounded-xl text-xs font-semibold bg-slate-900 border border-slate-700 text-slate-300 hover:text-white transition" data-cat="3D Models">3D Models</button>
+                    <button onclick="filterProducts('Books')" class="cat-btn px-3.5 py-1.5 rounded-xl text-xs font-semibold bg-slate-900 border border-slate-700 text-slate-300 hover:text-white transition" data-cat="Books">Books & Guides</button>
+                    <button onclick="filterProducts('Digital Files')" class="cat-btn px-3.5 py-1.5 rounded-xl text-xs font-semibold bg-slate-900 border border-slate-700 text-slate-300 hover:text-white transition" data-cat="Digital Files">PPT & Files</button>
+                </div>
+            </div>
+
+            <!-- Dynamic Product Grid -->
+            <div id="product-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 pt-6">
+                <!-- Products injected by JavaScript -->
+            </div>
+        </section>
+
+        <!-- TAB 3: 3D PORTFOLIO SHOWCASE -->
+        <section id="tab-portfolio" class="tab-content hidden py-8 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="mb-6">
+                <h1 class="text-2xl sm:text-3xl font-extrabold text-white">3D Modeling Work Portfolio</h1>
+                <p class="text-slate-400 text-xs sm:text-sm mt-1">Detailed view of hard-surface concept renders and scale architectural assets.</p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <!-- Samsung F56 Showcase -->
+                <div class="glass rounded-3xl p-5 border border-slate-800 space-y-4">
+                    <div class="h-64 rounded-2xl overflow-hidden bg-slate-900 relative">
+                        <img src="https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?auto=format&fit=crop&w=1000&q=80" alt="Samsung F56 Concept" class="w-full h-full object-cover">
+                        <span class="absolute top-3 left-3 bg-neon text-white text-[10px] font-bold px-3 py-1 rounded-full uppercase">Hard-Surface Gadget</span>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-bold text-white">Samsung F56 Concept 3D Smartphone</h3>
+                        <p class="text-slate-400 text-xs mt-2 leading-relaxed">
+                            Built with precision in Blender 3D. Features triple-camera bezel details, metallic frame beveling, screen glass reflections, SIM tray cutouts, and realistic PBR lighting.
+                        </p>
+                    </div>
+                    <div class="flex flex-wrap gap-2 pt-1">
+                        <span class="bg-slate-900 text-slate-300 text-[11px] px-2.5 py-1 rounded-md border border-slate-800">Blender 3D</span>
+                        <span class="bg-slate-900 text-slate-300 text-[11px] px-2.5 py-1 rounded-md border border-slate-800">Beveled Topology</span>
+                        <span class="bg-slate-900 text-slate-300 text-[11px] px-2.5 py-1 rounded-md border border-slate-800">Cycles & Eevee</span>
+                    </div>
+                </div>
+
+                <!-- Architectural House Showcase -->
+                <div class="glass rounded-3xl p-5 border border-slate-800 space-y-4">
+                    <div class="h-64 rounded-2xl overflow-hidden bg-slate-900 relative">
+                        <img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1000&q=80" alt="House Model" class="w-full h-full object-cover">
+                        <span class="absolute top-3 left-3 bg-brand-600 text-white text-[10px] font-bold px-3 py-1 rounded-full uppercase">Architectural Scale</span>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-bold text-white">2-Story Modern Architectural House</h3>
+                        <p class="text-slate-400 text-xs mt-2 leading-relaxed">
+                            Designed according to real metric measurements. Includes exterior glass panels, balcony metal railings, side staircase alignment, and interior room partition grids for 3D printing.
+                        </p>
+                    </div>
+                    <div class="flex flex-wrap gap-2 pt-1">
+                        <span class="bg-slate-900 text-slate-300 text-[11px] px-2.5 py-1 rounded-md border border-slate-800">Metric Scale</span>
+                        <span class="bg-slate-900 text-slate-300 text-[11px] px-2.5 py-1 rounded-md border border-slate-800">Architectural Mesh</span>
+                        <span class="bg-slate-900 text-slate-300 text-[11px] px-2.5 py-1 rounded-md border border-slate-800">3D Print Ready</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 4: QUALIFICATIONS & EDUCATION -->
+        <section id="tab-about" class="tab-content hidden py-8 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                
+                <!-- Education & Details -->
+                <div class="lg:col-span-7 glass rounded-3xl p-6 border border-slate-800 space-y-6">
+                    <div>
+                        <h2 class="text-2xl font-extrabold text-white flex items-center gap-2">
+                            <i class="fa-solid fa-graduation-cap text-brand-400"></i> Education & Profile
+                        </h2>
+                        <p class="text-slate-400 text-xs mt-1">Academic background and technical specialization.</p>
+                    </div>
+
+                    <div class="border-l-2 border-brand-500 pl-4 py-1 space-y-1">
+                        <h3 class="text-base font-bold text-slate-100">B.Tech in Information Technology</h3>
+                        <p class="text-xs font-semibold text-brand-400">Government Engineering College Ajmer (GEC Ajmer)</p>
+                        <p class="text-xs text-slate-400 pt-2 leading-relaxed">
+                            Comprehensive study of Software Engineering, Microprocessors, Computer Graphics, Operating Systems, Data Structures, and Algorithmic Logic.
+                        </p>
+                    </div>
+
+                    <div class="space-y-3 pt-2">
+                        <h4 class="text-sm font-bold text-white">Technical Skill Index</h4>
+                        
+                        <div class="space-y-2">
+                            <div>
+                                <div class="flex justify-between text-xs font-semibold mb-1">
+                                    <span class="text-slate-300">Blender 3D Modeling & Rendering</span>
+                                    <span class="text-brand-400">92%</span>
+                                </div>
+                                <div class="w-full bg-slate-900 h-2 rounded-full overflow-hidden">
+                                    <div class="bg-brand-500 h-full rounded-full" style="width: 92%"></div>
+                                </div>
+                            </div>
+
+                            <div>
+                                <div class="flex justify-between text-xs font-semibold mb-1">
+                                    <span class="text-slate-300">C++ / Python / Logic Building</span>
+                                    <span class="text-neon">85%</span>
+                                </div>
+                                <div class="w-full bg-slate-900 h-2 rounded-full overflow-hidden">
+                                    <div class="bg-neon h-full rounded-full" style="width: 85%"></div>
+                                </div>
+                            </div>
+
+                            <div>
+                                <div class="flex justify-between text-xs font-semibold mb-1">
+                                    <span class="text-slate-300">HTML / Tailwind CSS / Web Apps</span>
+                                    <span class="text-accent">88%</span>
+                                </div>
+                                <div class="w-full bg-slate-900 h-2 rounded-full overflow-hidden">
+                                    <div class="bg-accent h-full rounded-full" style="width: 88%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Contact & Reach out Card -->
+                <div class="lg:col-span-5 glass rounded-3xl p-6 border border-slate-800 space-y-5 flex flex-col justify-between">
+                    <div>
+                        <h3 class="text-xl font-bold text-white">Direct Contact Info</h3>
+                        <p class="text-slate-400 text-xs mt-1">Get in touch for projects, 3D assets, or hiring inquiries.</p>
+                    </div>
+
+                    <div class="space-y-3 text-xs">
+                        <div class="p-3.5 bg-slate-950 rounded-2xl border border-slate-800 flex items-center gap-3">
+                            <i class="fa-solid fa-user text-brand-400 text-lg"></i>
+                            <div>
+                                <span class="text-slate-500 block">Full Name</span>
+                                <span class="text-slate-200 font-semibold">Raman Kumar Barolia</span>
+                            </div>
+                        </div>
+
+                        <div class="p-3.5 bg-slate-950 rounded-2xl border border-slate-800 flex items-center gap-3">
+                            <i class="fa-solid fa-envelope text-neon text-lg"></i>
+                            <div>
+                                <span class="text-slate-500 block">Email Address</span>
+                                <span class="text-slate-200 font-semibold">Lalr13031@gmail.com</span>
+                            </div>
+                        </div>
+
+                        <div class="p-3.5 bg-slate-950 rounded-2xl border border-slate-800 flex items-center gap-3">
+                            <i class="fa-brands fa-whatsapp text-emerald-400 text-lg"></i>
+                            <div>
+                                <span class="text-slate-500 block">Mobile & WhatsApp</span>
+                                <span class="text-slate-200 font-semibold">+91 7742987003</span>
+                            </div>
+                        </div>
+
+                        <div class="p-3.5 bg-slate-950 rounded-2xl border border-slate-800 flex items-center gap-3">
+                            <i class="fa-solid fa-qrcode text-amber-400 text-lg"></i>
+                            <div>
+                                <span class="text-slate-500 block">Merchant UPI ID</span>
+                                <span class="text-amber-400 font-mono font-bold">Lalr13031-1@oksbi</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <a href="https://wa.me/917742987003" target="_blank" class="w-full gradient-bg text-white font-bold py-3 rounded-xl text-center text-xs uppercase tracking-wider block shadow-lg hover:opacity-95 transition">
+                        Start WhatsApp Chat
+                    </a>
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="border-t border-slate-800/80 bg-slate-950 py-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div class="flex items-center gap-2">
+                <span class="font-extrabold text-base text-white">RAMAN<span class="text-brand-500">.3D</span></span>
+                <span class="text-xs text-slate-500">| B.Tech IT (GEC Ajmer)</span>
+            </div>
+
+            <div class="flex items-center space-x-6 text-xs text-slate-400">
+                <button onclick="switchTab('store')" class="hover:text-white transition">Digital Store</button>
+                <button onclick="switchTab('portfolio')" class="hover:text-white transition">3D Portfolio</button>
+                <button onclick="switchTab('about')" class="hover:text-white transition">Qualifications</button>
+                <button onclick="openAdminModal()" class="text-amber-400 hover:underline">Admin Login</button>
+            </div>
+        </div>
+    </footer>
+
+    <!-- PRODUCT PREVIEW & INSPECT MODAL -->
+    <div id="product-modal" class="fixed inset-0 z-50 hidden bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4 overflow-y-auto">
+        <div class="bg-slate-900 border border-slate-800 rounded-3xl max-w-2xl w-full p-6 relative shadow-2xl space-y-6">
+            <button onclick="closeProductModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center transition">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            <div id="modal-details" class="space-y-4"></div>
+        </div>
+    </div>
+
+    <!-- PAYMENT AUTHORIZATION CHECKOUT MODAL -->
+    <div id="payment-modal" class="fixed inset-0 z-50 hidden bg-slate-950/90 backdrop-blur-md flex items-center justify-center p-4">
+        <div class="bg-slate-900 border border-slate-800 rounded-3xl max-w-md w-full p-6 relative shadow-2xl text-center space-y-4">
+            <button onclick="closePaymentModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+
+            <div class="w-12 h-12 bg-brand-500/10 text-brand-400 rounded-2xl flex items-center justify-center text-xl mx-auto">
+                <i class="fa-solid fa-shield-halved"></i>
+            </div>
+
+            <div>
+                <h3 class="text-lg font-bold text-white">Payment Authorization</h3>
+                <p class="text-slate-400 text-xs mt-0.5">Scan & Pay to Unlock Download Link</p>
+            </div>
+
+            <div class="bg-slate-950 p-3.5 rounded-2xl border border-slate-800 text-left space-y-1.5">
+                <div class="flex justify-between text-xs">
+                    <span class="text-slate-400">Selected Item:</span>
+                    <span id="pay-item-name" class="text-white font-semibold truncate max-w-[200px]">Digital Asset</span>
+                </div>
+                <div class="flex justify-between text-xs">
+                    <span class="text-slate-400">Total Price:</span>
+                    <span id="pay-item-price" class="text-emerald-400 font-bold">₹0</span>
+                </div>
+                <div class="flex justify-between text-xs">
+                    <span class="text-slate-400">Merchant UPI:</span>
+                    <span class="text-amber-400 font-mono">Lalr13031-1@oksbi</span>
+                </div>
+            </div>
+
+            <!-- Auto-Generated QR Code Box -->
+            <div class="bg-white p-3 rounded-2xl w-40 h-40 mx-auto flex items-center justify-center shadow-lg">
+                <img id="upi-qr-image" src="" alt="UPI Payment QR Code" class="w-full h-full object-contain">
+            </div>
+            <p class="text-[11px] text-slate-400">Scan using GPay, PhonePe, Paytm, or BHIM UPI</p>
+
+            <div class="space-y-2">
+                <input type="text" id="pay-txn-id" placeholder="Enter Transaction / UTR No. (Optional)" class="w-full bg-slate-950 text-slate-200 text-xs rounded-xl px-3.5 py-2.5 border border-slate-700 focus:outline-none focus:border-brand-500">
+                <button onclick="processSimulatedPayment()" id="pay-confirm-btn" class="w-full gradient-bg text-white font-bold py-3 rounded-xl shadow-lg hover:opacity-95 transition text-xs uppercase tracking-wider">
+                    Verify Payment & Download
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ADMIN PANEL OVERLAY MODAL -->
+    <div id="admin-modal" class="fixed inset-0 z-50 hidden bg-slate-950/90 backdrop-blur-md flex items-center justify-center p-4">
+        <div class="bg-slate-900 border border-slate-800 rounded-3xl max-w-lg w-full p-6 relative shadow-2xl space-y-5">
+            <button onclick="closeAdminModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+
+            <!-- Login View -->
+            <div id="admin-login-view" class="space-y-4 text-center">
+                <div class="w-12 h-12 bg-amber-500/10 text-amber-400 rounded-2xl flex items-center justify-center text-xl mx-auto">
+                    <i class="fa-solid fa-user-gear"></i>
+                </div>
+                <div>
+                    <h3 class="text-lg font-bold text-white">Author Admin Login</h3>
+                    <p class="text-slate-400 text-xs mt-1">Enter your password to upload new items without code modification.</p>
+                </div>
+                <input type="password" id="admin-pass-input" placeholder="Enter Security Password (admin123)" class="w-full bg-slate-950 text-slate-200 text-sm rounded-xl px-4 py-3 border border-slate-700 focus:outline-none focus:border-amber-500">
+                <button onclick="authenticateAdmin()" class="w-full bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold py-3 rounded-xl text-xs uppercase tracking-wider transition">
+                    Login to Admin Panel
+                </button>
+            </div>
+
+            <!-- Upload Form View (hidden until login) -->
+            <div id="admin-form-view" class="hidden space-y-4">
+                <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+                    <h3 class="text-base font-bold text-white flex items-center gap-2">
+                        <i class="fa-solid fa-cloud-arrow-up text-amber-400"></i> Add New Product / Asset
+                    </h3>
+                    <span class="text-[10px] text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded">Admin Authenticated</span>
+                </div>
+
+                <form id="new-product-form" onsubmit="handleAddNewProduct(event)" class="space-y-3 text-xs">
+                    <div>
+                        <label class="block text-slate-400 mb-1">Asset Category</label>
+                        <select id="adm-cat" required class="w-full bg-slate-950 text-slate-200 rounded-xl px-3 py-2 border border-slate-700">
+                            <option value="3D Models">3D Models (.blend / .obj)</option>
+                            <option value="Books">Books & Study Guides (.pdf)</option>
+                            <option value="Digital Files">PPTs & Coding Source (.pptx / .zip)</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-slate-400 mb-1">Product Title</label>
+                        <input type="text" id="adm-title" required placeholder="e.g. 10th RBSE Science Guide PDF" class="w-full bg-slate-950 text-slate-200 rounded-xl px-3 py-2 border border-slate-700">
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-slate-400 mb-1">Price (₹ INR)</label>
+                            <input type="number" id="adm-price" required placeholder="299" class="w-full bg-slate-950 text-slate-200 rounded-xl px-3 py-2 border border-slate-700">
+                        </div>
+                        <div>
+                            <label class="block text-slate-400 mb-1">File Size / Tag</label>
+                            <input type="text" id="adm-size" placeholder="15 MB / PDF" class="w-full bg-slate-950 text-slate-200 rounded-xl px-3 py-2 border border-slate-700">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-slate-400 mb-1">Preview Image URL</label>
+                        <input type="url" id="adm-image" required placeholder="https://images.unsplash.com/..." class="w-full bg-slate-950 text-slate-200 rounded-xl px-3 py-2 border border-slate-700">
+                    </div>
+
+                    <div>
+                        <label class="block text-slate-400 mb-1">File Download URL (Google Drive / GitHub Link)</label>
+                        <input type="url" id="adm-filelink" required placeholder="https://drive.google.com/file/d/..." class="w-full bg-slate-950 text-slate-200 rounded-xl px-3 py-2 border border-slate-700">
+                    </div>
+
+                    <div>
+                        <label class="block text-slate-400 mb-1">Description</label>
+                        <textarea id="adm-desc" rows="2" required placeholder="Details about this asset..." class="w-full bg-slate-950 text-slate-200 rounded-xl px-3 py-2 border border-slate-700"></textarea>
+                    </div>
+
+                    <button type="submit" class="w-full gradient-bg text-white font-bold py-3 rounded-xl text-xs uppercase tracking-wider hover:opacity-95 transition mt-2">
+                        Publish Asset to Store
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- CART DRAWER -->
+    <div id="cart-drawer" class="fixed inset-y-0 right-0 z-50 w-full max-w-sm bg-slate-900 border-l border-slate-800 shadow-2xl transform translate-x-full transition-transform duration-300 flex flex-col">
+        <div class="p-4 border-b border-slate-800 flex items-center justify-between">
+            <h3 class="text-base font-bold text-white flex items-center gap-2">
+                <i class="fa-solid fa-bag-shopping text-brand-400"></i> Shopping Cart
+            </h3>
+            <button onclick="toggleCartDrawer()" class="text-slate-400 hover:text-white">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+        </div>
+
+        <div id="cart-items" class="flex-grow p-4 overflow-y-auto space-y-3"></div>
+
+        <div class="p-4 border-t border-slate-800 space-y-3 bg-slate-950">
+            <div class="flex justify-between text-sm font-bold">
+                <span class="text-slate-300">Total:</span>
+                <span id="cart-total" class="text-emerald-400">₹0</span>
+            </div>
+            <button onclick="checkoutCart()" class="w-full gradient-bg text-white font-bold py-3 rounded-xl text-xs uppercase tracking-wider hover:opacity-95 transition">
+                Proceed to Pay & Download
+            </button>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT STATE LOGIC -->
+    <script>
+        const MERCH_UPI_ID = "Lalr13031-1@oksbi";
+        const MERCH_NAME = "Raman Kumar Barolia";
+
+        // Initial Sample Products Dataset
+        const defaultProducts = [
+            {
+                id: 1,
+                title: "Samsung F56 Concept 3D Smartphone",
+                category: "3D Models",
+                price: 499,
+                tags: [".blend", ".obj", "Cycles"],
+                image: "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?auto=format&fit=crop&w=800&q=80",
+                description: "Complete 3D Hard-Surface Model of Samsung F56. Features triple camera rings, glass backplate reflection, volume buttons, SIM tray, and clean wireframe topology.",
+                fileType: "ZIP Archive (.blend + textures)",
+                size: "45 MB",
+                fileUrl: "https://github.com"
+            },
+            {
+                id: 2,
+                title: "Modern Architectural 2-Story House",
+                category: "3D Models",
+                price: 799,
+                tags: ["Metric Scale", ".blend", "3D Print"],
+                image: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=800&q=80",
+                description: "Millimeter accurate architectural layout with exterior glass panels, metal railings, side stairs, and wireframe room partitions.",
+                fileType: "Blender File (.blend)",
+                size: "82 MB",
+                fileUrl: "https://github.com"
+            },
+            {
+                id: 3,
+                title: "10th RBSE Science Complete Guide E-Book",
+                category: "Books",
+                price: 199,
+                tags: ["PDF", "Exam Guide", "RBSE"],
+                image: "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&w=800&q=80",
+                description: "Handcrafted comprehensive study guide with NCERT/RBSE solutions, diagrams, key concepts, and exam blueprints designed by Raman.",
+                fileType: "Digital PDF E-Book",
+                size: "18 MB",
+                fileUrl: "https://github.com"
+            },
+            {
+                id: 4,
+                title: "8085 Microprocessor Simulator & Tech Memo PPT",
+                category: "Digital Files",
+                price: 299,
+                tags: ["PPTX", "B.Tech IT", "GEC Ajmer"],
+                image: "https://images.unsplash.com/photo-1586281380349-632531db7ed4?auto=format&fit=crop&w=800&q=80",
+                description: "Detailed presentation slides and technical memos explaining microprocessor registers, instruction sets, and hardware assembly logic.",
+                fileType: "PowerPoint Template (.pptx)",
+                size: "14 MB",
+                fileUrl: "https://github.com"
+            }
+        ];
+
+        // Retrieve local stored products or set defaults
+        let products = JSON.parse(localStorage.getItem('raman_store_products')) || defaultProducts;
+        let cart = [];
+        let activeCategory = 'All';
+        let activeProductForPay = null;
+
+        window.addEventListener('DOMContentLoaded', () => {
+            renderProducts(products);
+        });
+
+        // Tab Navigator
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            const target = document.getElementById(`tab-${tabId}`);
+            if (target) {
+                target.classList.remove('hidden');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        }
+
+        function toggleMobileMenu() {
+            document.getElementById('mobile-menu').classList.toggle('hidden');
+        }
+
+        // Product Filtering Logic
+        function filterProducts(cat) {
+            activeCategory = cat;
+            document.querySelectorAll('.cat-btn').forEach(btn => {
+                if (btn.dataset.cat === cat) {
+                    btn.className = "cat-btn active px-3.5 py-1.5 rounded-xl text-xs font-semibold bg-brand-600 text-white transition";
+                } else {
+                    btn.className = "cat-btn px-3.5 py-1.5 rounded-xl text-xs font-semibold bg-slate-900 border border-slate-700 text-slate-300 hover:text-white transition";
+                }
+            });
+
+            const filtered = cat === 'All' ? products : products.filter(p => p.category === cat);
+            renderProducts(filtered);
+        }
+
+        function handleGlobalSearch(e) {
+            const query = e.target.value.toLowerCase().trim();
+            const results = products.filter(p => 
+                p.title.toLowerCase().includes(query) || 
+                p.category.toLowerCase().includes(query) ||
+                (p.tags && p.tags.some(t => t.toLowerCase().includes(query)))
+            );
+            if (document.getElementById('tab-store').classList.contains('hidden')) {
+                switchTab('store');
+            }
+            renderProducts(results);
+        }
+
+        function renderProducts(items) {
+            const container = document.getElementById('product-grid');
+            if (items.length === 0) {
+                container.innerHTML = `
+                    <div class="col-span-full py-16 text-center">
+                        <i class="fa-solid fa-box-open text-4xl text-slate-600 mb-2"></i>
+                        <p class="text-slate-400 text-xs">No assets match your query.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = items.map(item => `
+                <div class="glass rounded-3xl p-4 border border-slate-800 flex flex-col justify-between hover:border-slate-700 transition group">
+                    <div>
+                        <div class="relative h-44 rounded-2xl overflow-hidden bg-slate-950 mb-3">
+                            <img src="${item.image}" alt="${item.title}" class="w-full h-full object-cover group-hover:scale-105 transition duration-300" onerror="this.src='https://placehold.co/600x400/0f172a/6366f1?text=3D+Asset'">
+                            <span class="absolute top-2.5 left-2.5 bg-slate-900/90 text-brand-400 text-[10px] font-bold px-2.5 py-0.5 rounded-full border border-slate-700">
+                                ${item.category}
+                            </span>
+                        </div>
+
+                        <div class="flex flex-wrap gap-1 mb-2">
+                            ${(item.tags || []).map(t => `<span class="bg-slate-900 text-slate-400 text-[10px] px-2 py-0.5 rounded-md border border-slate-800">${t}</span>`).join('')}
+                        </div>
+
+                        <h3 class="text-sm font-bold text-white group-hover:text-brand-400 transition leading-snug">${item.title}</h3>
+                        <p class="text-slate-400 text-xs mt-1 line-clamp-2">${item.description}</p>
+                    </div>
+
+                    <div class="pt-3 mt-3 border-t border-slate-800/80 flex items-center justify-between">
+                        <div>
+                            <span class="text-[10px] text-slate-500 block">Price</span>
+                            <span class="text-base font-extrabold text-emerald-400">₹${item.price}</span>
+                        </div>
+
+                        <div class="flex gap-2">
+                            <button onclick="openProductModal(${item.id})" class="p-2 rounded-xl bg-slate-900 border border-slate-700 text-slate-300 hover:text-white text-xs">
+                                <i class="fa-solid fa-eye"></i>
+                            </button>
+                            <button onclick="openPaymentModal(${item.id})" class="gradient-bg text-white font-semibold text-xs px-3 py-2 rounded-xl shadow-md hover:opacity-90 transition">
+                                Buy & Download
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Product Details Modal
+        function openProductModal(id) {
+            const p = products.find(item => item.id === id);
+            if (!p) return;
+            activeProductForPay = p;
+
+            const details = document.getElementById('modal-details');
+            details.innerHTML = `
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="h-56 md:h-full rounded-2xl overflow-hidden bg-slate-950">
+                        <img src="${p.image}" class="w-full h-full object-cover">
+                    </div>
+                    <div class="space-y-3">
+                        <span class="text-[11px] font-bold text-brand-400 bg-brand-500/10 px-3 py-1 rounded-full border border-brand-500/20">${p.category}</span>
+                        <h2 class="text-xl font-bold text-white">${p.title}</h2>
+                        <p class="text-slate-300 text-xs leading-relaxed">${p.description}</p>
+
+                        <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 space-y-1 text-xs">
+                            <div class="flex justify-between"><span class="text-slate-400">File Type:</span><span class="text-white font-semibold">${p.fileType || 'Digital Asset'}</span></div>
+                            <div class="flex justify-between"><span class="text-slate-400">File Size:</span><span class="text-white font-semibold">${p.size || 'N/A'}</span></div>
+                        </div>
+
+                        <div class="flex items-center justify-between pt-2">
+                            <span class="text-xl font-extrabold text-emerald-400">₹${p.price}</span>
+                            <button onclick="closeProductModal(); openPaymentModal(${p.id});" class="gradient-bg text-white font-bold text-xs px-4 py-2.5 rounded-xl shadow-lg hover:opacity-90">
+                                Buy Now & Download
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            document.getElementById('product-modal').classList.remove('hidden');
+        }
+
+        function closeProductModal() {
+            document.getElementById('product-modal').classList.add('hidden');
+        }
+
+        // Payment Simulation & Auto UPI QR Code Generation
+        function openPaymentModal(id) {
+            const p = products.find(item => item.id === id);
+            if (!p) return;
+            activeProductForPay = p;
+
+            document.getElementById('pay-item-name').innerText = p.title;
+            document.getElementById('pay-item-price').innerText = `₹${p.price}`;
+
+            // Generate UPI QR Code URL using free QR API schema
+            const upiString = `upi://pay?pa=${MERCH_UPI_ID}&pn=${encodeURIComponent(MERCH_NAME)}&am=${p.price}&cu=INR`;
+            const qrApiUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(upiString)}`;
+            document.getElementById('upi-qr-image').src = qrApiUrl;
+
+            document.getElementById('payment-modal').classList.remove('hidden');
+        }
+
+        function closePaymentModal() {
+            document.getElementById('payment-modal').classList.add('hidden');
+        }
+
+        function processSimulatedPayment() {
+            const btn = document.getElementById('pay-confirm-btn');
+            btn.innerHTML = `<i class="fa-solid fa-spinner animate-spin mr-1"></i> Verifying Payment...`;
+            btn.disabled = true;
+
+            setTimeout(() => {
+                btn.innerHTML = `Verify Payment & Download`;
+                btn.disabled = false;
+                closePaymentModal();
+
+                showToast(`Payment Approved! File Download Unlocked.`);
+                
+                // Trigger Direct Download Simulation
+                const targetUrl = activeProductForPay.fileUrl || "https://github.com";
+                window.open(targetUrl, '_blank');
+
+                alert(`SUCCESS: Payment verified for "${activeProductForPay.title}"! High-speed download link unlocked.`);
+            }, 1500);
+        }
+
+        // Admin Panel Functions
+        function openAdminModal() {
+            document.getElementById('admin-modal').classList.remove('hidden');
+        }
+
+        function closeAdminModal() {
+            document.getElementById('admin-modal').classList.add('hidden');
+        }
+
+        function authenticateAdmin() {
+            const pass = document.getElementById('admin-pass-input').value;
+            if (pass === 'admin123') {
+                document.getElementById('admin-login-view').classList.add('hidden');
+                document.getElementById('admin-form-view').classList.remove('hidden');
+                showToast("Admin Authenticated Successfully!");
+            } else {
+                alert("Incorrect Password! (Default pass: admin123)");
+            }
+        }
+
+        function handleAddNewProduct(e) {
+            e.preventDefault();
+            const newAsset = {
+                id: Date.now(),
+                title: document.getElementById('adm-title').value,
+                category: document.getElementById('adm-cat').value,
+                price: Number(document.getElementById('adm-price').value),
+                size: document.getElementById('adm-size').value || '10 MB',
+                image: document.getElementById('adm-image').value,
+                fileUrl: document.getElementById('adm-filelink').value,
+                description: document.getElementById('adm-desc').value,
+                tags: ["New Upload", "Author Asset"]
+            };
+
+            products.unshift(newAsset);
+            localStorage.setItem('raman_store_products', JSON.stringify(products));
+            
+            renderProducts(products);
+            closeAdminModal();
+            
+            // Reset Form
+            document.getElementById('new-product-form').reset();
+            showToast(`Asset "${newAsset.title}" Published to Store!`);
+        }
+
+        // Cart Drawer Handlers
+        function toggleCartDrawer() {
+            document.getElementById('cart-drawer').classList.toggle('translate-x-full');
+        }
+
+        function checkoutCart() {
+            if (products.length > 0) {
+                toggleCartDrawer();
+                openPaymentModal(products[0].id);
+            }
+        }
+
+        // Toast Handler
+        function showToast(msg) {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = "pointer-events-auto bg-slate-900 text-white text-xs font-semibold px-4 py-3 rounded-xl border border-slate-700 shadow-xl flex items-center gap-2 transition transform duration-300 translate-y-2 opacity-0";
+            toast.innerHTML = `<i class="fa-solid fa-circle-check text-emerald-400"></i> ${msg}`;
+            
+            container.appendChild(toast);
+            setTimeout(() => toast.classList.remove('translate-y-2', 'opacity-0'), 10);
+            setTimeout(() => {
+                toast.classList.add('opacity-0');
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
