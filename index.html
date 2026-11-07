@@ -351,6 +351,28 @@
             </div>
         </div>
     </div>
+    <!-- Firebase App & Realtime Database CDN -->
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
+    import { getDatabase, ref, set, get, update, remove, child } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-database.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyASHajXHzthBKVBvKPAnJCnW5czbeVLT1w",
+        authDomain: "raman-portfolio-store.firebaseapp.com",
+        projectId: "raman-portfolio-store",
+        storageBucket: "raman-portfolio-store.firebasestorage.app",
+        messagingSenderId: "1046178826544",
+        appId: "1:1046178826544:web:89560277b418d6440ca0f5"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    window.db = getDatabase(app);
+    
+    // जैसे ही Firebase लोड हो, डेटा फेच करना शुरू करें
+    if (typeof initFirebaseSync === 'function') {
+        initFirebaseSync();
+    }
+</script>
 
     <!-- JavaScript Link -->
     <script src="script.js"></script>
