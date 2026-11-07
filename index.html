@@ -351,7 +351,8 @@
             </div>
         </div>
     </div>
-   <!-- Firebase Script & Global Window Binding -->
+ 
+   <!-- Firebase SDK & Database Integration -->
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
     import { getDatabase, ref, set, get, child } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-database.js";
@@ -365,20 +366,27 @@
         appId: "1:1046178826544:web:89560277b418d6440ca0f5"
     };
 
+    // Firebase इनिशियलाइज करें
     const app = initializeApp(firebaseConfig);
-    
-    // इन्हें ग्लोबल window पर असाइन करना ज़रूरी है ताकि script.js इन्हें यूज़ कर सके
-    window.db = getDatabase(app);
+    const db = getDatabase(app);
+
+    // इन्हें ग्लोबल window ऑब्जेक्ट पर बाइंड कर देते हैं ताकि script.js इन्हें आसानी से एक्सेस कर सके
+    window.db = db;
     window.ref = ref;
     window.set = set;
     window.get = get;
     window.child = child;
-    
-    // डेटा सिंक शुरू करें
-    if (typeof initFirebaseSync === 'function') {
-        initFirebaseSync();
-    }
+
+    // जैसे ही Firebase तैयार हो, डेटा सिंक कॉल करें
+    document.addEventListener("DOMContentLoaded", () => {
+        if (typeof initFirebaseSync === 'function') {
+            initFirebaseSync();
+        }
+    });
 </script>
+
+<!-- Main Script File -->
+<script src="script.js"></script>
     <!-- JavaScript Link -->
     <script src="script.js"></script>
 </body>
