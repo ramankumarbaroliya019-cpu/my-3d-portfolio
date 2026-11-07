@@ -170,31 +170,39 @@
         <p>&copy; 2026 Raman Kumar Baroliya. All rights reserved.</p>
     </footer>
 
-    <!-- Checkout Modal -->
+    <!-- Checkout & UTR Verification Modal -->
     <div id="checkout-modal" class="fixed inset-0 z-50 hidden bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
         <div class="bg-slate-900 border border-slate-800 w-full max-w-md rounded-2xl p-6 relative shadow-2xl">
             <button onclick="closeCheckoutModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white text-lg">
                 <i class="fa-solid fa-xmark"></i>
             </button>
-            <div class="text-center mb-6">
+            <div class="text-center mb-4">
                 <h3 id="modal-product-title" class="text-xl font-bold">Product Title</h3>
                 <p id="modal-product-price" class="text-blue-400 font-semibold text-lg mt-1">₹0</p>
             </div>
             
-            <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 text-center mb-6">
-                <p class="text-xs text-slate-400 mb-2">Scan QR code to pay via GPay / PhonePe / Paytm</p>
+            <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 text-center mb-4">
+                <p class="text-xs text-slate-400 mb-2">Scan QR to pay & enter UTR/Transaction ID below</p>
                 <div class="bg-white p-3 inline-block rounded-lg mx-auto">
-                    <img id="upi-qr-img" src="" alt="UPI QR Code" class="w-40 h-40 object-contain mx-auto">
+                    <img id="upi-qr-img" src="" alt="UPI QR Code" class="w-36 h-36 object-contain mx-auto">
                 </div>
                 <p class="text-xs text-emerald-400 mt-2 font-mono">UPI ID: <span id="display-upi-id">Lalr13031-1@oksbi</span></p>
             </div>
 
+            <!-- UTR Input Form -->
             <div class="space-y-3">
-                <button onclick="verifyPayment()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-3 rounded-xl transition shadow-lg shadow-emerald-600/20 flex items-center justify-center gap-2">
-                    <i class="fa-solid fa-circle-check"></i> I Have Paid - Unlock Download
+                <div>
+                    <label class="block text-xs text-slate-400 mb-1">Enter 12-Digit UTR / Transaction ID</label>
+                    <input type="text" id="user-utr-input" placeholder="e.g. 432198765432" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-blue-500">
+                </div>
+                <button onclick="submitOrderForApproval()" class="w-full gradient-btn font-semibold py-3 rounded-xl transition text-sm shadow-md">
+                    Submit Payment Details
                 </button>
+                <p id="order-status-msg" class="text-xs text-center text-amber-400 hidden">Order submitted! Waiting for Admin approval.</p>
+
+                <!-- Download Section (Unlocked by Admin Approval) -->
                 <div id="download-section" class="hidden text-center pt-2">
-                    <a id="file-download-link" href="#" target="_blank" class="block w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-xl transition shadow-lg shadow-blue-600/20">
+                    <a id="file-download-link" href="#" target="_blank" class="block w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-3 rounded-xl transition shadow-lg shadow-emerald-600/20">
                         <i class="fa-solid fa-download mr-2"></i> Download File Now
                     </a>
                 </div>
@@ -204,7 +212,7 @@
 
     <!-- Multi-Tab Admin Panel Modal -->
     <div id="admin-modal" class="fixed inset-0 z-50 hidden bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
-        <div class="bg-slate-900 border border-slate-800 w-full max-w-2xl rounded-2xl p-6 relative shadow-2xl max-h-[90vh] flex flex-col">
+        <div class="bg-slate-900 border border-slate-800 w-full max-w-3xl rounded-2xl p-6 relative shadow-2xl max-h-[90vh] flex flex-col">
             <button onclick="closeAdminModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white text-lg z-10">
                 <i class="fa-solid fa-xmark"></i>
             </button>
@@ -231,113 +239,121 @@
 
                 <!-- Admin Tab Bar -->
                 <div class="flex border-b border-slate-800 mb-4 overflow-x-auto gap-2 pb-2">
-                    <button onclick="switchAdminTab('profile')" id="tab-btn-profile" class="admin-tab-btn active-admin-tab text-xs font-semibold px-4 py-2 rounded-lg transition whitespace-nowrap">
+                    <button onclick="switchAdminTab('orders')" id="tab-btn-orders" class="admin-tab-btn active-admin-tab text-xs font-semibold px-4 py-2 rounded-lg transition whitespace-nowrap">
+                        <i class="fa-solid fa-receipt mr-1"></i> Orders & Approvals
+                    </button>
+                    <button onclick="switchAdminTab('profile')" id="tab-btn-profile" class="admin-tab-btn text-xs font-semibold px-4 py-2 rounded-lg transition whitespace-nowrap bg-slate-950 text-slate-400">
                         <i class="fa-solid fa-user-gear mr-1"></i> Profile & Photo
                     </button>
                     <button onclick="switchAdminTab('about')" id="tab-btn-about" class="admin-tab-btn text-xs font-semibold px-4 py-2 rounded-lg transition whitespace-nowrap bg-slate-950 text-slate-400">
-                        <i class="fa-solid fa-graduation-cap mr-1"></i> Qualifications & Skills
+                        <i class="fa-solid fa-graduation-cap mr-1"></i> Qualifications
                     </button>
                     <button onclick="switchAdminTab('3d')" id="tab-btn-3d" class="admin-tab-btn text-xs font-semibold px-4 py-2 rounded-lg transition whitespace-nowrap bg-slate-950 text-slate-400">
                         <i class="fa-solid fa-cube mr-1"></i> 3D Models
                     </button>
                     <button onclick="switchAdminTab('book')" id="tab-btn-book" class="admin-tab-btn text-xs font-semibold px-4 py-2 rounded-lg transition whitespace-nowrap bg-slate-950 text-slate-400">
-                        <i class="fa-solid fa-book mr-1"></i> Books & Guides
+                        <i class="fa-solid fa-book mr-1"></i> Books
                     </button>
                     <button onclick="switchAdminTab('ppt')" id="tab-btn-ppt" class="admin-tab-btn text-xs font-semibold px-4 py-2 rounded-lg transition whitespace-nowrap bg-slate-950 text-slate-400">
-                        <i class="fa-solid fa-file-powerpoint mr-1"></i> PPTs & Files
+                        <i class="fa-solid fa-file-powerpoint mr-1"></i> PPTs
                     </button>
                 </div>
 
                 <!-- Tab Contents -->
                 <div class="overflow-y-auto pr-2 space-y-4 flex-1">
+                    <!-- Orders & Approvals Tab (NEW) -->
+                    <div id="admin-tab-orders" class="admin-tab-content space-y-4">
+                        <h4 class="text-sm font-semibold text-blue-400">Customer Payment Orders (UTR Verification)</h4>
+                        <div id="admin-orders-list" class="space-y-3">
+                            <!-- Populated via JavaScript -->
+                        </div>
+                    </div>
+
                     <!-- Profile Tab -->
-                    <div id="admin-tab-profile" class="admin-tab-content space-y-4">
+                    <div id="admin-tab-profile" class="admin-tab-content hidden space-y-4">
                         <h4 class="text-sm font-semibold text-blue-400">Profile Photo & Contacts</h4>
                         <div>
-                            <label class="block text-xs text-slate-400 mb-1">Profile Image URL</label>
-                            <input type="text" id="admin-input-photo" placeholder="https://..." class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 text-white text-sm focus:outline-none focus:border-blue-500">
+                            <label class="block text-xs text-slate-400 mb-1">Upload Profile Photo</label>
+                            <input type="file" id="admin-input-file" accept="image/*" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 text-slate-300 text-sm file:mr-4 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-blue-600 file:text-white">
                         </div>
                         <div>
                             <label class="block text-xs text-slate-400 mb-1">Full Name</label>
-                            <input type="text" id="admin-input-name" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 text-white text-sm focus:outline-none focus:border-blue-500">
+                            <input type="text" id="admin-input-name" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 text-white text-sm">
                         </div>
                         <div>
-                            <label class="block text-xs text-slate-400 mb-1">Tagline / Subtitle</label>
-                            <input type="text" id="admin-input-tagline" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 text-white text-sm focus:outline-none focus:border-blue-500">
+                            <label class="block text-xs text-slate-400 mb-1">Tagline</label>
+                            <input type="text" id="admin-input-tagline" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 text-white text-sm">
                         </div>
                         <div>
                             <label class="block text-xs text-slate-400 mb-1">UPI ID</label>
-                            <input type="text" id="admin-input-upi" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 text-white text-sm focus:outline-none focus:border-blue-500">
+                            <input type="text" id="admin-input-upi" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 text-white text-sm">
                         </div>
                         <div class="grid grid-cols-2 gap-4">
                             <div>
                                 <label class="block text-xs text-slate-400 mb-1">WhatsApp / Phone</label>
-                                <input type="text" id="admin-input-phone" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 text-white text-sm focus:outline-none focus:border-blue-500">
+                                <input type="text" id="admin-input-phone" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 text-white text-sm">
                             </div>
                             <div>
-                                <label class="block text-xs text-slate-400 mb-1">Gmail Address</label>
-                                <input type="text" id="admin-input-email" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 text-white text-sm focus:outline-none focus:border-blue-500">
+                                <label class="block text-xs text-slate-400 mb-1">Gmail</label>
+                                <input type="text" id="admin-input-email" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 text-white text-sm">
                             </div>
                         </div>
                         <div class="pt-4 border-t border-slate-800">
-                            <h4 class="text-sm font-semibold text-pink-400 mb-2"><i class="fa-solid fa-key mr-1"></i> Change Admin Password</h4>
-                            <div>
-                                <label class="block text-xs text-slate-400 mb-1">New Password</label>
-                                <input type="password" id="admin-input-newpass" placeholder="Enter new password" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 text-white text-sm focus:outline-none focus:border-pink-500">
-                            </div>
+                            <h4 class="text-sm font-semibold text-pink-400 mb-2">Change Admin Password</h4>
+                            <input type="password" id="admin-input-newpass" placeholder="Enter new password" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 text-white text-sm">
                         </div>
                         <button onclick="saveProfileSettings()" class="w-full gradient-btn font-semibold py-3 rounded-xl transition text-sm">Save Profile & Password</button>
                     </div>
 
                     <!-- About Tab -->
                     <div id="admin-tab-about" class="admin-tab-content hidden space-y-4">
-                        <h4 class="text-sm font-semibold text-blue-400">Manage Education, Skills & Certificates</h4>
+                        <h4 class="text-sm font-semibold text-blue-400">Manage Qualifications</h4>
                         <div>
-                            <label class="block text-xs text-slate-400 mb-1">Education Details</label>
-                            <textarea id="admin-input-education" rows="3" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 text-white text-sm focus:outline-none focus:border-blue-500"></textarea>
+                            <label class="block text-xs text-slate-400 mb-1">Education</label>
+                            <textarea id="admin-input-education" rows="3" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 text-white text-sm"></textarea>
                         </div>
                         <div>
-                            <label class="block text-xs text-slate-400 mb-1">3D & Tech Skills</label>
-                            <textarea id="admin-input-skills" rows="3" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 text-white text-sm focus:outline-none focus:border-blue-500"></textarea>
+                            <label class="block text-xs text-slate-400 mb-1">Skills</label>
+                            <textarea id="admin-input-skills" rows="3" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 text-white text-sm"></textarea>
                         </div>
                         <div>
                             <label class="block text-xs text-slate-400 mb-1">Certifications</label>
-                            <textarea id="admin-input-cert" rows="3" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 text-white text-sm focus:outline-none focus:border-blue-500"></textarea>
+                            <textarea id="admin-input-cert" rows="3" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 text-white text-sm"></textarea>
                         </div>
-                        <button onclick="saveAboutSettings()" class="w-full gradient-btn font-semibold py-3 rounded-xl transition text-sm">Save Qualifications & Skills</button>
+                        <button onclick="saveAboutSettings()" class="w-full gradient-btn font-semibold py-3 rounded-xl transition text-sm">Save Qualifications</button>
                     </div>
 
                     <!-- 3D Models Tab -->
                     <div id="admin-tab-3d" class="admin-tab-content hidden space-y-4">
-                        <h4 class="text-sm font-semibold text-blue-400">Upload New 3D Model</h4>
-                        <input type="text" id="add-3d-title" placeholder="3D Model Title" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 text-white text-sm">
+                        <h4 class="text-sm font-semibold text-blue-400">Upload 3D Model</h4>
+                        <input type="text" id="add-3d-title" placeholder="Title" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 text-white text-sm">
                         <input type="number" id="add-3d-price" placeholder="Price (₹)" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 text-white text-sm">
                         <textarea id="add-3d-desc" rows="2" placeholder="Description" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 text-white text-sm"></textarea>
                         <input type="text" id="add-3d-image" placeholder="Image URL" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 text-white text-sm">
-                        <input type="text" id="add-3d-file" placeholder="Google Drive File Link" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 text-white text-sm">
+                        <input type="text" id="add-3d-file" placeholder="Google Drive Download Link" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 text-white text-sm">
                         <button onclick="addNewProductByCategory('3d')" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-3 rounded-xl transition text-sm">Publish 3D Model</button>
                     </div>
 
                     <!-- Books Tab -->
                     <div id="admin-tab-book" class="admin-tab-content hidden space-y-4">
-                        <h4 class="text-sm font-semibold text-blue-400">Upload New Book / Guide</h4>
-                        <input type="text" id="add-book-title" placeholder="Book Title" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 text-white text-sm">
+                        <h4 class="text-sm font-semibold text-blue-400">Upload Book</h4>
+                        <input type="text" id="add-book-title" placeholder="Title" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 text-white text-sm">
                         <input type="number" id="add-book-price" placeholder="Price (₹)" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 text-white text-sm">
                         <textarea id="add-book-desc" rows="2" placeholder="Description" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 text-white text-sm"></textarea>
                         <input type="text" id="add-book-image" placeholder="Cover Image URL" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 text-white text-sm">
-                        <input type="text" id="add-book-file" placeholder="E-book Download Link" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 text-white text-sm">
+                        <input type="text" id="add-book-file" placeholder="Download Link" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 text-white text-sm">
                         <button onclick="addNewProductByCategory('book')" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-3 rounded-xl transition text-sm">Publish Book</button>
                     </div>
 
                     <!-- PPTs Tab -->
                     <div id="admin-tab-ppt" class="admin-tab-content hidden space-y-4">
-                        <h4 class="text-sm font-semibold text-blue-400">Upload New PPT / Digital File</h4>
-                        <input type="text" id="add-ppt-title" placeholder="Presentation / File Title" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 text-white text-sm">
+                        <h4 class="text-sm font-semibold text-blue-400">Upload PPT / File</h4>
+                        <input type="text" id="add-ppt-title" placeholder="Title" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 text-white text-sm">
                         <input type="number" id="add-ppt-price" placeholder="Price (₹)" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 text-white text-sm">
                         <textarea id="add-ppt-desc" rows="2" placeholder="Description" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 text-white text-sm"></textarea>
                         <input type="text" id="add-ppt-image" placeholder="Preview Image URL" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 text-white text-sm">
-                        <input type="text" id="add-ppt-file" placeholder="File Download Link" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 text-white text-sm">
-                        <button onclick="addNewProductByCategory('ppt')" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-3 rounded-xl transition text-sm">Publish Digital File</button>
+                        <input type="text" id="add-ppt-file" placeholder="Download Link" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 text-white text-sm">
+                        <button onclick="addNewProductByCategory('ppt')" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-3 rounded-xl transition text-sm">Publish File</button>
                     </div>
                 </div>
             </div>
