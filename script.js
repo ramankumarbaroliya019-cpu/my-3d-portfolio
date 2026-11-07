@@ -1,5 +1,5 @@
 let profileData = {
-    photo: "1000209783.png",
+    photo: "raman-profile.jpg", // GitHub रिपॉजिटरी से अपने आप उठेगी फोटो
     name: "Raman Kumar Baroliya",
     tagline: "Crafting high-end 3D hard-surface models in Blender, developing responsive web applications, and building smart digital tools.",
     upi: "Lalr13031-1@oksbi",
@@ -162,7 +162,6 @@ function openAdminModal() {
     document.getElementById('admin-login-view').classList.remove('hidden');
     document.getElementById('admin-dashboard-view').classList.add('hidden');
     document.getElementById('admin-pass-input').value = '';
-    // Focus password input automatically
     setTimeout(() => {
         document.getElementById('admin-pass-input').focus();
     }, 100);
@@ -181,6 +180,7 @@ function authenticateAdmin() {
         document.getElementById('admin-dashboard-view').classList.remove('hidden');
         document.getElementById('admin-dashboard-view').classList.add('flex');
         
+        document.getElementById('admin-input-photoname').value = profileData.photo;
         document.getElementById('admin-input-name').value = profileData.name;
         document.getElementById('admin-input-tagline').value = profileData.tagline;
         document.getElementById('admin-input-upi').value = profileData.upi;
@@ -199,7 +199,6 @@ function authenticateAdmin() {
     }
 }
 
-// Listen for "Enter" key on password input box
 document.addEventListener('DOMContentLoaded', () => {
     const passInput = document.getElementById('admin-pass-input');
     if (passInput) {
@@ -346,28 +345,15 @@ function deleteProduct(id) {
     }
 }
 
-// Save Profile Settings with Direct File Upload
+// Save Profile Settings
 function saveProfileSettings() {
     profileData.name = document.getElementById('admin-input-name').value || profileData.name;
     profileData.tagline = document.getElementById('admin-input-tagline').value || profileData.tagline;
     profileData.upi = document.getElementById('admin-input-upi').value || profileData.upi;
     profileData.phone = document.getElementById('admin-input-phone').value || profileData.phone;
     profileData.email = document.getElementById('admin-input-email').value || profileData.email;
+    profileData.photo = document.getElementById('admin-input-photoname').value || profileData.photo;
 
-    const fileInput = document.getElementById('admin-input-file');
-    if (fileInput.files && fileInput.files[0]) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            profileData.photo = e.target.result;
-            finalizeSaveProfile();
-        };
-        reader.readAsDataURL(fileInput.files[0]);
-    } else {
-        finalizeSaveProfile();
-    }
-}
-
-function finalizeSaveProfile() {
     const newPass = document.getElementById('admin-input-newpass').value;
     if (newPass && newPass.trim() !== '') {
         profileData.password = newPass.trim();
@@ -388,7 +374,7 @@ function saveAboutSettings() {
     alert("क्वालिफिकेशंस अपडेट हो गई हैं!");
 }
 
-// Add New Product with Direct Image File Upload (Optimized)
+// Add New Product with Direct Image File Upload
 function addNewProduct() {
     const category = document.getElementById('add-item-category').value;
     const title = document.getElementById('add-item-title').value;
