@@ -115,7 +115,6 @@ function openCheckout(id) {
     document.getElementById('order-status-msg').classList.add('hidden');
     document.getElementById('download-section').classList.add('hidden');
 
-    // Check if this product is already approved for current browser session
     const existingApproved = orders.find(o => o.productId === product.id && o.status === 'Approved');
     if (existingApproved) {
         document.getElementById('file-download-link').href = product.fileLink || '#';
@@ -178,7 +177,6 @@ function authenticateAdmin() {
         document.getElementById('admin-dashboard-view').classList.remove('hidden');
         document.getElementById('admin-dashboard-view').classList.add('flex');
         
-        document.getElementById('admin-input-photo-url').value = profileData.photo.startsWith('data:') ? '' : profileData.photo;
         document.getElementById('admin-input-name').value = profileData.name;
         document.getElementById('admin-input-tagline').value = profileData.tagline;
         document.getElementById('admin-input-upi').value = profileData.upi;
@@ -295,11 +293,7 @@ function renderAdminItemsList() {
                 </div>
             </div>
             <div>
-                <label class="block text-[10px] text-slate-400">Preview Image URL</label>
-                <input type="text" id="edit-image-${p.id}" value="${p.image}" class="w-full bg-slate-900 border border-slate-800 rounded px-2.5 py-1 text-xs text-white">
-            </div>
-            <div>
-                <label class="block text-text-[10px] text-slate-400">Google Drive Download Link</label>
+                <label class="block text-[10px] text-slate-400">Google Drive Download Link</label>
                 <input type="text" id="edit-file-${p.id}" value="${p.fileLink}" class="w-full bg-slate-900 border border-slate-800 rounded px-2.5 py-1 text-xs text-white">
             </div>
             <button onclick="saveProductEdit(${p.id})" class="bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold px-4 py-1.5 rounded-lg transition w-full">Save Changes</button>
@@ -313,7 +307,6 @@ function saveProductEdit(id) {
     if (product) {
         product.title = document.getElementById(`edit-title-${id}`).value;
         product.price = parseFloat(document.getElementById(`edit-price-${id}`).value) || 0;
-        product.image = document.getElementById(`edit-image-${id}`).value;
         product.fileLink = document.getElementById(`edit-file-${id}`).value;
 
         localStorage.setItem('raman_portfolio_products', JSON.stringify(products));
@@ -332,18 +325,13 @@ function deleteProduct(id) {
     }
 }
 
-// Profile & Photo Save (Supports both direct upload & URL fallback)
+// Save Profile Settings with Direct File Upload
 function saveProfileSettings() {
     profileData.name = document.getElementById('admin-input-name').value || profileData.name;
     profileData.tagline = document.getElementById('admin-input-tagline').value || profileData.tagline;
     profileData.upi = document.getElementById('admin-input-upi').value || profileData.upi;
     profileData.phone = document.getElementById('admin-input-phone').value || profileData.phone;
     profileData.email = document.getElementById('admin-input-email').value || profileData.email;
-
-    const customUrl = document.getElementById('admin-input-photo-url').value;
-    if (customUrl && customUrl.trim() !== '') {
-        profileData.photo = customUrl.trim();
-    }
 
     const fileInput = document.getElementById('admin-input-file');
     if (fileInput.files && fileInput.files[0]) {
@@ -379,23 +367,35 @@ function saveAboutSettings() {
     alert("क्वालिफिकेशंस अपडेट हो गई हैं!");
 }
 
+// Add New Product with Direct Image File Upload
 function addNewProduct() {
     const category = document.getElementById('add-item-category').value;
     const title = document.getElementById('add-item-title').value;
     const price = parseFloat(document.getElementById('add-item-price').value);
     const desc = document.getElementById('add-item-desc').value;
-    let image = document.getElementById('add-item-image').value;
     const fileLink = document.getElementById('add-item-file').value;
+    const imgFileInput = document.getElementById('add-item-file-img');
 
     if (!title || isNaN(price)) {
-        alert("कृपया प्रोडक्ट का नाम और कीमत दर्ज करें। (उदा: ₹1)");
+        alert("कृपया प्रोडक्ट का नाम और कीमत दर्ज करें।");
         return;
     }
 
-    if (!image) {
-        image = "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&q=80&w=600";
+    if (imgFileInput.files && imgFileInput.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const imageBase64 = e.target.result;
+            saveNewProductObject(category, title, price, desc, imageBase64, fileLink);
+        };
+        reader.readAsDataURL(imgFileInput.files[0]);
+    } else {
+        // Fallback default image if none uploaded
+        const defaultImage = "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&q=80&w=600";
+        saveNewProductObject(category, title, price, desc, defaultImage, fileLink);
     }
+}
 
+function saveNewProductObject(category, title, price, desc, image, fileLink) {
     const newProd = {
         id: Date.now(),
         title,
