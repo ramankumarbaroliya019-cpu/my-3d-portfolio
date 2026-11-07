@@ -259,29 +259,36 @@
         </div>
     </div>
 
-    <!-- Firebase SDK & Single Clean Loader Script -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
-        import { getDatabase, ref, set, get, child } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-database.js";
+<!-- Firebase SDK & Global Exporter -->
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
+    import { getDatabase, ref, set, get, child } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-database.js";
 
-        const firebaseConfig = {
-            apiKey: "AIzaSyASHajXHzthBKVBvKPAnJCnW5czbeVLT1w",
-            authDomain: "raman-portfolio-store.firebaseapp.com",
-            projectId: "raman-portfolio-store",
-            storageBucket: "raman-portfolio-store.firebasestorage.app",
-            messagingSenderId: "1046178826544",
-            appId: "1:1046178826544:web:89560277b418d6440ca0f5"
-        };
+    const firebaseConfig = {
+        apiKey: "AIzaSyASHajXHzthBKVBvKPAnJCnW5czbeVLT1w",
+        authDomain: "raman-portfolio-store.firebaseapp.com",
+        databaseURL: "https://raman-portfolio-store-default-rtdb.firebaseio.com",
+        projectId: "raman-portfolio-store",
+        storageBucket: "raman-portfolio-store.firebasestorage.app",
+        messagingSenderId: "1046178826544",
+        appId: "1:1046178826544:web:89560277b418d6440ca0f5"
+    };
 
-        const app = initializeApp(firebaseConfig);
-        
-        // Expose Firebase tools globally for script.js
-        window.db = getDatabase(app);
-        window.ref = ref;
-        window.set = set;
-        window.get = get;
-        window.child = child;
-    </script>
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    
+    // Global Binding for script.js
+    window.db = getDatabase(app);
+    window.ref = ref;
+    window.set = set;
+    window.get = get;
+    window.child = child;
+    
+    console.log("Firebase Connected Successfully to:", firebaseConfig.projectId);
+</script>
+
+<!-- Main JavaScript File -->
+<script src="script.js"></script>
 
     <!-- Main JavaScript File -->
     <script src="script.js"></script>
