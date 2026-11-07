@@ -17,7 +17,10 @@ let currentCheckoutProductId = null;
 
 // Firebase Sync Initialization
 function initFirebaseSync() {
-    if (!window.db || !window.ref || !window.get) return;
+    if (!window.db || !window.ref || !window.get) {
+        setTimeout(initFirebaseSync, 500); // Wait for Firebase to load
+        return;
+    }
     const dbRef = window.ref(window.db);
     
     // Fetch Profile
@@ -49,6 +52,7 @@ function initFirebaseSync() {
 function loadSavedData() {
     updateProfileUI();
     renderProducts('all');
+    initFirebaseSync();
 }
 
 // Helper to save to Firebase & LocalStorage
@@ -126,11 +130,11 @@ function renderProducts(filter = 'all') {
 
 function filterProducts(category, btnElement) {
     document.querySelectorAll('.filter-btn').forEach(btn => {
-        btn.classList.remove('active-tab');
+        btn.classList.remove('bg-blue-600', 'text-white');
         btn.classList.add('bg-slate-900', 'text-slate-300', 'border', 'border-slate-800');
     });
     btnElement.classList.remove('bg-slate-900', 'text-slate-300', 'border', 'border-slate-800');
-    btnElement.classList.add('active-tab');
+    btnElement.classList.add('bg-blue-600', 'text-white');
     renderProducts(category);
 }
 
@@ -260,14 +264,14 @@ function logoutAdmin() {
 function switchAdminTab(tabName) {
     document.querySelectorAll('.admin-tab-content').forEach(el => el.classList.add('hidden'));
     document.querySelectorAll('.admin-tab-btn').forEach(btn => {
-        btn.classList.remove('active-admin-tab');
+        btn.classList.remove('bg-blue-600', 'text-white');
         btn.classList.add('bg-slate-950', 'text-slate-400');
     });
 
     document.getElementById(`admin-tab-${tabName}`).classList.remove('hidden');
     const activeBtn = document.getElementById(`tab-btn-${tabName}`);
     activeBtn.classList.remove('bg-slate-950', 'text-slate-400');
-    activeBtn.classList.add('active-admin-tab');
+    activeBtn.classList.add('bg-blue-600', 'text-white');
 
     if (tabName === 'orders') renderAdminOrdersList();
     if (tabName === 'manage') renderAdminItemsList();
@@ -459,13 +463,6 @@ function saveNewProductObject(category, title, price, desc, image, fileLink) {
     } catch (err) {
         alert("इमेज सेव करने में समस्या आई!");
     }
-}
-
-const mobileMenuBtn = document.getElementById('mobile-menu-btn');
-if (mobileMenuBtn) {
-    mobileMenuBtn.addEventListener('click', () => {
-        document.getElementById('mobile-menu').classList.toggle('hidden');
-    });
 }
 
 window.onload = () => {
