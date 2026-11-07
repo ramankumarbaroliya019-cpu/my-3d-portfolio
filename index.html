@@ -1,393 +1,289 @@
 <!DOCTYPE html>
-<html lang="hi" class="dark">
+<html lang="hi" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Raman Kumar Baroliya | 3D Portfolio & Digital Store</title>
-    <!-- Tailwind CSS CDN -->
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    colors: {
-                        primary: '#3b82f6',
-                        darkbg: '#0f172a',
-                    }
-                }
-            }
-        }
-    </script>
     <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Custom CSS Link -->
-    <link rel="stylesheet" href="style.css">
+    <style>
+        .gradient-btn {
+            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+            color: white;
+        }
+        .gradient-btn:hover {
+            background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
+        }
+    </style>
 </head>
-<body class="bg-slate-950 text-slate-100 font-sans antialiased selection:bg-blue-500 selection:text-white">
+<body class="bg-slate-950 text-slate-100 font-sans antialiased selection:bg-blue-600 selection:text-white">
 
     <!-- Navbar -->
-    <nav class="sticky top-0 z-50 bg-slate-900/85 backdrop-blur-md border-b border-slate-800">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex items-center justify-between h-16">
-                <div class="flex items-center space-x-3">
-                    <div class="w-10 h-10 rounded-full overflow-hidden border-2 border-blue-500 bg-slate-800 flex-shrink-0">
-                        <img id="nav-profile-img" src="raman-profile.jpg" alt="Raman Kumar Baroliya" class="w-full h-full object-cover">
-                    </div>
-                    <span class="font-bold text-lg tracking-wider">RAMAN <span class="text-blue-500">BAROLIYA</span></span>
-                </div>
-                <div class="hidden md:flex items-center space-x-6">
-                    <a href="#home" class="hover:text-blue-400 transition">Home</a>
-                    <a href="#products" class="hover:text-blue-400 transition">Store & Models</a>
-                    <a href="#about" class="hover:text-blue-400 transition">About & Skills</a>
-                    <a href="#contact" class="hover:text-blue-400 transition">Contact</a>
-                    <button onclick="openAdminModal()" class="gradient-btn px-4 py-2 rounded-lg text-sm font-medium transition shadow-lg">
-                        <i class="fa-solid fa-lock mr-1"></i> Admin Panel
-                    </button>
-                </div>
-                <div class="md:hidden flex items-center space-x-2">
-                    <button onclick="openAdminModal()" class="gradient-btn px-3 py-1.5 rounded text-xs text-white">Admin</button>
-                    <button id="mobile-menu-btn" class="text-slate-300 hover:text-white focus:outline-none">
-                        <i class="fa-solid fa-bars text-xl"></i>
-                    </button>
-                </div>
+    <nav class="fixed top-0 left-0 right-0 z-50 bg-slate-950/80 backdrop-blur-md border-b border-slate-800/80">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <img id="nav-profile-img" src="raman-profile.jpg" alt="Raman" class="w-10 h-10 rounded-full object-cover border border-blue-500/50">
+                <span class="font-bold text-lg tracking-tight text-white">RAMAN BAROLIYA</span>
             </div>
-        </div>
-        <div id="mobile-menu" class="hidden md:hidden bg-slate-900 border-b border-slate-800 px-4 pt-2 pb-4 space-y-2">
-            <a href="#home" class="block py-2 hover:text-blue-400">Home</a>
-            <a href="#products" class="block py-2 hover:text-blue-400">Store & Models</a>
-            <a href="#about" class="block py-2 hover:text-blue-400">About & Skills</a>
-            <a href="#contact" class="block py-2 hover:text-blue-400">Contact</a>
+            <div class="hidden md:flex items-center space-x-8 text-sm font-medium text-slate-300">
+                <a href="#home" class="hover:text-blue-400 transition">Home</a>
+                <a href="#store" class="hover:text-blue-400 transition">Store & Models</a>
+                <a href="#about" class="hover:text-blue-400 transition">About & Skills</a>
+                <a href="#contact" class="hover:text-blue-400 transition">Contact</a>
+            </div>
+            <div>
+                <button onclick="openAdminModal()" class="gradient-btn px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition shadow-lg flex items-center gap-2">
+                    <i class="fa-solid fa-lock"></i> Admin Panel
+                </button>
+            </div>
         </div>
     </nav>
 
     <!-- Hero Section -->
-    <header id="home" class="relative overflow-hidden py-20 lg:py-32 bg-gradient-to-b from-slate-900 to-slate-950 border-b border-slate-800/50">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-                <div class="space-y-6 text-center lg:text-left">
-                    <span class="inline-block bg-blue-500/10 text-blue-400 border border-blue-500/20 px-3 py-1 rounded-full text-xs font-semibold tracking-wide uppercase">
-                        B.Tech IT Student & 3D Artist
-                    </span>
-                    <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight">
-                        Hi, I'm <span id="hero-name" class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-pink-500">Raman Kumar Baroliya</span>
-                    </h1>
-                    <p id="hero-tagline" class="text-slate-400 text-lg max-w-xl mx-auto lg:mx-0">
-                        Crafting high-end 3D hard-surface models in Blender, developing responsive web applications, and building smart digital tools.
-                    </p>
-                    <div class="flex flex-wrap justify-center lg:justify-start gap-4 pt-2">
-                        <a href="#products" class="gradient-btn font-semibold px-6 py-3 rounded-xl transition flex items-center gap-2">
-                            <i class="fa-solid fa-store"></i> Explore Digital Store
-                        </a>
-                        <a href="#about" class="bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold px-6 py-3 rounded-xl transition border border-slate-700 flex items-center gap-2">
-                            <i class="fa-solid fa-user-gear"></i> Qualifications
-                        </a>
-                    </div>
+    <section id="home" class="pt-32 pb-16 md:pt-40 md:pb-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+            <div class="space-y-6">
+                <h1 class="text-4xl sm:text-6xl font-extrabold tracking-tight text-white leading-tight">
+                    Hi, I'm <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-500" id="hero-name">Raman Kumar Baroliya</span>
+                </h1>
+                <p class="text-slate-400 text-base sm:text-lg leading-relaxed" id="hero-tagline">
+                    Crafting high-end 3D hard-surface models in Blender, developing responsive web applications, and building smart digital tools.
+                </p>
+                <div class="flex flex-wrap gap-4 pt-2">
+                    <a href="#store" class="gradient-btn px-6 py-3 rounded-xl font-semibold transition shadow-lg">Explore Digital Store</a>
+                    <a href="#about" class="bg-slate-900 border border-slate-800 hover:border-slate-700 px-6 py-3 rounded-xl font-semibold transition text-slate-300">Qualifications</a>
                 </div>
-                <div class="flex justify-center">
-                    <div class="relative w-72 h-72 sm:w-80 sm:h-80 rounded-full overflow-hidden border-4 border-blue-500/30 shadow-2xl shadow-blue-500/10 bg-slate-900">
-                        <img id="hero-profile-img" src="raman-profile.jpg" alt="Raman Kumar Baroliya Profile" class="w-full h-full object-cover">
-                    </div>
+            </div>
+            <div class="flex justify-center">
+                <div class="relative w-64 h-64 sm:w-80 sm:h-80 rounded-3xl overflow-hidden border-2 border-slate-800 shadow-2xl bg-slate-900">
+                    <img id="hero-profile-img" src="raman-profile.jpg" alt="Raman Kumar" class="w-full h-full object-cover">
                 </div>
             </div>
         </div>
-    </header>
-
-    <!-- Store Section -->
-    <section id="products" class="py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex flex-col md:flex-row justify-between items-center mb-10">
-            <div>
-                <h2 class="text-3xl font-bold tracking-tight">Digital Store & Assets</h2>
-                <p class="text-slate-400 text-sm mt-1">Download Blender 3D models, e-books, and presentation files instantly.</p>
-            </div>
-            <div class="flex flex-wrap gap-2 mt-4 md:mt-0">
-                <button onclick="filterProducts('all', this)" class="filter-btn active-tab px-4 py-2 rounded-lg text-sm font-medium transition">All Items</button>
-                <button onclick="filterProducts('3d', this)" class="filter-btn bg-slate-900 text-slate-300 hover:bg-slate-800 border border-slate-800 px-4 py-2 rounded-lg text-sm font-medium transition">3D Models</button>
-                <button onclick="filterProducts('book', this)" class="filter-btn bg-slate-900 text-slate-300 hover:bg-slate-800 border border-slate-800 px-4 py-2 rounded-lg text-sm font-medium transition">Books & Guides</button>
-                <button onclick="filterProducts('ppt', this)" class="filter-btn bg-slate-900 text-slate-300 hover:bg-slate-800 border border-slate-800 px-4 py-2 rounded-lg text-sm font-medium transition">PPTs & Files</button>
-            </div>
-        </div>
-        <div id="product-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"></div>
     </section>
 
-    <!-- About Section -->
-    <section id="about" class="py-16 bg-slate-900/50 border-t border-slate-800/50">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center max-w-3xl mx-auto mb-12">
-                <h2 class="text-3xl font-bold">About Me & Qualifications</h2>
-                <p class="text-slate-400 mt-2">Information Technology student at Government Engineering College Ajmer.</p>
+    <!-- Store Section -->
+    <section id="store" class="py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 border-t border-slate-900">
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-10 gap-4">
+            <div>
+                <h2 class="text-2xl sm:text-3xl font-bold tracking-tight text-white">Digital Store & Assets</h2>
+                <p class="text-slate-400 text-sm mt-1">Download Blender 3D models, e-books, and presentation files instantly.</p>
             </div>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                <div class="bg-slate-900 border border-slate-800 p-6 rounded-2xl">
-                    <div class="w-12 h-12 bg-blue-500/10 text-blue-400 rounded-xl flex items-center justify-center text-xl mb-4">
-                        <i class="fa-solid fa-graduation-cap"></i>
-                    </div>
-                    <h3 class="text-xl font-semibold mb-2">Education</h3>
-                    <p id="display-education" class="text-slate-400 text-sm leading-relaxed">
-                        B.Tech IT at <strong>Government Engineering College Ajmer</strong> (BTU). 86% in 12th Senior Secondary.
-                    </p>
-                </div>
-                <div class="bg-slate-900 border border-slate-800 p-6 rounded-2xl">
-                    <div class="w-12 h-12 bg-indigo-500/10 text-indigo-400 rounded-xl flex items-center justify-center text-xl mb-4">
-                        <i class="fa-solid fa-cube"></i>
-                    </div>
-                    <h3 class="text-xl font-semibold mb-2">3D & Tech Skills</h3>
-                    <p id="display-skills" class="text-slate-400 text-sm leading-relaxed">
-                        Blender 3D Modeling, Hard-Surface Design, C++, Python, JavaScript, HTML/CSS, and Microcontroller projects.
-                    </p>
-                </div>
-                <div class="bg-slate-900 border border-slate-800 p-6 rounded-2xl">
-                    <div class="w-12 h-12 bg-emerald-500/10 text-emerald-400 rounded-xl flex items-center justify-center text-xl mb-4">
-                        <i class="fa-solid fa-certificate"></i>
-                    </div>
-                    <h3 class="text-xl font-semibold mb-2">Certifications</h3>
-                    <p id="display-certifications" class="text-slate-400 text-sm leading-relaxed">
-                        Google Kubernetes, Canva Digital Design, SEO, Google Ads, and Embedded IoT Certification.
-                    </p>
-                </div>
+            <div class="flex flex-wrap gap-2 bg-slate-900 p-1.5 rounded-2xl border border-slate-800">
+                <button onclick="filterProducts('all', this)" class="filter-btn active-tab px-4 py-2 rounded-xl text-xs font-semibold bg-blue-600 text-white transition">All Items</button>
+                <button onclick="filterProducts('3d', this)" class="filter-btn px-4 py-2 rounded-xl text-xs font-semibold bg-slate-900 text-slate-300 border border-slate-800 transition">3D Models</button>
+                <button onclick="filterProducts('book', this)" class="filter-btn px-4 py-2 rounded-xl text-xs font-semibold bg-slate-900 text-slate-300 border border-slate-800 transition">Books & Guides</button>
+                <button onclick="filterProducts('file', this)" class="filter-btn px-4 py-2 rounded-xl text-xs font-semibold bg-slate-900 text-slate-300 border border-slate-800 transition">PPTs & Files</button>
+            </div>
+        </div>
+
+        <!-- Product Grid -->
+        <div id="product-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- Dynamic Products loaded via script.js -->
+        </div>
+    </section>
+
+    <!-- About & Skills Section -->
+    <section id="about" class="py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 border-t border-slate-900">
+        <h2 class="text-2xl sm:text-3xl font-bold tracking-tight text-white mb-8">About & Qualifications</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="bg-slate-900 border border-slate-800 p-6 rounded-2xl">
+                <div class="w-10 h-10 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-400 mb-4"><i class="fa-solid fa-graduation-cap"></i></div>
+                <h3 class="font-bold text-lg mb-2">Education</h3>
+                <p id="display-education" class="text-slate-400 text-sm leading-relaxed">B.Tech IT at Government Engineering College Ajmer (BTU). 86% in 12th Senior Secondary.</p>
+            </div>
+            <div class="bg-slate-900 border border-slate-800 p-6 rounded-2xl">
+                <div class="w-10 h-10 rounded-xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-400 mb-4"><i class="fa-solid fa-code"></i></div>
+                <h3 class="font-bold text-lg mb-2">Technical Skills</h3>
+                <p id="display-skills" class="text-slate-400 text-sm leading-relaxed">Blender 3D Modeling, Hard-Surface Design, C++, Python, JavaScript, HTML/CSS, and Microcontroller projects.</p>
+            </div>
+            <div class="bg-slate-900 border border-slate-800 p-6 rounded-2xl">
+                <div class="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 mb-4"><i class="fa-solid fa-certificate"></i></div>
+                <h3 class="font-bold text-lg mb-2">Certifications</h3>
+                <p id="display-certifications" class="text-slate-400 text-sm leading-relaxed">Google Kubernetes, Canva Digital Design, SEO, Google Ads, and Embedded IoT Certification.</p>
             </div>
         </div>
     </section>
 
     <!-- Contact Section -->
-    <section id="contact" class="py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="bg-gradient-to-r from-blue-900/30 to-indigo-900/30 border border-blue-500/20 rounded-3xl p-8 lg:p-12 text-center">
-            <h2 class="text-3xl font-bold mb-4">Get In Touch</h2>
-            <p class="text-slate-300 max-w-xl mx-auto mb-8">Available for 3D modeling commissions, file requests, and technical development.</p>
-            <div class="flex flex-wrap justify-center gap-6">
-                <a id="contact-email-btn" href="mailto:Lalr13031@gmail.com" class="bg-slate-900 hover:bg-slate-800 border border-slate-700 px-6 py-3 rounded-xl flex items-center gap-3 transition">
-                    <i class="fa-solid fa-envelope text-blue-400"></i> <span id="display-email">Lalr13031@gmail.com</span>
-                </a>
-                <a id="contact-phone-btn" href="https://wa.me/917742987003" target="_blank" class="bg-slate-900 hover:bg-slate-800 border border-slate-700 px-6 py-3 rounded-xl flex items-center gap-3 transition">
-                    <i class="fa-brands fa-whatsapp text-emerald-400"></i> <span id="display-phone">+91 7742987003</span>
-                </a>
+    <section id="contact" class="py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 border-t border-slate-900 mb-12">
+        <h2 class="text-2xl sm:text-3xl font-bold tracking-tight text-white mb-8">Get In Touch</h2>
+        <div class="bg-slate-900 border border-slate-800 p-8 rounded-3xl grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
+            <div class="p-4">
+                <i class="fa-solid fa-envelope text-blue-400 text-2xl mb-3"></i>
+                <h4 class="font-semibold text-white mb-1">Email</h4>
+                <a id="display-email" href="mailto:Lalr13031@gmail.com" class="text-slate-400 text-sm hover:text-blue-400">Lalr13031@gmail.com</a>
+            </div>
+            <div class="p-4">
+                <i class="fa-solid fa-phone text-emerald-400 text-2xl mb-3"></i>
+                <h4 class="font-semibold text-white mb-1">Phone / WhatsApp</h4>
+                <a id="display-phone" href="#" class="text-slate-400 text-sm hover:text-emerald-400">+91 7742987003</a>
+            </div>
+            <div class="p-4">
+                <i class="fa-solid fa-qrcode text-indigo-400 text-2xl mb-3"></i>
+                <h4 class="font-semibold text-white mb-1">UPI ID</h4>
+                <span id="display-upi-id" class="text-slate-400 text-sm font-mono">Lalr13031-1@oksbi</span>
             </div>
         </div>
     </section>
 
-    <!-- Footer -->
-    <footer class="bg-slate-900 border-t border-slate-800 py-8 text-center text-slate-500 text-sm">
-        <p>&copy; 2026 Raman Kumar Baroliya. All rights reserved.</p>
-    </footer>
-
     <!-- Checkout Modal -->
-    <div id="checkout-modal" class="fixed inset-0 z-50 hidden bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
-        <div class="bg-slate-900 border border-slate-800 w-full max-w-md rounded-2xl p-6 relative shadow-2xl">
-            <button onclick="closeCheckoutModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white text-lg">
-                <i class="fa-solid fa-xmark"></i>
-            </button>
-            <div class="text-center mb-4">
-                <h3 id="modal-product-title" class="text-xl font-bold">Product Title</h3>
-                <p id="modal-product-price" class="text-blue-400 font-semibold text-lg mt-1">₹0</p>
-            </div>
-            
-            <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 text-center mb-4">
-                <p class="text-xs text-slate-400 mb-2">Scan QR to pay & enter UTR/Transaction ID</p>
-                <div class="bg-white p-3 inline-block rounded-lg mx-auto">
-                    <img id="upi-qr-img" src="" alt="UPI QR Code" class="w-36 h-36 object-contain mx-auto">
-                </div>
-                <p class="text-xs text-emerald-400 mt-2 font-mono">UPI ID: <span id="display-upi-id">Lalr13031-1@oksbi</span></p>
-            </div>
-
-            <div class="space-y-3">
+    <div id="checkout-modal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <div class="bg-slate-900 border border-slate-800 w-full max-w-md rounded-3xl p-6 relative shadow-2xl space-y-4">
+            <button onclick="closeCheckoutModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
+            <h3 class="text-xl font-bold text-white">Complete Purchase</h3>
+            <div class="bg-slate-950 border border-slate-800 p-4 rounded-2xl flex justify-between items-center">
                 <div>
-                    <label class="block text-xs text-slate-400 mb-1">Enter 12-Digit UTR / Txn ID</label>
-                    <input type="text" id="user-utr-input" placeholder="e.g. 432198765432" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-blue-500">
+                    <h4 id="modal-product-title" class="font-semibold text-white text-sm">Product Name</h4>
+                    <span id="modal-product-price" class="text-blue-400 font-bold text-lg">₹0</span>
                 </div>
-                <button onclick="submitOrderForApproval()" class="w-full gradient-btn font-semibold py-3 rounded-xl transition text-sm shadow-md">
-                    Submit Payment Details
-                </button>
-                <div id="order-status-msg" class="text-xs text-center text-amber-400 hidden font-semibold">
-                    Order submitted! Download will unlock after Admin approval.
+                <div class="bg-white p-2 rounded-xl">
+                    <img id="upi-qr-img" src="" alt="QR Code" class="w-24 h-24 object-contain">
                 </div>
-
-                <div id="download-section" class="hidden text-center pt-2">
-                    <a id="file-download-link" href="#" target="_blank" class="block w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-3 rounded-xl transition shadow-lg shadow-emerald-600/20">
-                        <i class="fa-solid fa-download mr-2"></i> Download File Now
-                    </a>
-                </div>
+            </div>
+            <p class="text-xs text-slate-400">Scan QR code via any UPI app and pay the exact amount. After payment, enter your 12-digit UTR/Transaction ID below.</p>
+            <div>
+                <label class="block text-xs font-medium text-slate-300 mb-1">Enter UTR / Transaction ID</label>
+                <input type="text" id="user-utr-input" placeholder="e.g. 4321XXXXXXXX" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-blue-500">
+            </div>
+            <button onclick="submitOrderForApproval()" class="w-full gradient-btn py-3 rounded-xl font-semibold text-sm transition shadow-lg">Submit UTR for Verification</button>
+            <div id="order-status-msg" class="hidden text-xs text-amber-400 text-center font-medium">Order submitted! Pending admin verification.</div>
+            <div id="download-section" class="hidden pt-2 border-t border-slate-800 text-center">
+                <a id="file-download-link" href="#" target="_blank" class="inline-block bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold px-4 py-2.5 rounded-xl transition">Download File Now <i class="fa-solid fa-download ml-1"></i></a>
             </div>
         </div>
     </div>
 
     <!-- Admin Panel Modal -->
-    <div id="admin-modal" class="fixed inset-0 z-50 hidden bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
-        <div class="bg-slate-900 border border-slate-800 w-full max-w-3xl rounded-2xl p-6 relative shadow-2xl max-h-[90vh] flex flex-col">
-            <button onclick="closeAdminModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white text-lg z-10">
-                <i class="fa-solid fa-xmark"></i>
-            </button>
+    <div id="admin-modal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <div class="bg-slate-900 border border-slate-800 w-full max-w-2xl rounded-3xl p-6 relative shadow-2xl max-h-[90vh] overflow-y-auto">
+            <button onclick="closeAdminModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
             
-            <!-- Login -->
-            <div id="admin-login-view" class="my-auto">
-                <h3 class="text-xl font-bold mb-4"><i class="fa-solid fa-lock text-blue-500 mr-2"></i> Admin Authentication</h3>
-                <p class="text-slate-400 text-sm mb-6">Enter security password to access control panel. (Press Enter to Login)</p>
-                <div class="space-y-4">
-                    <div>
-                        <label class="block text-xs text-slate-400 mb-1">Security Password</label>
-                        <input type="password" id="admin-pass-input" placeholder="Enter password" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-blue-500">
-                    </div>
-                    <button onclick="authenticateAdmin()" class="w-full gradient-btn font-semibold py-3 rounded-xl transition">Login to Panel</button>
+            <!-- Login View -->
+            <div id="admin-login-view" class="space-y-4 py-6 text-center">
+                <div class="w-12 h-12 bg-blue-500/10 border border-blue-500/20 text-blue-400 rounded-2xl flex items-center justify-center mx-auto text-xl"><i class="fa-solid fa-lock"></i></div>
+                <h3 class="text-xl font-bold text-white">Admin Authentication</h3>
+                <p class="text-xs text-slate-400">Enter your admin password to manage store products and orders.</p>
+                <div class="max-w-xs mx-auto space-y-3">
+                    <input type="password" id="admin-pass-input" placeholder="Enter password (default: admin123)" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white text-center focus:outline-none focus:border-blue-500">
+                    <button onclick="authenticateAdmin()" class="w-full gradient-btn py-2.5 rounded-xl font-semibold text-sm shadow-lg">Login to Admin</button>
                 </div>
             </div>
 
-            <!-- Dashboard -->
-            <div id="admin-dashboard-view" class="hidden flex-col h-full overflow-hidden">
-                <div class="flex items-center justify-between pb-4 border-b border-slate-800 mb-4">
-                    <h3 class="text-xl font-bold text-white"><i class="fa-solid fa-sliders text-blue-500 mr-2"></i> Admin Control Panel</h3>
-                    <button onclick="logoutAdmin()" class="text-xs text-red-400 hover:underline">Logout</button>
+            <!-- Dashboard View -->
+            <div id="admin-dashboard-view" class="hidden flex-col space-y-6">
+                <div class="flex justify-between items-center border-b border-slate-800 pb-4">
+                    <h3 class="text-lg font-bold text-white">Admin Dashboard</h3>
+                    <button onclick="logoutAdmin()" class="text-xs text-red-400 hover:text-red-300 font-semibold"><i class="fa-solid fa-right-from-bracket mr-1"></i> Logout</button>
                 </div>
 
-                <!-- Tabs Navigation -->
-                <div class="flex border-b border-slate-800 mb-4 overflow-x-auto gap-2 pb-2">
-                    <button onclick="switchAdminTab('orders')" id="tab-btn-orders" class="admin-tab-btn active-admin-tab text-xs font-semibold px-4 py-2 rounded-lg transition whitespace-nowrap">
-                        <i class="fa-solid fa-receipt mr-1"></i> Orders & Approvals
-                    </button>
-                    <button onclick="switchAdminTab('manage')" id="tab-btn-manage" class="admin-tab-btn text-xs font-semibold px-4 py-2 rounded-lg transition whitespace-nowrap bg-slate-950 text-slate-400">
-                        <i class="fa-solid fa-pen-to-square mr-1"></i> Edit/Delete Items
-                    </button>
-                    <button onclick="switchAdminTab('profile')" id="tab-btn-profile" class="admin-tab-btn text-xs font-semibold px-4 py-2 rounded-lg transition whitespace-nowrap bg-slate-950 text-slate-400">
-                        <i class="fa-solid fa-user-gear mr-1"></i> Profile & Photo
-                    </button>
-                    <button onclick="switchAdminTab('about')" id="tab-btn-about" class="admin-tab-btn text-xs font-semibold px-4 py-2 rounded-lg transition whitespace-nowrap bg-slate-950 text-slate-400">
-                        <i class="fa-solid fa-graduation-cap mr-1"></i> Qualifications
-                    </button>
-                    <button onclick="switchAdminTab('add')" id="tab-btn-add" class="admin-tab-btn text-xs font-semibold px-4 py-2 rounded-lg transition whitespace-nowrap bg-slate-950 text-slate-400">
-                        <i class="fa-solid fa-plus mr-1"></i> Add New Item
-                    </button>
+                <!-- Tabs -->
+                <div class="flex gap-2 bg-slate-950 p-1.5 rounded-xl border border-slate-800">
+                    <button onclick="switchAdminTab('add')" id="tab-btn-add" class="admin-tab-btn flex-1 py-2 rounded-lg text-xs font-semibold bg-blue-600 text-white transition">Add Product</button>
+                    <button onclick="switchAdminTab('manage')" id="tab-btn-manage" class="admin-tab-btn flex-1 py-2 rounded-lg text-xs font-semibold bg-slate-950 text-slate-400 transition">Manage Catalog</button>
+                    <button onclick="switchAdminTab('orders')" id="tab-btn-orders" class="admin-tab-btn flex-1 py-2 rounded-lg text-xs font-semibold bg-slate-950 text-slate-400 transition">Orders & UTR</button>
+                    <button onclick="switchAdminTab('settings')" id="tab-btn-settings" class="admin-tab-btn flex-1 py-2 rounded-lg text-xs font-semibold bg-slate-950 text-slate-400 transition">Settings</button>
                 </div>
 
-                <!-- Tab Contents -->
-                <div class="overflow-y-auto pr-2 space-y-4 flex-1">
-                    <!-- Orders Tab -->
-                    <div id="admin-tab-orders" class="admin-tab-content space-y-4">
-                        <h4 class="text-sm font-semibold text-blue-400">Customer Payment Orders (UTR Verification)</h4>
-                        <div id="admin-orders-list" class="space-y-3"></div>
-                    </div>
-
-                    <!-- Manage Items (Edit & Delete) Tab -->
-                    <div id="admin-tab-manage" class="admin-tab-content hidden space-y-4">
-                        <h4 class="text-sm font-semibold text-blue-400">Manage Catalog (Edit Price, Links or Delete)</h4>
-                        <div id="admin-items-list" class="space-y-3"></div>
-                    </div>
-
-                    <!-- Profile Tab -->
-                    <div id="admin-tab-profile" class="admin-tab-content hidden space-y-4">
-                        <h4 class="text-sm font-semibold text-blue-400">Profile Photo & Contacts</h4>
-                        <div>
-                            <label class="block text-xs text-slate-400 mb-1">Profile Photo Name (GitHub File: raman-profile.jpg)</label>
-                            <input type="text" id="admin-input-photoname" value="raman-profile.jpg" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 text-white text-sm">
-                        </div>
-                        <div>
-                            <label class="block text-xs text-slate-400 mb-1">Full Name</label>
-                            <input type="text" id="admin-input-name" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 text-white text-sm">
-                        </div>
-                        <div>
-                            <label class="block text-xs text-slate-400 mb-1">Tagline</label>
-                            <input type="text" id="admin-input-tagline" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 text-white text-sm">
-                        </div>
-                        <div>
-                            <label class="block text-xs text-slate-400 mb-1">UPI ID</label>
-                            <input type="text" id="admin-input-upi" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 text-white text-sm">
-                        </div>
-                        <div class="grid grid-cols-2 gap-4">
-                            <div>
-                                <label class="block text-xs text-slate-400 mb-1">WhatsApp / Phone</label>
-                                <input type="text" id="admin-input-phone" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 text-white text-sm">
-                            </div>
-                            <div>
-                                <label class="block text-xs text-slate-400 mb-1">Gmail</label>
-                                <input type="text" id="admin-input-email" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 text-white text-sm">
-                            </div>
-                        </div>
-                        <div class="pt-4 border-t border-slate-800">
-                            <h4 class="text-sm font-semibold text-pink-400 mb-2">Change Admin Password</h4>
-                            <input type="password" id="admin-input-newpass" placeholder="Enter new password" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 text-white text-sm">
-                        </div>
-                        <button onclick="saveProfileSettings()" class="w-full gradient-btn font-semibold py-3 rounded-xl transition text-sm">Save Profile & Password</button>
-                    </div>
-
-                    <!-- About Tab -->
-                    <div id="admin-tab-about" class="admin-tab-content hidden space-y-4">
-                        <h4 class="text-sm font-semibold text-blue-400">Manage Qualifications</h4>
-                        <div>
-                            <label class="block text-xs text-slate-400 mb-1">Education</label>
-                            <textarea id="admin-input-education" rows="3" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 text-white text-sm"></textarea>
-                        </div>
-                        <div>
-                            <label class="block text-xs text-slate-400 mb-1">Skills</label>
-                            <textarea id="admin-input-skills" rows="3" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 text-white text-sm"></textarea>
-                        </div>
-                        <div>
-                            <label class="block text-xs text-slate-400 mb-1">Certifications</label>
-                            <textarea id="admin-input-cert" rows="3" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 text-white text-sm"></textarea>
-                        </div>
-                        <button onclick="saveAboutSettings()" class="w-full gradient-btn font-semibold py-3 rounded-xl transition text-sm">Save Qualifications</button>
-                    </div>
-
-                    <!-- Add New Item Tab -->
-                    <div id="admin-tab-add" class="admin-tab-content hidden space-y-4">
-                        <h4 class="text-sm font-semibold text-blue-400">Publish New Item</h4>
+                <!-- Add Product Tab -->
+                <div id="admin-tab-add" class="admin-tab-content space-y-4">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
                             <label class="block text-xs text-slate-400 mb-1">Category</label>
-                            <select id="add-item-category" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 text-white text-sm">
+                            <select id="add-item-category" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white">
                                 <option value="3d">3D Model</option>
-                                <option value="book">Book / Guide</option>
-                                <option value="ppt">PPT / Digital File</option>
+                                <option value="book">Book & Guide</option>
+                                <option value="file">PPT & File</option>
                             </select>
                         </div>
-                        <input type="text" id="add-item-title" placeholder="Product Title" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 text-white text-sm">
-                        <input type="number" id="add-item-price" placeholder="Price in ₹ (e.g. 1)" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 text-white text-sm">
-                        <textarea id="add-item-desc" rows="2" placeholder="Description" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 text-white text-sm"></textarea>
-                        
                         <div>
-                            <label class="block text-xs text-slate-400 mb-1">Upload Product Preview Image (डिवाइस से फोटो चुनें)</label>
-                            <input type="file" id="add-item-file-img" accept="image/*" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 text-slate-300 text-sm file:mr-4 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-blue-600 file:text-white">
+                            <label class="block text-xs text-slate-400 mb-1">Product Title</label>
+                            <input type="text" id="add-item-title" placeholder="e.g. Samsung Galaxy F56 3D Model" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white">
                         </div>
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs text-slate-400 mb-1">Price (₹)</label>
+                            <input type="number" id="add-item-price" placeholder="1" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white">
+                        </div>
+                        <div>
+                            <label class="block text-xs text-slate-400 mb-1">Google Drive Download Link</label>
+                            <input type="text" id="add-item-file" placeholder="https://drive.google.com/..." class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-xs text-slate-400 mb-1">Description</label>
+                        <textarea id="add-item-desc" rows="3" placeholder="Product details..." class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white"></textarea>
+                    </div>
+                    <div>
+                        <label class="block text-xs text-slate-400 mb-1">Upload Preview Image</label>
+                        <input type="file" id="add-item-file-img" accept="image/*" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-400 file:mr-4 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-blue-700">
+                    </div>
+                    <button onclick="addNewProduct()" class="w-full gradient-btn py-2.5 rounded-xl font-semibold text-xs transition shadow-lg">Publish Product</button>
+                </div>
 
-                        <input type="text" id="add-item-file" placeholder="Google Drive Download Link (Blender/PDF)" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 text-white text-sm">
-                        <button onclick="addNewProduct()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-3 rounded-xl transition text-sm">Publish Product</button>
+                <!-- Manage Catalog Tab -->
+                <div id="admin-tab-manage" class="admin-tab-content hidden space-y-3 max-h-64 overflow-y-auto">
+                    <div id="admin-items-list" class="space-y-3"></div>
+                </div>
+
+                <!-- Orders Tab -->
+                <div id="admin-tab-orders" class="admin-tab-content hidden space-y-3 max-h-64 overflow-y-auto">
+                    <div id="admin-orders-list" class="space-y-3"></div>
+                </div>
+
+                <!-- Settings Tab -->
+                <div id="admin-tab-settings" class="admin-tab-content hidden space-y-4">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div><label class="block text-[10px] text-slate-400">Name</label><input type="text" id="admin-input-name" class="w-full bg-slate-950 border border-slate-800 rounded px-2.5 py-1 text-xs text-white"></div>
+                        <div><label class="block text-[10px] text-slate-400">UPI ID</label><input type="text" id="admin-input-upi" class="w-full bg-slate-950 border border-slate-800 rounded px-2.5 py-1 text-xs text-white"></div>
+                        <div><label class="block text-[10px] text-slate-400">Phone</label><input type="text" id="admin-input-phone" class="w-full bg-slate-950 border border-slate-800 rounded px-2.5 py-1 text-xs text-white"></div>
+                        <div><label class="block text-[10px] text-slate-400">Email</label><input type="text" id="admin-input-email" class="w-full bg-slate-950 border border-slate-800 rounded px-2.5 py-1 text-xs text-white"></div>
+                        <div><label class="block text-[10px] text-slate-400">Profile Image Filename</label><input type="text" id="admin-input-photoname" class="w-full bg-slate-950 border border-slate-800 rounded px-2.5 py-1 text-xs text-white"></div>
+                        <div><label class="block text-[10px] text-slate-400">New Admin Password</label><input type="password" id="admin-input-newpass" placeholder="Leave blank to keep current" class="w-full bg-slate-950 border border-slate-800 rounded px-2.5 py-1 text-xs text-white"></div>
+                    </div>
+                    <div><label class="block text-[10px] text-slate-400">Tagline</label><textarea id="admin-input-tagline" rows="2" class="w-full bg-slate-950 border border-slate-800 rounded px-2.5 py-1 text-xs text-white"></textarea></div>
+                    <button onclick="saveProfileSettings()" class="w-full bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold py-2 rounded-lg transition">Save Profile Changes</button>
+                    
+                    <div class="border-t border-slate-800 pt-4 space-y-3">
+                        <h4 class="font-bold text-xs text-white">About & Qualifications Settings</h4>
+                        <div><label class="block text-[10px] text-slate-400">Education Details</label><textarea id="admin-input-education" rows="2" class="w-full bg-slate-950 border border-slate-800 rounded px-2.5 py-1 text-xs text-white"></textarea></div>
+                        <div><label class="block text-[10px] text-slate-400">Skills Details</label><textarea id="admin-input-skills" rows="2" class="w-full bg-slate-950 border border-slate-800 rounded px-2.5 py-1 text-xs text-white"></textarea></div>
+                        <div><label class="block text-[10px] text-slate-400">Certifications Details</label><textarea id="admin-input-cert" rows="2" class="w-full bg-slate-950 border border-slate-800 rounded px-2.5 py-1 text-xs text-white"></textarea></div>
+                        <button onclick="saveAboutSettings()" class="w-full bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold py-2 rounded-lg transition">Save Qualifications</button>
                     </div>
                 </div>
             </div>
         </div>
     </div>
- 
-   <!-- Firebase SDK & Database Integration -->
-<script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
-    import { getDatabase, ref, set, get, child } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-database.js";
 
-    const firebaseConfig = {
-        apiKey: "AIzaSyASHajXHzthBKVBvKPAnJCnW5czbeVLT1w",
-        authDomain: "raman-portfolio-store.firebaseapp.com",
-        projectId: "raman-portfolio-store",
-        storageBucket: "raman-portfolio-store.firebasestorage.app",
-        messagingSenderId: "1046178826544",
-        appId: "1:1046178826544:web:89560277b418d6440ca0f5"
-    };
+    <!-- Firebase SDK & Single Clean Loader Script -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
+        import { getDatabase, ref, set, get, child } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-database.js";
 
-    // Firebase इनिशियलाइज करें
-    const app = initializeApp(firebaseConfig);
-    const db = getDatabase(app);
+        const firebaseConfig = {
+            apiKey: "AIzaSyASHajXHzthBKVBvKPAnJCnW5czbeVLT1w",
+            authDomain: "raman-portfolio-store.firebaseapp.com",
+            projectId: "raman-portfolio-store",
+            storageBucket: "raman-portfolio-store.firebasestorage.app",
+            messagingSenderId: "1046178826544",
+            appId: "1:1046178826544:web:89560277b418d6440ca0f5"
+        };
 
-    // इन्हें ग्लोबल window ऑब्जेक्ट पर बाइंड कर देते हैं ताकि script.js इन्हें आसानी से एक्सेस कर सके
-    window.db = db;
-    window.ref = ref;
-    window.set = set;
-    window.get = get;
-    window.child = child;
+        const app = initializeApp(firebaseConfig);
+        
+        // Expose Firebase tools globally for script.js
+        window.db = getDatabase(app);
+        window.ref = ref;
+        window.set = set;
+        window.get = get;
+        window.child = child;
+    </script>
 
-    // जैसे ही Firebase तैयार हो, डेटा सिंक कॉल करें
-    document.addEventListener("DOMContentLoaded", () => {
-        if (typeof initFirebaseSync === 'function') {
-            initFirebaseSync();
-        }
-    });
-</script>
-
-<!-- Main Script File -->
-<script src="script.js"></script>
-    <!-- JavaScript Link -->
+    <!-- Main JavaScript File -->
     <script src="script.js"></script>
 </body>
 </html>
