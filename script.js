@@ -9,7 +9,7 @@ let profileData = {
     education: "B.Tech IT at <strong>Government Engineering College Ajmer</strong> (BTU). 86% in 12th Senior Secondary.",
     skills: "Blender 3D Modeling, Hard-Surface Design, C++, Python, JavaScript, HTML/CSS, and Microcontroller projects.",
     certifications: "Google Kubernetes, Canva Digital Design, SEO, Google Ads, and Embedded IoT Certification.",
-    password: "admin123" // Default password stored securely in state
+    password: "admin123"
 };
 
 // Initial Products Array is empty as requested
@@ -138,7 +138,6 @@ function closeAdminModal() {
     document.getElementById('admin-modal').classList.add('hidden');
 }
 
-// Authenticate with Saved/Updated Password
 function authenticateAdmin() {
     const pass = document.getElementById('admin-pass-input').value;
     const currentPass = profileData.password || 'admin123';
@@ -148,14 +147,13 @@ function authenticateAdmin() {
         document.getElementById('admin-dashboard-view').classList.remove('hidden');
         document.getElementById('admin-dashboard-view').classList.add('flex');
         
-        // Populate inputs
         document.getElementById('admin-input-photo').value = profileData.photo;
         document.getElementById('admin-input-name').value = profileData.name;
         document.getElementById('admin-input-tagline').value = profileData.tagline;
         document.getElementById('admin-input-upi').value = profileData.upi;
         document.getElementById('admin-input-phone').value = profileData.phone;
         document.getElementById('admin-input-email').value = profileData.email;
-        document.getElementById('admin-input-newpass').value = ''; // Keep blank for security
+        document.getElementById('admin-input-newpass').value = '';
 
         document.getElementById('admin-input-education').value = profileData.education;
         document.getElementById('admin-input-skills').value = profileData.skills;
@@ -194,7 +192,6 @@ function saveProfileSettings() {
     profileData.phone = document.getElementById('admin-input-phone').value || profileData.phone;
     profileData.email = document.getElementById('admin-input-email').value || profileData.email;
 
-    // Check if user entered a new password
     const newPass = document.getElementById('admin-input-newpass').value;
     if (newPass && newPass.trim() !== '') {
         profileData.password = newPass.trim();
