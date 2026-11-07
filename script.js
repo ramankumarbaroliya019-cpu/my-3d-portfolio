@@ -18,8 +18,6 @@ let currentCheckoutProductId = null;
 // Firebase Sync Initialization
 function initFirebaseSync() {
     if (!window.db) return;
-    const { ref, get, child } = window.DB_MODULE || {}; // handled via global scope
-    
     const dbRef = window.ref(window.db);
     
     // Fetch Profile
@@ -48,7 +46,6 @@ function initFirebaseSync() {
     });
 }
 
-// Fallback load data if firebase takes time
 function loadSavedData() {
     updateProfileUI();
     renderProducts('all');
@@ -64,22 +61,26 @@ function saveDataToFirebase(path, data) {
 
 function updateProfileUI() {
     if (profileData.photo) {
-        document.getElementById('nav-profile-img').src = profileData.photo;
-        document.getElementById('hero-profile-img').src = profileData.photo;
+        const navImg = document.getElementById('nav-profile-img');
+        const heroImg = document.getElementById('hero-profile-img');
+        if (navImg) navImg.src = profileData.photo;
+        if (heroImg) heroImg.src = profileData.photo;
     }
-    document.getElementById('hero-name').innerText = profileData.name;
-    document.getElementById('hero-tagline').innerText = profileData.tagline;
-    document.getElementById('display-email').innerText = profileData.email;
-    document.getElementById('display-phone').innerText = profileData.phone;
-    document.getElementById('display-upi-id').innerText = profileData.upi;
+    if (document.getElementById('hero-name')) document.getElementById('hero-name').innerText = profileData.name;
+    if (document.getElementById('hero-tagline')) document.getElementById('hero-tagline').innerText = profileData.tagline;
+    if (document.getElementById('display-email')) document.getElementById('display-email').innerText = profileData.email;
+    if (document.getElementById('display-phone')) document.getElementById('display-phone').innerText = profileData.phone;
+    if (document.getElementById('display-upi-id')) document.getElementById('display-upi-id').innerText = profileData.upi;
     
-    document.getElementById('display-education').innerHTML = profileData.education;
-    document.getElementById('display-skills').innerHTML = profileData.skills;
-    document.getElementById('display-certifications').innerHTML = profileData.certifications;
+    if (document.getElementById('display-education')) document.getElementById('display-education').innerHTML = profileData.education;
+    if (document.getElementById('display-skills')) document.getElementById('display-skills').innerHTML = profileData.skills;
+    if (document.getElementById('display-certifications')) document.getElementById('display-certifications').innerHTML = profileData.certifications;
     
-    document.getElementById('contact-email-btn').href = `mailto:${profileData.email}`;
-    const cleanPhone = profileData.phone.replace(/[^0-9]/g, '');
-    document.getElementById('contact-phone-btn').href = `https://wa.me/${cleanPhone}`;
+    if (document.getElementById('contact-email-btn')) document.getElementById('contact-email-btn').href = `mailto:${profileData.email}`;
+    if (document.getElementById('contact-phone-btn') && profileData.phone) {
+        const cleanPhone = profileData.phone.replace(/[^0-9]/g, '');
+        document.getElementById('contact-phone-btn').href = `https://wa.me/${cleanPhone}`;
+    }
 }
 
 // Render Products Grid
@@ -460,9 +461,12 @@ function saveNewProductObject(category, title, price, desc, image, fileLink) {
     }
 }
 
-document.getElementById('mobile-menu-btn').addEventListener('click', () => {
-    document.getElementById('mobile-menu').classList.toggle('hidden');
-});
+const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+if (mobileMenuBtn) {
+    mobileMenuBtn.addEventListener('click', () => {
+        document.getElementById('mobile-menu').classList.toggle('hidden');
+    });
+}
 
 window.onload = () => {
     loadSavedData();
