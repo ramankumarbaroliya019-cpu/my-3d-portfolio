@@ -1,11 +1,15 @@
-// Profile State Storage (Updated with exact name Raman Kumar Baroliya)
+// Profile State & Security Password Storage
 let profileData = {
     photo: "1000209783.png",
     name: "Raman Kumar Baroliya",
     tagline: "Crafting high-end 3D hard-surface models in Blender, developing responsive web applications, and building smart digital tools.",
     upi: "Lalr13031-1@oksbi",
     phone: "+91 7742987003",
-    email: "Lalr13031@gmail.com"
+    email: "Lalr13031@gmail.com",
+    education: "B.Tech IT at <strong>Government Engineering College Ajmer</strong> (BTU). 86% in 12th Senior Secondary.",
+    skills: "Blender 3D Modeling, Hard-Surface Design, C++, Python, JavaScript, HTML/CSS, and Microcontroller projects.",
+    certifications: "Google Kubernetes, Canva Digital Design, SEO, Google Ads, and Embedded IoT Certification.",
+    password: "admin123" // Default password stored securely in state
 };
 
 // Initial Products Array is empty as requested
@@ -24,7 +28,7 @@ function loadSavedData() {
     updateProfileUI();
 }
 
-// Update Profile UI Elements
+// Update Profile & About UI Elements
 function updateProfileUI() {
     document.getElementById('nav-profile-img').src = profileData.photo;
     document.getElementById('hero-profile-img').src = profileData.photo;
@@ -33,6 +37,10 @@ function updateProfileUI() {
     document.getElementById('display-email').innerText = profileData.email;
     document.getElementById('display-phone').innerText = profileData.phone;
     document.getElementById('display-upi-id').innerText = profileData.upi;
+    
+    document.getElementById('display-education').innerHTML = profileData.education;
+    document.getElementById('display-skills').innerHTML = profileData.skills;
+    document.getElementById('display-certifications').innerHTML = profileData.certifications;
     
     document.getElementById('contact-email-btn').href = `mailto:${profileData.email}`;
     const cleanPhone = profileData.phone.replace(/[^0-9]/g, '');
@@ -70,7 +78,7 @@ function renderProducts(filter = 'all') {
             </div>
             <div class="p-5 pt-0 flex items-center justify-between border-t border-slate-800/60 mt-auto">
                 <span class="text-xl font-bold text-blue-400">₹${p.price}</span>
-                <button onclick="openCheckout(${p.id})" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl text-sm font-semibold transition shadow-md shadow-blue-600/20">
+                <button onclick="openCheckout(${p.id})" class="gradient-btn px-4 py-2 rounded-xl text-sm font-semibold transition shadow-md">
                     Buy Now
                 </button>
             </div>
@@ -98,12 +106,10 @@ function openCheckout(id) {
     document.getElementById('modal-product-title').innerText = product.title;
     document.getElementById('modal-product-price').innerText = `₹${product.price}`;
     
-    // Generate QR using dynamic UPI ID
     const upiString = `upi://pay?pa=${encodeURIComponent(profileData.upi)}&pn=${encodeURIComponent(profileData.name)}&am=${product.price}&cu=INR`;
     const qrApiUrl = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(upiString)}`;
     document.getElementById('upi-qr-img').src = qrApiUrl;
 
-    // Set Download Link
     const dlLink = document.getElementById('file-download-link');
     dlLink.href = product.fileLink && product.fileLink !== "#" ? product.fileLink : "#";
     document.getElementById('download-section').classList.add('hidden');
@@ -132,9 +138,12 @@ function closeAdminModal() {
     document.getElementById('admin-modal').classList.add('hidden');
 }
 
+// Authenticate with Saved/Updated Password
 function authenticateAdmin() {
     const pass = document.getElementById('admin-pass-input').value;
-    if (pass === 'admin123') {
+    const currentPass = profileData.password || 'admin123';
+    
+    if (pass === currentPass) {
         document.getElementById('admin-login-view').classList.add('hidden');
         document.getElementById('admin-dashboard-view').classList.remove('hidden');
         document.getElementById('admin-dashboard-view').classList.add('flex');
@@ -146,8 +155,13 @@ function authenticateAdmin() {
         document.getElementById('admin-input-upi').value = profileData.upi;
         document.getElementById('admin-input-phone').value = profileData.phone;
         document.getElementById('admin-input-email').value = profileData.email;
+        document.getElementById('admin-input-newpass').value = ''; // Keep blank for security
+
+        document.getElementById('admin-input-education').value = profileData.education;
+        document.getElementById('admin-input-skills').value = profileData.skills;
+        document.getElementById('admin-input-cert').value = profileData.certifications;
     } else {
-        alert("Incorrect Admin Password! Try 'admin123'");
+        alert("Incorrect Admin Password! Please try again.");
     }
 }
 
@@ -171,7 +185,7 @@ function switchAdminTab(tabName) {
     activeBtn.classList.add('active-admin-tab');
 }
 
-// Save Profile Settings from Admin Panel
+// Save Profile, Photo, and New Password Settings
 function saveProfileSettings() {
     profileData.photo = document.getElementById('admin-input-photo').value || profileData.photo;
     profileData.name = document.getElementById('admin-input-name').value || profileData.name;
@@ -180,9 +194,28 @@ function saveProfileSettings() {
     profileData.phone = document.getElementById('admin-input-phone').value || profileData.phone;
     profileData.email = document.getElementById('admin-input-email').value || profileData.email;
 
+    // Check if user entered a new password
+    const newPass = document.getElementById('admin-input-newpass').value;
+    if (newPass && newPass.trim() !== '') {
+        profileData.password = newPass.trim();
+        alert("Profile details and SECURITY PASSWORD updated successfully!");
+    } else {
+        alert("Profile details updated successfully!");
+    }
+
     localStorage.setItem('raman_portfolio_profile', JSON.stringify(profileData));
     updateProfileUI();
-    alert("Profile settings & UPI updated successfully!");
+}
+
+// Save Qualifications & Skills Settings from Admin Panel
+function saveAboutSettings() {
+    profileData.education = document.getElementById('admin-input-education').value || profileData.education;
+    profileData.skills = document.getElementById('admin-input-skills').value || profileData.skills;
+    profileData.certifications = document.getElementById('admin-input-cert').value || profileData.certifications;
+
+    localStorage.setItem('raman_portfolio_profile', JSON.stringify(profileData));
+    updateProfileUI();
+    alert("Qualifications and skills updated successfully!");
 }
 
 // Add New Product in Specific Section
