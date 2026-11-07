@@ -162,6 +162,10 @@ function openAdminModal() {
     document.getElementById('admin-login-view').classList.remove('hidden');
     document.getElementById('admin-dashboard-view').classList.add('hidden');
     document.getElementById('admin-pass-input').value = '';
+    // Focus password input automatically
+    setTimeout(() => {
+        document.getElementById('admin-pass-input').focus();
+    }, 100);
 }
 
 function closeAdminModal() {
@@ -195,10 +199,27 @@ function authenticateAdmin() {
     }
 }
 
+// Listen for "Enter" key on password input box
+document.addEventListener('DOMContentLoaded', () => {
+    const passInput = document.getElementById('admin-pass-input');
+    if (passInput) {
+        passInput.addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+                authenticateAdmin();
+            }
+        });
+    }
+});
+
 function logoutAdmin() {
     document.getElementById('admin-dashboard-view').classList.remove('flex');
     document.getElementById('admin-dashboard-view').classList.add('hidden');
     document.getElementById('admin-login-view').classList.remove('hidden');
+    document.getElementById('admin-pass-input').value = '';
+    setTimeout(() => {
+        document.getElementById('admin-pass-input').focus();
+    }, 100);
 }
 
 function switchAdminTab(tabName) {
@@ -367,7 +388,7 @@ function saveAboutSettings() {
     alert("क्वालिफिकेशंस अपडेट हो गई हैं!");
 }
 
-// Add New Product with Direct Image File Upload
+// Add New Product with Direct Image File Upload (Optimized)
 function addNewProduct() {
     const category = document.getElementById('add-item-category').value;
     const title = document.getElementById('add-item-title').value;
@@ -389,7 +410,6 @@ function addNewProduct() {
         };
         reader.readAsDataURL(imgFileInput.files[0]);
     } else {
-        // Fallback default image if none uploaded
         const defaultImage = "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&q=80&w=600";
         saveNewProductObject(category, title, price, desc, defaultImage, fileLink);
     }
@@ -407,10 +427,14 @@ function saveNewProductObject(category, title, price, desc, image, fileLink) {
     };
 
     products.unshift(newProd);
-    localStorage.setItem('raman_portfolio_products', JSON.stringify(products));
-    renderProducts('all');
-    closeAdminModal();
-    alert(`₹${price} का नया प्रोडक्ट सफलतापूर्वक पब्लिश हो गया!`);
+    try {
+        localStorage.setItem('raman_portfolio_products', JSON.stringify(products));
+        renderProducts('all');
+        closeAdminModal();
+        alert(`₹${price} का नया प्रोडक्ट सफलतापूर्वक पब्लिश हो गया!`);
+    } catch (err) {
+        alert("इमेज साइज बहुत बड़ी है! कृपया छोटी साइज की इमेज चुनें।");
+    }
 }
 
 document.getElementById('mobile-menu-btn').addEventListener('click', () => {
