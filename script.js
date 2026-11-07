@@ -138,7 +138,7 @@ function filterProducts(category, btnElement) {
     renderProducts(category);
 }
 
-// Checkout Modal
+// Checkout Modal ओपन करने का अपडेटेड फंक्शन
 function openCheckout(id) {
     const product = products.find(p => p.id === id);
     if (!product) return;
@@ -147,9 +147,18 @@ function openCheckout(id) {
     document.getElementById('modal-product-title').innerText = product.title;
     document.getElementById('modal-product-price').innerText = `₹${product.price}`;
     
+    // UPI String (Google Pay, PhonePe, Paytm के लिए डायरेक्ट पेमेंट लिंक)
     const upiString = `upi://pay?pa=${encodeURIComponent(profileData.upi)}&pn=${encodeURIComponent(profileData.name)}&am=${product.price}&cu=INR`;
+    
+    // QR Code जेनरेट करें
     const qrApiUrl = `https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=${encodeURIComponent(upiString)}`;
     document.getElementById('upi-qr-img').src = qrApiUrl;
+
+    // Direct UPI App Link सेट करें (मोबाइल या डेस्कटॉप पर क्लिक करते ही ऐप खुल जाएगी)
+    const directPayBtn = document.getElementById('direct-upi-pay-btn');
+    if (directPayBtn) {
+        directPayBtn.href = upiString;
+    }
 
     document.getElementById('user-utr-input').value = '';
     document.getElementById('order-status-msg').classList.add('hidden');
@@ -163,10 +172,8 @@ function openCheckout(id) {
 
     document.getElementById('checkout-modal').classList.remove('hidden');
 }
+    
 
-function closeCheckoutModal() {
-    document.getElementById('checkout-modal').classList.add('hidden');
-}
 
 // Submit UTR
 function submitOrderForApproval() {
