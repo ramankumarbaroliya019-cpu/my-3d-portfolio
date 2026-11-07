@@ -17,7 +17,7 @@ let currentCheckoutProductId = null;
 
 // Firebase Sync Initialization
 function initFirebaseSync() {
-    if (!window.db) return;
+    if (!window.db || !window.ref || !window.get) return;
     const dbRef = window.ref(window.db);
     
     // Fetch Profile
