@@ -31,7 +31,6 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-16">
                 <div class="flex items-center space-x-3">
-                    <!-- गोल प्रोफाइल फोटो (Circle Profile Image) -->
                     <div class="w-10 h-10 rounded-full overflow-hidden border-2 border-blue-500 bg-slate-800 flex-shrink-0">
                         <img id="nav-profile-img" src="1000209783.png" alt="Raman Kumar Baroliya" class="w-full h-full object-cover">
                     </div>
@@ -86,7 +85,6 @@
                     </div>
                 </div>
                 <div class="flex justify-center">
-                    <!-- हीरो सेक्शन की फोटो भी गोल (Circle) कर दी गई है -->
                     <div class="relative w-72 h-72 sm:w-80 sm:h-80 rounded-full overflow-hidden border-4 border-blue-500/30 shadow-2xl shadow-blue-500/10 bg-slate-900">
                         <img id="hero-profile-img" src="1000209783.png" alt="Raman Kumar Baroliya Profile" class="w-full h-full object-cover">
                     </div>
@@ -191,7 +189,6 @@
                 <p class="text-xs text-emerald-400 mt-2 font-mono">UPI ID: <span id="display-upi-id">Lalr13031-1@oksbi</span></p>
             </div>
 
-            <!-- UTR Form -->
             <div class="space-y-3">
                 <div>
                     <label class="block text-xs text-slate-400 mb-1">Enter 12-Digit UTR / Txn ID</label>
@@ -223,10 +220,11 @@
             <!-- Login -->
             <div id="admin-login-view" class="my-auto">
                 <h3 class="text-xl font-bold mb-4"><i class="fa-solid fa-lock text-blue-500 mr-2"></i> Admin Authentication</h3>
-                <p class="text-slate-400 text-sm mb-6">Enter security password to access control panel.</p>
+                <p class="text-slate-400 text-sm mb-6">Enter security password to access control panel. (Press Enter to Login)</p>
                 <div class="space-y-4">
                     <div>
                         <label class="block text-xs text-slate-400 mb-1">Security Password</label>
+                        <!-- Password field supports Enter key -->
                         <input type="password" id="admin-pass-input" placeholder="Enter password" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-blue-500">
                     </div>
                     <button onclick="authenticateAdmin()" class="w-full gradient-btn font-semibold py-3 rounded-xl transition">Login to Panel</button>
@@ -327,7 +325,7 @@
                         <button onclick="saveAboutSettings()" class="w-full gradient-btn font-semibold py-3 rounded-xl transition text-sm">Save Qualifications</button>
                     </div>
 
-                    <!-- Add New Item Tab (अब यहाँ डायरेक्ट इमेज फाइल अपलोड का बटन है) -->
+                    <!-- Add New Item Tab -->
                     <div id="admin-tab-add" class="admin-tab-content hidden space-y-4">
                         <h4 class="text-sm font-semibold text-blue-400">Publish New Item</h4>
                         <div>
@@ -342,7 +340,6 @@
                         <input type="number" id="add-item-price" placeholder="Price in ₹ (e.g. 1)" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 text-white text-sm">
                         <textarea id="add-item-desc" rows="2" placeholder="Description" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 text-white text-sm"></textarea>
                         
-                        <!-- Direct File Upload for Product Image -->
                         <div>
                             <label class="block text-xs text-slate-400 mb-1">Upload Product Preview Image (डिवाइस से फोटो चुनें)</label>
                             <input type="file" id="add-item-file-img" accept="image/*" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 text-slate-300 text-sm file:mr-4 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-blue-600 file:text-white">
