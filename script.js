@@ -12,7 +12,7 @@ let profileData = {
 };
 
 let products = [];
-let orders = []; // List of customer UTR payment submissions
+let orders = [];
 let currentCheckoutProductId = null;
 
 function loadSavedData() {
@@ -115,6 +115,13 @@ function openCheckout(id) {
     document.getElementById('order-status-msg').classList.add('hidden');
     document.getElementById('download-section').classList.add('hidden');
 
+    // Check if this product is already approved for current browser session
+    const existingApproved = orders.find(o => o.productId === product.id && o.status === 'Approved');
+    if (existingApproved) {
+        document.getElementById('file-download-link').href = product.fileLink || '#';
+        document.getElementById('download-section').classList.remove('hidden');
+    }
+
     document.getElementById('checkout-modal').classList.remove('hidden');
 }
 
@@ -122,7 +129,7 @@ function closeCheckoutModal() {
     document.getElementById('checkout-modal').classList.add('hidden');
 }
 
-// User submits UTR / Transaction ID for approval
+// Submit UTR
 function submitOrderForApproval() {
     const utr = document.getElementById('user-utr-input').value.trim();
     if (!utr || utr.length < 6) {
@@ -139,7 +146,7 @@ function submitOrderForApproval() {
         productTitle: product.title,
         price: product.price,
         utr: utr,
-        status: "Pending", // Pending or Approved
+        status: "Pending",
         fileLink: product.fileLink || "#"
     };
 
@@ -150,7 +157,7 @@ function submitOrderForApproval() {
     alert("ऑर्डर सबमिट हो गया है! एडमिन द्वारा UTR वेरीफाई होने के बाद डाउनलोड लिंक अनलॉक कर दिया जाएगा।");
 }
 
-// Admin Panel Control
+// Admin Control
 function openAdminModal() {
     document.getElementById('admin-modal').classList.remove('hidden');
     document.getElementById('admin-login-view').classList.remove('hidden');
@@ -171,6 +178,7 @@ function authenticateAdmin() {
         document.getElementById('admin-dashboard-view').classList.remove('hidden');
         document.getElementById('admin-dashboard-view').classList.add('flex');
         
+        document.getElementById('admin-input-photo-url').value = profileData.photo.startsWith('data:') ? '' : profileData.photo;
         document.getElementById('admin-input-name').value = profileData.name;
         document.getElementById('admin-input-tagline').value = profileData.tagline;
         document.getElementById('admin-input-upi').value = profileData.upi;
@@ -183,8 +191,9 @@ function authenticateAdmin() {
         document.getElementById('admin-input-cert').value = profileData.certifications;
 
         renderAdminOrdersList();
+        renderAdminItemsList();
     } else {
-        alert("गलत पासवर्ड! कृपया दोबारा कोशिश करें।");
+        alert("गलत पासवर्ड!");
     }
 }
 
@@ -194,7 +203,6 @@ function logoutAdmin() {
     document.getElementById('admin-login-view').classList.remove('hidden');
 }
 
-// Admin Tab Navigation
 function switchAdminTab(tabName) {
     document.querySelectorAll('.admin-tab-content').forEach(el => el.classList.add('hidden'));
     document.querySelectorAll('.admin-tab-btn').forEach(btn => {
@@ -207,9 +215,8 @@ function switchAdminTab(tabName) {
     activeBtn.classList.remove('bg-slate-950', 'text-slate-400');
     activeBtn.classList.add('active-admin-tab');
 
-    if (tabName === 'orders') {
-        renderAdminOrdersList();
-    }
+    if (tabName === 'orders') renderAdminOrdersList();
+    if (tabName === 'manage') renderAdminItemsList();
 }
 
 // Render Orders in Admin Panel
@@ -218,7 +225,7 @@ function renderAdminOrdersList() {
     listContainer.innerHTML = '';
 
     if (orders.length === 0) {
-        listContainer.innerHTML = `<p class="text-xs text-slate-500 text-center py-6">कोई पेंडिंग आर्डर नहीं है।</p>`;
+        listContainer.innerHTML = `<p class="text-xs text-slate-500 text-center py-6">कोई आर्डर नहीं है।</p>`;
         return;
     }
 
@@ -228,21 +235,21 @@ function renderAdminOrdersList() {
         item.innerHTML = `
             <div>
                 <h5 class="text-sm font-bold text-white">${order.productTitle} <span class="text-blue-400 font-semibold">₹${order.price}</span></h5>
-                <p class="text-xs text-slate-400 mt-0.5">UTR / Txn ID: <span class="text-emerald-400 font-mono font-bold">${order.utr}</span></p>
+                <p class="text-xs text-slate-400 mt-0.5">UTR: <span class="text-emerald-400 font-mono font-bold">${order.utr}</span></p>
                 <p class="text-[10px] text-slate-500 mt-1">Status: <span class="${order.status === 'Approved' ? 'text-emerald-400' : 'text-amber-400'} font-semibold">${order.status}</span></p>
             </div>
-            <div>
+            <div class="flex items-center gap-2">
                 ${order.status === 'Pending' 
                     ? `<button onclick="approveOrder(${order.orderId})" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold px-4 py-2 rounded-lg transition shadow">Approve & Unlock</button>`
                     : `<span class="text-xs text-emerald-400 font-semibold bg-emerald-500/10 border border-emerald-500/20 px-3 py-1.5 rounded-lg">Approved</span>`
                 }
+                <button onclick="deleteOrder(${order.orderId})" class="text-red-400 hover:text-red-300 text-xs px-2 py-1">Delete</button>
             </div>
         `;
         listContainer.appendChild(item);
     });
 }
 
-// Admin Approves an Order
 function approveOrder(orderId) {
     const order = orders.find(o => o.orderId === orderId);
     if (order) {
@@ -253,13 +260,90 @@ function approveOrder(orderId) {
     }
 }
 
-// Save Profile Settings
+function deleteOrder(orderId) {
+    orders = orders.filter(o => o.orderId !== orderId);
+    localStorage.setItem('raman_portfolio_orders', JSON.stringify(orders));
+    renderAdminOrdersList();
+}
+
+// Render Catalog for Editing & Deleting
+function renderAdminItemsList() {
+    const container = document.getElementById('admin-items-list');
+    container.innerHTML = '';
+
+    if (products.length === 0) {
+        container.innerHTML = `<p class="text-xs text-slate-500 text-center py-6">कैटलॉग में कोई प्रोडक्ट नहीं है।</p>`;
+        return;
+    }
+
+    products.forEach(p => {
+        const div = document.createElement('div');
+        div.className = "bg-slate-950 border border-slate-800 p-4 rounded-xl space-y-3";
+        div.innerHTML = `
+            <div class="flex justify-between items-center border-b border-slate-800 pb-2">
+                <span class="text-xs uppercase bg-blue-500/10 text-blue-400 px-2 py-0.5 rounded font-bold">${p.category}</span>
+                <button onclick="deleteProduct(${p.id})" class="text-xs text-red-400 hover:text-red-300"><i class="fa-solid fa-trash mr-1"></i> Delete Product</button>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                    <label class="block text-[10px] text-slate-400">Title</label>
+                    <input type="text" id="edit-title-${p.id}" value="${p.title}" class="w-full bg-slate-900 border border-slate-800 rounded px-2.5 py-1 text-xs text-white">
+                </div>
+                <div>
+                    <label class="block text-[10px] text-slate-400">Price (₹)</label>
+                    <input type="number" id="edit-price-${p.id}" value="${p.price}" class="w-full bg-slate-900 border border-slate-800 rounded px-2.5 py-1 text-xs text-white">
+                </div>
+            </div>
+            <div>
+                <label class="block text-[10px] text-slate-400">Preview Image URL</label>
+                <input type="text" id="edit-image-${p.id}" value="${p.image}" class="w-full bg-slate-900 border border-slate-800 rounded px-2.5 py-1 text-xs text-white">
+            </div>
+            <div>
+                <label class="block text-text-[10px] text-slate-400">Google Drive Download Link</label>
+                <input type="text" id="edit-file-${p.id}" value="${p.fileLink}" class="w-full bg-slate-900 border border-slate-800 rounded px-2.5 py-1 text-xs text-white">
+            </div>
+            <button onclick="saveProductEdit(${p.id})" class="bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold px-4 py-1.5 rounded-lg transition w-full">Save Changes</button>
+        `;
+        container.appendChild(div);
+    });
+}
+
+function saveProductEdit(id) {
+    const product = products.find(p => p.id === id);
+    if (product) {
+        product.title = document.getElementById(`edit-title-${id}`).value;
+        product.price = parseFloat(document.getElementById(`edit-price-${id}`).value) || 0;
+        product.image = document.getElementById(`edit-image-${id}`).value;
+        product.fileLink = document.getElementById(`edit-file-${id}`).value;
+
+        localStorage.setItem('raman_portfolio_products', JSON.stringify(products));
+        renderProducts('all');
+        renderAdminItemsList();
+        alert("प्रोडक्ट अपडेट हो गया!");
+    }
+}
+
+function deleteProduct(id) {
+    if (confirm("क्या आप वाकई इस प्रोडक्ट को डिलीट करना चाहते हैं?")) {
+        products = products.filter(p => p.id !== id);
+        localStorage.setItem('raman_portfolio_products', JSON.stringify(products));
+        renderProducts('all');
+        renderAdminItemsList();
+    }
+}
+
+// Profile & Photo Save (Supports both direct upload & URL fallback)
 function saveProfileSettings() {
     profileData.name = document.getElementById('admin-input-name').value || profileData.name;
     profileData.tagline = document.getElementById('admin-input-tagline').value || profileData.tagline;
     profileData.upi = document.getElementById('admin-input-upi').value || profileData.upi;
     profileData.phone = document.getElementById('admin-input-phone').value || profileData.phone;
     profileData.email = document.getElementById('admin-input-email').value || profileData.email;
+
+    const customUrl = document.getElementById('admin-input-photo-url').value;
+    if (customUrl && customUrl.trim() !== '') {
+        profileData.photo = customUrl.trim();
+    }
 
     const fileInput = document.getElementById('admin-input-file');
     if (fileInput.files && fileInput.files[0]) {
@@ -281,7 +365,7 @@ function finalizeSaveProfile() {
     }
     localStorage.setItem('raman_portfolio_profile', JSON.stringify(profileData));
     updateProfileUI();
-    alert("प्रोफाइल और सेटिंग्स सफलतापूर्वक सेव हो गई हैं!");
+    alert("प्रोफाइल सेटिंग्स सफलतापूर्वक सेव हो गई हैं!");
     closeAdminModal();
 }
 
@@ -295,15 +379,16 @@ function saveAboutSettings() {
     alert("क्वालिफिकेशंस अपडेट हो गई हैं!");
 }
 
-function addNewProductByCategory(category) {
-    const title = document.getElementById(`add-${category}-title`).value;
-    const price = parseFloat(document.getElementById(`add-${category}-price`).value);
-    const desc = document.getElementById(`add-${category}-desc`).value;
-    let image = document.getElementById(`add-${category}-image`).value;
-    const fileLink = document.getElementById(`add-${category}-file`).value;
+function addNewProduct() {
+    const category = document.getElementById('add-item-category').value;
+    const title = document.getElementById('add-item-title').value;
+    const price = parseFloat(document.getElementById('add-item-price').value);
+    const desc = document.getElementById('add-item-desc').value;
+    let image = document.getElementById('add-item-image').value;
+    const fileLink = document.getElementById('add-item-file').value;
 
-    if (!title || !price) {
-        alert("कृपया टाइटल और कीमत दर्ज करें।");
+    if (!title || isNaN(price)) {
+        alert("कृपया प्रोडक्ट का नाम और कीमत दर्ज करें। (उदा: ₹1)");
         return;
     }
 
@@ -325,7 +410,7 @@ function addNewProductByCategory(category) {
     localStorage.setItem('raman_portfolio_products', JSON.stringify(products));
     renderProducts('all');
     closeAdminModal();
-    alert(`नया ${category.toUpperCase()} सफलतापूर्वक पब्लिश हो गया है!`);
+    alert(`₹${price} का नया प्रोडक्ट सफलतापूर्वक पब्लिश हो गया!`);
 }
 
 document.getElementById('mobile-menu-btn').addEventListener('click', () => {
