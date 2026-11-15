@@ -112,13 +112,11 @@ function openLoginModal() {
         }
         return;
     }
-    const modal = document.getElementById('login-modal');
-    if (modal) modal.classList.remove('hidden');
+    document.getElementById('login-modal').classList.remove('hidden');
 }
 
 function closeLoginModal() {
-    const modal = document.getElementById('login-modal');
-    if (modal) modal.classList.add('hidden');
+    document.getElementById('login-modal').classList.add('hidden');
 }
 
 // Submit User Login
@@ -153,7 +151,7 @@ function checkLoginBeforeAction() {
     return true;
 }
 
-// Update Live Notification Badge for New/Pending Orders
+// Update Live Notification Badge (1, 2, 3...) for New/Pending Orders
 function updateOrderNotificationBadge() {
     const unseenCount = orders.filter(o => o.isNewOrder === true || o.status === 'Pending').length;
     const navBadge = document.getElementById('admin-order-badge');
@@ -209,7 +207,7 @@ function escapeHtml(text) {
     return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 }
 
-// Render Products Grid (Light Theme)
+// Render Products Grid (Light Theme with Gradient Buy Now Buttons)
 function renderProducts(filter = 'all') {
     currentFilterCategory = filter;
     const grid = document.getElementById('product-grid');
@@ -239,12 +237,12 @@ function renderProducts(filter = 'all') {
             : `<p class="text-[11px] text-slate-400">No comments yet. Be the first one!</p>`;
 
         const card = document.createElement('div');
-        card.className = "product-card bg-white border border-slate-200 rounded-2xl overflow-hidden hover:border-blue-400 transition flex flex-col justify-between shadow-sm";
+        card.className = "product-card bg-white border border-slate-200 rounded-2xl overflow-hidden hover:border-pink-400 transition flex flex-col justify-between shadow-sm";
         card.innerHTML = `
             <div>
                 <div class="h-48 overflow-hidden bg-slate-100 relative">
                     <img src="${p.image}" alt="${escapeHtml(p.title)}" class="product-card-img w-full h-full object-cover">
-                    <span class="absolute top-3 right-3 bg-blue-600 text-white text-[11px] font-semibold px-3 py-1 rounded-full uppercase tracking-wider shadow">${categoryLabel}</span>
+                    <span class="absolute top-3 right-3 gradient-btn text-white text-[11px] font-semibold px-3 py-1 rounded-full uppercase tracking-wider shadow">${categoryLabel}</span>
                 </div>
                 <div class="p-5 pb-3">
                     <h3 class="font-bold text-lg text-slate-900 mb-1">${escapeHtml(p.title)}</h3>
@@ -255,9 +253,9 @@ function renderProducts(filter = 'all') {
             <div class="px-5 pb-5 space-y-4 mt-auto">
                 <!-- Price & Action Row -->
                 <div class="flex items-center justify-between pt-3 border-t border-slate-100">
-                    <span class="text-xl font-bold text-blue-600">${p.price == 0 ? 'Free' : '₹' + p.price}</span>
+                    <span class="text-xl font-bold text-pink-600">${p.price == 0 ? 'Free' : '₹' + p.price}</span>
                     <div class="flex items-center gap-2">
-                        <!-- Like / Unlike Button -->
+                        <!-- Like Button -->
                         <button onclick="likeProduct(${p.id})" class="px-3 py-2 rounded-full text-xs font-semibold transition flex items-center gap-1.5 ${hasLiked ? 'bg-rose-600 text-white shadow-sm' : 'bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200'}">
                             <i class="fa-solid fa-heart"></i> <span>${likes}</span>
                         </button>
@@ -271,7 +269,7 @@ function renderProducts(filter = 'all') {
                 <!-- Interactive Comments & Feedback Box -->
                 <div class="bg-slate-50 border border-slate-200 rounded-2xl p-3 space-y-2.5">
                     <div class="flex justify-between items-center">
-                        <span class="text-[11px] font-bold text-slate-700"><i class="fa-regular fa-comments text-blue-600 mr-1"></i> Comments (${comments.length})</span>
+                        <span class="text-[11px] font-bold text-slate-700"><i class="fa-regular fa-comments text-pink-600 mr-1"></i> Comments (${comments.length})</span>
                         <button onclick="toggleFeedbackBox(${p.id})" class="text-[11px] font-semibold text-emerald-600 hover:underline"><i class="fa-regular fa-star mr-0.5"></i> Give Feedback</button>
                     </div>
                     
@@ -281,7 +279,7 @@ function renderProducts(filter = 'all') {
 
                     <!-- Add Comment Input -->
                     <div class="flex gap-1.5">
-                        <input type="text" id="comment-input-${p.id}" placeholder="Write a comment..." class="flex-1 bg-white border border-slate-300 rounded-full px-3 py-1.5 text-xs text-slate-900 focus:outline-none focus:border-blue-500">
+                        <input type="text" id="comment-input-${p.id}" placeholder="Write a comment (Login required)..." class="flex-1 bg-white border border-slate-300 rounded-full px-3 py-1.5 text-xs text-slate-900 focus:outline-none focus:border-pink-500">
                         <button onclick="addProductComment(${p.id})" class="bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold px-3.5 py-1.5 rounded-full transition">Post</button>
                     </div>
 
@@ -297,7 +295,7 @@ function renderProducts(filter = 'all') {
     });
 }
 
-// Like / Dislike Toggle Function (Login Protected & Instant UI Update)
+// Like / Dislike Toggle Function (Login Protected & Permanent Firebase Sync)
 function likeProduct(id) {
     if (!checkLoginBeforeAction()) return;
 
@@ -311,7 +309,7 @@ function likeProduct(id) {
     const userIndex = product.likedUsers.indexOf(loggedInUser.email);
 
     if (userIndex > -1) {
-        // यदि यूज़र पहले ही लाइक कर चुका है, तो दोबारा क्लिक करने पर लाइक हटा दें (Dislike / Unlike)
+        // यदि यूज़र पहले लाइक कर चुका है, तो लाइक हटा दें (Dislike / Unlike)
         product.likedUsers.splice(userIndex, 1);
         product.likes = Math.max(0, (product.likes || 1) - 1);
     } else {
@@ -320,10 +318,7 @@ function likeProduct(id) {
         product.likes = (product.likes || 0) + 1;
     }
 
-    // Firebase और LocalStorage में तुरंत सेव करें
     saveDataToFirebase('products', products);
-    
-    // स्क्रीन पर तुरंत नंबर अपडेट करें
     renderProducts(currentFilterCategory);
 }
 
@@ -392,11 +387,11 @@ function submitProductFeedback(id) {
 
 function filterProducts(category, btnElement) {
     document.querySelectorAll('.filter-btn').forEach(btn => {
-        btn.classList.remove('bg-blue-600', 'text-white');
+        btn.classList.remove('active-tab', 'text-white');
         btn.classList.add('bg-white', 'text-slate-700', 'border', 'border-slate-200');
     });
     btnElement.classList.remove('bg-white', 'text-slate-700', 'border', 'border-slate-200');
-    btnElement.classList.add('bg-blue-600', 'text-white');
+    btnElement.classList.add('active-tab', 'text-white');
     renderProducts(category);
 }
 
@@ -537,14 +532,14 @@ function logoutAdmin() {
 function switchAdminTab(tabName) {
     document.querySelectorAll('.admin-tab-content').forEach(el => el.classList.add('hidden'));
     document.querySelectorAll('.admin-tab-btn').forEach(btn => {
-        btn.classList.remove('bg-blue-600', 'text-white');
+        btn.classList.remove('active-admin-tab', 'text-white');
         btn.classList.add('bg-transparent', 'text-slate-600');
     });
 
     document.getElementById(`admin-tab-${tabName}`).classList.remove('hidden');
     const activeBtn = document.getElementById(`tab-btn-${tabName}`);
     activeBtn.classList.remove('bg-transparent', 'text-slate-600');
-    activeBtn.classList.add('bg-blue-600', 'text-white');
+    activeBtn.classList.add('active-admin-tab', 'text-white');
 
     if (tabName === 'orders') {
         let updated = false;
@@ -579,7 +574,7 @@ function renderAdminOrdersList() {
         item.className = "bg-slate-50 border border-slate-200 p-4 rounded-xl flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3";
         item.innerHTML = `
             <div>
-                <h5 class="text-sm font-bold text-slate-900">${escapeHtml(order.productTitle)} <span class="text-blue-600 font-semibold">₹${order.price}</span></h5>
+                <h5 class="text-sm font-bold text-slate-900">${escapeHtml(order.productTitle)} <span class="text-pink-600 font-semibold">₹${order.price}</span></h5>
                 <p class="text-xs text-slate-600 mt-0.5">User: <span class="font-medium text-slate-800">${escapeHtml(order.userEmail || 'N/A')}</span></p>
                 <p class="text-xs text-slate-600">UTR: <span class="text-emerald-600 font-mono font-bold">${escapeHtml(order.utr)}</span></p>
                 <p class="text-[10px] text-slate-500 mt-1">Status: <span class="${order.status === 'Approved' ? 'text-emerald-600' : 'text-amber-600'} font-semibold">${order.status}</span></p>
@@ -631,7 +626,7 @@ function renderAdminItemsList() {
         div.className = "bg-slate-50 border border-slate-200 p-4 rounded-xl space-y-3";
         div.innerHTML = `
             <div class="flex justify-between items-center border-b border-slate-200 pb-2">
-                <span class="text-xs uppercase bg-blue-50 text-blue-600 border border-blue-200 px-2 py-0.5 rounded font-bold">${p.category}</span>
+                <span class="text-xs uppercase bg-pink-50 text-pink-600 border border-pink-200 px-2 py-0.5 rounded font-bold">${p.category}</span>
                 <button onclick="deleteProduct(${p.id})" class="text-xs text-red-500 hover:text-red-600 font-medium"><i class="fa-solid fa-trash mr-1"></i> Delete Product</button>
             </div>
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -648,7 +643,7 @@ function renderAdminItemsList() {
                 <label class="block text-[10px] text-slate-500">Download Link (APK / Drive URL)</label>
                 <input type="text" id="edit-file-${p.id}" value="${escapeHtml(p.fileLink)}" class="w-full bg-white border border-slate-200 rounded px-2.5 py-1 text-xs text-slate-900">
             </div>
-            <button onclick="saveProductEdit(${p.id})" class="bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold px-4 py-1.5 rounded-lg transition w-full">Save Changes</button>
+            <button onclick="saveProductEdit(${p.id})" class="gradient-btn text-white text-xs font-semibold px-4 py-1.5 rounded-lg transition w-full">Save Changes</button>
         `;
         container.appendChild(div);
     });
