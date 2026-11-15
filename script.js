@@ -232,10 +232,10 @@ function renderProducts(filter = 'all') {
         const likedUsers = Array.isArray(p.likedUsers) ? p.likedUsers : [];
         const categoryLabel = p.category === 'app' ? 'Android App' : p.category;
         
-        // Product specific feedbacks
-        const productFeedbacks = feedbacks.filter(f => f.productId === p.id);
+        // Product specific feedbacks / ratings mapping (matches productId)
+        const productFeedbacks = feedbacks.filter(f => String(f.productId) === String(p.id));
         const avgRating = productFeedbacks.length > 0 
-            ? (productFeedbacks.reduce((acc, curr) => acc + (curr.rating || 5), 0) / productFeedbacks.length).toFixed(1) 
+            ? (productFeedbacks.reduce((acc, curr) => acc + Number(curr.rating || 5), 0) / productFeedbacks.length).toFixed(1) 
             : '5.0';
 
         const hasLiked = loggedInUser && likedUsers.includes(loggedInUser.email);
@@ -259,6 +259,7 @@ function renderProducts(filter = 'all') {
         card.className = "product-card bg-white border border-slate-200 rounded-2xl overflow-hidden hover:border-pink-400 transition flex flex-col justify-between shadow-sm";
         card.innerHTML = `
             <div>
+                <!-- इमेज पूरी दिखने और क्लिक करने पर ओपन होने के लिए object-contain और onclick ज़ूम जोड़ा गया है -->
                 <div class="h-48 overflow-hidden bg-slate-100 relative cursor-pointer group" onclick="openImageModal('${p.image}', '${escapeHtml(p.title)}')">
                     <img src="${p.image}" alt="${escapeHtml(p.title)}" class="w-full h-full object-contain group-hover:scale-105 transition duration-300">
                     <div class="absolute inset-0 bg-slate-900/20 opacity-0 group-hover:opacity-100 transition flex items-center justify-center text-white text-xs font-semibold gap-1">
@@ -271,7 +272,7 @@ function renderProducts(filter = 'all') {
                         <h3 class="font-bold text-lg text-slate-900">${escapeHtml(p.title)}</h3>
                         <span class="text-xs font-semibold text-amber-500 bg-amber-50 px-2 py-0.5 rounded-full border border-amber-200">⭐ ${avgRating} (${productFeedbacks.length})</span>
                     </div>
-                    <!-- डिस्क्रिप्शन अब बिना कटे पूरा दिखाई देगा -->
+                    <!-- डिस्क्रिप्शन अब बिना कटे पूरा दिखाई देगा (line-clamp हटा दिया गया है) -->
                     <p class="text-slate-600 text-sm mb-3 leading-relaxed">${escapeHtml(p.desc)}</p>
                 </div>
             </div>
@@ -334,7 +335,7 @@ function renderProducts(filter = 'all') {
     });
 }
 
-// Image Zoom / Lightbox Modal Implementation
+// Image Zoom / Lightbox Modal Implementation (फोटो पर क्लिक करने पर फुल-स्क्रीन ओपन करने के लिए)
 function openImageModal(imgSrc, imgTitle) {
     let modal = document.getElementById('image-lightbox-modal');
     if (!modal) {
@@ -445,7 +446,7 @@ function toggleFeedbackBox(id) {
     }
 }
 
-// Submit Feedback Function with Star Rating & User Info
+// Submit Feedback Function with Star Rating & User Info (रेटिंग्स और फीडबैक को Firebase में सेव करना)
 function submitProductFeedback(id) {
     if (!checkLoginBeforeAction()) return;
 
