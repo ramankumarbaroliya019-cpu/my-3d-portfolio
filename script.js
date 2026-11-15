@@ -13,38 +13,58 @@ let profileData = {
 
 let products = [];
 let orders = [];
+let feedbacks = [];
 let currentCheckoutProductId = null;
+let currentFilterCategory = 'all';
 
-// Firebase Sync Initialization
+// Firebase Sync Initialization (Real-time with onValue)
 function initFirebaseSync() {
-    if (!window.db || !window.ref || !window.get) {
-        setTimeout(initFirebaseSync, 500); // Wait for Firebase to load
+    if (!window.db || !window.ref || !window.onValue) {
+        setTimeout(initFirebaseSync, 500);
         return;
     }
-    const dbRef = window.ref(window.db);
-    
-    // Fetch Profile
-    window.get(window.child(dbRef, "profile")).then((snapshot) => {
+
+    // 1. Real-time Profile Sync
+    window.onValue(window.ref(window.db, "profile"), (snapshot) => {
         if (snapshot.exists()) {
             profileData = snapshot.val();
             updateProfileUI();
         } else {
             saveDataToFirebase('profile', profileData);
         }
-    }).catch((error) => { console.error(error); });
-
-    // Fetch Products
-    window.get(window.child(dbRef, "products")).then((snapshot) => {
-        if (snapshot.exists()) {
-            products = snapshot.val() || [];
-            renderProducts('all');
-        }
     });
 
-    // Fetch Orders
-    window.get(window.child(dbRef, "orders")).then((snapshot) => {
+    // 2. Real-time Products Sync (Includes Likes & Comments)
+    window.onValue(window.ref(window.db, "products"), (snapshot) => {
         if (snapshot.exists()) {
-            orders = snapshot.val() || [];
+            const val = snapshot.val();
+            products = Array.isArray(val) ? val : Object.values(val);
+        } else {
+            products = [];
+        }
+        renderProducts(currentFilterCategory);
+        renderAdminItemsList();
+    });
+
+    // 3. Real-time Orders Sync & Notification Badge Update
+    window.onValue(window.ref(window.db, "orders"), (snapshot) => {
+        if (snapshot.exists()) {
+            const val = snapshot.val();
+            orders = Array.isArray(val) ? val : Object.values(val);
+        } else {
+            orders = [];
+        }
+        updateOrderNotificationBadge();
+        renderAdminOrdersList();
+    });
+
+    // 4. Real-time Feedbacks Sync
+    window.onValue(window.ref(window.db, "feedbacks"), (snapshot) => {
+        if (snapshot.exists()) {
+            const val = snapshot.val();
+            feedbacks = Array.isArray(val) ? val : Object.values(val);
+        } else {
+            feedbacks = [];
         }
     });
 }
@@ -58,9 +78,34 @@ function loadSavedData() {
 // Helper to save to Firebase & LocalStorage
 function saveDataToFirebase(path, data) {
     if (window.db && window.ref && window.set) {
-        window.set(window.ref(window.db, path), data).catch(err => console.log(err));
+        window.set(window.ref(window.db, path), data).catch(err => console.error("Firebase Save Error:", err));
     }
     localStorage.setItem(`raman_portfolio_${path}`, JSON.stringify(data));
+}
+
+// Update Live Notification Badge (1, 2, 3...) for New/Pending Orders
+function updateOrderNotificationBadge() {
+    const unseenCount = orders.filter(o => o.isNewOrder === true || o.status === 'Pending').length;
+    const navBadge = document.getElementById('admin-order-badge');
+    const tabBadge = document.getElementById('tab-order-badge');
+
+    if (navBadge) {
+        if (unseenCount > 0) {
+            navBadge.innerText = unseenCount;
+            navBadge.classList.remove('hidden');
+        } else {
+            navBadge.classList.add('hidden');
+        }
+    }
+
+    if (tabBadge) {
+        if (unseenCount > 0) {
+            tabBadge.innerText = unseenCount;
+            tabBadge.classList.remove('hidden');
+        } else {
+            tabBadge.classList.add('hidden');
+        }
+    }
 }
 
 function updateProfileUI() {
@@ -72,23 +117,31 @@ function updateProfileUI() {
     }
     if (document.getElementById('hero-name')) document.getElementById('hero-name').innerText = profileData.name;
     if (document.getElementById('hero-tagline')) document.getElementById('hero-tagline').innerText = profileData.tagline;
-    if (document.getElementById('display-email')) document.getElementById('display-email').innerText = profileData.email;
-    if (document.getElementById('display-phone')) document.getElementById('display-phone').innerText = profileData.phone;
+    if (document.getElementById('display-email')) {
+        document.getElementById('display-email').innerText = profileData.email;
+        document.getElementById('display-email').href = `mailto:${profileData.email}`;
+    }
+    if (document.getElementById('display-phone')) {
+        document.getElementById('display-phone').innerText = profileData.phone;
+        const cleanPhone = profileData.phone.replace(/[^0-9]/g, '');
+        document.getElementById('display-phone').href = `https://wa.me/${cleanPhone}`;
+    }
     if (document.getElementById('display-upi-id')) document.getElementById('display-upi-id').innerText = profileData.upi;
     
     if (document.getElementById('display-education')) document.getElementById('display-education').innerHTML = profileData.education;
     if (document.getElementById('display-skills')) document.getElementById('display-skills').innerHTML = profileData.skills;
     if (document.getElementById('display-certifications')) document.getElementById('display-certifications').innerHTML = profileData.certifications;
-    
-    if (document.getElementById('contact-email-btn')) document.getElementById('contact-email-btn').href = `mailto:${profileData.email}`;
-    if (document.getElementById('contact-phone-btn') && profileData.phone) {
-        const cleanPhone = profileData.phone.replace(/[^0-9]/g, '');
-        document.getElementById('contact-phone-btn').href = `https://wa.me/${cleanPhone}`;
-    }
 }
 
-// Render Products Grid
+// Escape HTML to prevent XSS in comments/feedback
+function escapeHtml(text) {
+    if (!text) return '';
+    return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+}
+
+// Render Products Grid (Light Theme + Likes, Comments & Feedback)
 function renderProducts(filter = 'all') {
+    currentFilterCategory = filter;
     const grid = document.getElementById('product-grid');
     if (!grid) return;
     grid.innerHTML = '';
@@ -96,49 +149,158 @@ function renderProducts(filter = 'all') {
     const filtered = filter === 'all' ? products : products.filter(p => p.category === filter);
     
     if (filtered.length === 0) {
-        grid.innerHTML = `<div class="col-span-full text-center py-12 text-slate-500 bg-slate-900/30 border border-slate-800/60 rounded-2xl">
-            <i class="fa-solid fa-box-open text-3xl mb-2 text-slate-600"></i>
-            <p>No products added yet. Use the Admin Panel to upload your items!</p>
+        grid.innerHTML = `<div class="col-span-full text-center py-12 text-slate-500 bg-white border border-slate-200 rounded-2xl shadow-sm">
+            <i class="fa-solid fa-box-open text-3xl mb-2 text-slate-400"></i>
+            <p>No items found in this category. Use the Admin Panel to upload!</p>
         </div>`;
         return;
     }
 
     filtered.forEach(p => {
+        const likes = p.likes || 0;
+        const comments = Array.isArray(p.comments) ? p.comments : [];
+        const categoryLabel = p.category === 'app' ? 'Android App' : p.category;
+
+        const commentsHtml = comments.length > 0
+            ? comments.map(c => `<div class="text-xs text-slate-700 py-1 border-b border-slate-100 last:border-0"><strong class="text-slate-900">User:</strong> ${escapeHtml(c.text)}</div>`).join('')
+            : `<p class="text-[11px] text-slate-400">No comments yet.</p>`;
+
         const card = document.createElement('div');
-        card.className = "product-card bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden hover:border-slate-700 transition flex flex-col justify-between shadow-lg";
+        card.className = "product-card bg-white border border-slate-200 rounded-2xl overflow-hidden hover:border-blue-300 transition flex flex-col justify-between shadow-sm";
         card.innerHTML = `
             <div>
-                <div class="h-48 overflow-hidden bg-slate-950 relative">
-                    <img src="${p.image}" alt="${p.title}" class="product-card-img w-full h-full object-cover">
-                    <span class="absolute top-3 right-3 bg-blue-600/95 text-white text-xs font-semibold px-2.5 py-1 rounded-full uppercase tracking-wider">${p.category}</span>
+                <div class="h-48 overflow-hidden bg-slate-100 relative">
+                    <img src="${p.image}" alt="${escapeHtml(p.title)}" class="product-card-img w-full h-full object-cover">
+                    <span class="absolute top-3 right-3 bg-blue-600 text-white text-[11px] font-semibold px-3 py-1 rounded-full uppercase tracking-wider shadow">${categoryLabel}</span>
                 </div>
-                <div class="p-5">
-                    <h3 class="font-bold text-lg mb-1">${p.title}</h3>
-                    <p class="text-slate-400 text-sm line-clamp-2 mb-4">${p.desc}</p>
+                <div class="p-5 pb-3">
+                    <h3 class="font-bold text-lg text-slate-900 mb-1">${escapeHtml(p.title)}</h3>
+                    <p class="text-slate-600 text-sm line-clamp-2 mb-3">${escapeHtml(p.desc)}</p>
                 </div>
             </div>
-            <div class="p-5 pt-0 flex items-center justify-between border-t border-slate-800/60 mt-auto">
-                <span class="text-xl font-bold text-blue-400">₹${p.price}</span>
-                <button onclick="openCheckout(${p.id})" class="gradient-btn px-4 py-2 rounded-xl text-sm font-semibold transition shadow-md">
-                    Buy Now
-                </button>
+
+            <div class="px-5 pb-5 space-y-4 mt-auto">
+                <!-- Price & Action Row -->
+                <div class="flex items-center justify-between pt-3 border-t border-slate-100">
+                    <span class="text-xl font-bold text-blue-600">${p.price == 0 ? 'Free' : '₹' + p.price}</span>
+                    <div class="flex items-center gap-2">
+                        <button onclick="likeProduct(${p.id})" class="bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 px-3 py-2 rounded-full text-xs font-semibold transition flex items-center gap-1">
+                            <i class="fa-solid fa-heart"></i> <span>${likes}</span>
+                        </button>
+                        ${p.price == 0 
+                            ? `<a href="${p.fileLink || '#'}" target="_blank" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-full text-xs font-semibold transition shadow-sm">Download</a>`
+                            : `<button onclick="openCheckout(${p.id})" class="gradient-btn px-4 py-2 rounded-full text-xs font-semibold transition shadow-sm">Buy Now</button>`
+                        }
+                    </div>
+                </div>
+
+                <!-- Interactive Comments & Feedback Box -->
+                <div class="bg-slate-50 border border-slate-200 rounded-2xl p-3 space-y-2.5">
+                    <div class="flex justify-between items-center">
+                        <span class="text-[11px] font-bold text-slate-700"><i class="fa-regular fa-comments text-blue-600 mr-1"></i> Comments (${comments.length})</span>
+                        <button onclick="toggleFeedbackBox(${p.id})" class="text-[11px] font-semibold text-emerald-600 hover:underline"><i class="fa-regular fa-star mr-0.5"></i> Give Feedback</button>
+                    </div>
+                    
+                    <div class="max-h-24 overflow-y-auto bg-white border border-slate-200 rounded-xl p-2 space-y-1">
+                        ${commentsHtml}
+                    </div>
+
+                    <!-- Add Comment Input -->
+                    <div class="flex gap-1.5">
+                        <input type="text" id="comment-input-${p.id}" placeholder="Write a comment..." class="flex-1 bg-white border border-slate-300 rounded-full px-3 py-1.5 text-xs text-slate-900 focus:outline-none focus:border-blue-500">
+                        <button onclick="addProductComment(${p.id})" class="bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold px-3.5 py-1.5 rounded-full transition">Post</button>
+                    </div>
+
+                    <!-- Hidden Feedback Input Box -->
+                    <div id="feedback-box-${p.id}" class="hidden pt-2 border-t border-slate-200 space-y-1.5">
+                        <textarea id="feedback-input-${p.id}" rows="2" placeholder="Write your feedback for ${escapeHtml(p.title)}..." class="w-full bg-white border border-slate-300 rounded-xl p-2 text-xs text-slate-900 focus:outline-none focus:border-emerald-500"></textarea>
+                        <button onclick="submitProductFeedback(${p.id})" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold py-1.5 rounded-full transition">Submit Feedback</button>
+                    </div>
+                </div>
             </div>
         `;
         grid.appendChild(card);
     });
 }
 
+// Like Product Function
+function likeProduct(id) {
+    const product = products.find(p => p.id === id);
+    if (!product) return;
+    product.likes = (product.likes || 0) + 1;
+    saveDataToFirebase('products', products);
+    renderProducts(currentFilterCategory);
+}
+
+// Add Comment Function
+function addProductComment(id) {
+    const input = document.getElementById(`comment-input-${id}`);
+    if (!input) return;
+    const text = input.value.trim();
+    if (!text) {
+        alert("कृपया पहले कमेंट लिखें!");
+        return;
+    }
+    const product = products.find(p => p.id === id);
+    if (!product) return;
+
+    if (!Array.isArray(product.comments)) {
+        product.comments = [];
+    }
+    product.comments.push({
+        text: text,
+        timestamp: Date.now()
+    });
+
+    saveDataToFirebase('products', products);
+    input.value = '';
+    renderProducts(currentFilterCategory);
+}
+
+// Toggle Feedback Box
+function toggleFeedbackBox(id) {
+    const box = document.getElementById(`feedback-box-${id}`);
+    if (box) {
+        box.classList.toggle('hidden');
+    }
+}
+
+// Submit Feedback Function
+function submitProductFeedback(id) {
+    const input = document.getElementById(`feedback-input-${id}`);
+    if (!input) return;
+    const text = input.value.trim();
+    if (!text) {
+        alert("कृपया अपना फीडबैक लिखें!");
+        return;
+    }
+    const product = products.find(p => p.id === id);
+    const newFeedback = {
+        id: Date.now(),
+        productId: id,
+        productTitle: product ? product.title : 'Store Item',
+        text: text,
+        date: new Date().toLocaleDateString('hi-IN')
+    };
+
+    feedbacks.unshift(newFeedback);
+    saveDataToFirebase('feedbacks', feedbacks);
+    input.value = '';
+    toggleFeedbackBox(id);
+    alert("धन्यवाद! आपका फीडबैक सफलतापूर्वक सबमिट हो गया है।");
+}
+
 function filterProducts(category, btnElement) {
     document.querySelectorAll('.filter-btn').forEach(btn => {
         btn.classList.remove('bg-blue-600', 'text-white');
-        btn.classList.add('bg-slate-900', 'text-slate-300', 'border', 'border-slate-800');
+        btn.classList.add('bg-white', 'text-slate-700', 'border', 'border-slate-200');
     });
-    btnElement.classList.remove('bg-slate-900', 'text-slate-300', 'border', 'border-slate-800');
+    btnElement.classList.remove('bg-white', 'text-slate-700', 'border', 'border-slate-200');
     btnElement.classList.add('bg-blue-600', 'text-white');
     renderProducts(category);
 }
 
-// Checkout Modal ओपन करने का अपडेटेड फंक्शन
+// Checkout Modal Functions
 function openCheckout(id) {
     const product = products.find(p => p.id === id);
     if (!product) return;
@@ -147,14 +309,10 @@ function openCheckout(id) {
     document.getElementById('modal-product-title').innerText = product.title;
     document.getElementById('modal-product-price').innerText = `₹${product.price}`;
     
-    // UPI String (Google Pay, PhonePe, Paytm के लिए डायरेक्ट पेमेंट लिंक)
     const upiString = `upi://pay?pa=${encodeURIComponent(profileData.upi)}&pn=${encodeURIComponent(profileData.name)}&am=${product.price}&cu=INR`;
-    
-    // QR Code जेनरेट करें
     const qrApiUrl = `https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=${encodeURIComponent(upiString)}`;
     document.getElementById('upi-qr-img').src = qrApiUrl;
 
-    // Direct UPI App Link सेट करें (मोबाइल या डेस्कटॉप पर क्लिक करते ही ऐप खुल जाएगी)
     const directPayBtn = document.getElementById('direct-upi-pay-btn');
     if (directPayBtn) {
         directPayBtn.href = upiString;
@@ -172,10 +330,12 @@ function openCheckout(id) {
 
     document.getElementById('checkout-modal').classList.remove('hidden');
 }
-    
 
+function closeCheckoutModal() {
+    document.getElementById('checkout-modal').classList.add('hidden');
+}
 
-// Submit UTR
+// Submit UTR with New Order Flag
 function submitOrderForApproval() {
     const utr = document.getElementById('user-utr-input').value.trim();
     if (!utr || utr.length < 6) {
@@ -193,11 +353,13 @@ function submitOrderForApproval() {
         price: product.price,
         utr: utr,
         status: "Pending",
+        isNewOrder: true,
         fileLink: product.fileLink || "#"
     };
 
     orders.unshift(newOrder);
     saveDataToFirebase('orders', orders);
+    updateOrderNotificationBadge();
 
     document.getElementById('order-status-msg').classList.remove('hidden');
     alert("ऑर्डर सबमिट हो गया है! एडमिन द्वारा UTR वेरीफाई होने के बाद डाउनलोड लिंक अनलॉक कर दिया जाएगा।");
@@ -272,19 +434,33 @@ function switchAdminTab(tabName) {
     document.querySelectorAll('.admin-tab-content').forEach(el => el.classList.add('hidden'));
     document.querySelectorAll('.admin-tab-btn').forEach(btn => {
         btn.classList.remove('bg-blue-600', 'text-white');
-        btn.classList.add('bg-slate-950', 'text-slate-400');
+        btn.classList.add('bg-transparent', 'text-slate-600');
     });
 
     document.getElementById(`admin-tab-${tabName}`).classList.remove('hidden');
     const activeBtn = document.getElementById(`tab-btn-${tabName}`);
-    activeBtn.classList.remove('bg-slate-950', 'text-slate-400');
+    activeBtn.classList.remove('bg-transparent', 'text-slate-600');
     activeBtn.classList.add('bg-blue-600', 'text-white');
 
-    if (tabName === 'orders') renderAdminOrdersList();
+    if (tabName === 'orders') {
+        // Mark unseen orders as seen when admin opens Orders tab
+        let updated = false;
+        orders.forEach(o => {
+            if (o.isNewOrder) {
+                o.isNewOrder = false;
+                updated = true;
+            }
+        });
+        if (updated) {
+            saveDataToFirebase('orders', orders);
+            updateOrderNotificationBadge();
+        }
+        renderAdminOrdersList();
+    }
     if (tabName === 'manage') renderAdminItemsList();
 }
 
-// Render Orders in Admin Panel
+// Render Orders in Admin Panel (Light Theme)
 function renderAdminOrdersList() {
     const listContainer = document.getElementById('admin-orders-list');
     if (!listContainer) return;
@@ -297,19 +473,19 @@ function renderAdminOrdersList() {
 
     orders.forEach(order => {
         const item = document.createElement('div');
-        item.className = "bg-slate-950 border border-slate-800 p-4 rounded-xl flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3";
+        item.className = "bg-slate-50 border border-slate-200 p-4 rounded-xl flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3";
         item.innerHTML = `
             <div>
-                <h5 class="text-sm font-bold text-white">${order.productTitle} <span class="text-blue-400 font-semibold">₹${order.price}</span></h5>
-                <p class="text-xs text-slate-400 mt-0.5">UTR: <span class="text-emerald-400 font-mono font-bold">${order.utr}</span></p>
-                <p class="text-[10px] text-slate-500 mt-1">Status: <span class="${order.status === 'Approved' ? 'text-emerald-400' : 'text-amber-400'} font-semibold">${order.status}</span></p>
+                <h5 class="text-sm font-bold text-slate-900">${escapeHtml(order.productTitle)} <span class="text-blue-600 font-semibold">₹${order.price}</span></h5>
+                <p class="text-xs text-slate-600 mt-0.5">UTR: <span class="text-emerald-600 font-mono font-bold">${escapeHtml(order.utr)}</span></p>
+                <p class="text-[10px] text-slate-500 mt-1">Status: <span class="${order.status === 'Approved' ? 'text-emerald-600' : 'text-amber-600'} font-semibold">${order.status}</span></p>
             </div>
             <div class="flex items-center gap-2">
                 ${order.status === 'Pending' 
                     ? `<button onclick="approveOrder(${order.orderId})" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold px-4 py-2 rounded-lg transition shadow">Approve & Unlock</button>`
-                    : `<span class="text-xs text-emerald-400 font-semibold bg-emerald-500/10 border border-emerald-500/20 px-3 py-1.5 rounded-lg">Approved</span>`
+                    : `<span class="text-xs text-emerald-700 font-semibold bg-emerald-50 border border-emerald-200 px-3 py-1.5 rounded-lg">Approved</span>`
                 }
-                <button onclick="deleteOrder(${order.orderId})" class="text-red-400 hover:text-red-300 text-xs px-2 py-1">Delete</button>
+                <button onclick="deleteOrder(${order.orderId})" class="text-red-500 hover:text-red-600 text-xs px-2 py-1 font-medium">Delete</button>
             </div>
         `;
         listContainer.appendChild(item);
@@ -320,7 +496,9 @@ function approveOrder(orderId) {
     const order = orders.find(o => o.orderId === orderId);
     if (order) {
         order.status = "Approved";
+        order.isNewOrder = false;
         saveDataToFirebase('orders', orders);
+        updateOrderNotificationBadge();
         renderAdminOrdersList();
         alert(`आर्डर स्वीकृत कर दिया गया है! UTR: ${order.utr}`);
     }
@@ -329,10 +507,11 @@ function approveOrder(orderId) {
 function deleteOrder(orderId) {
     orders = orders.filter(o => o.orderId !== orderId);
     saveDataToFirebase('orders', orders);
+    updateOrderNotificationBadge();
     renderAdminOrdersList();
 }
 
-// Render Catalog for Editing & Deleting
+// Render Catalog for Editing & Deleting (Light Theme)
 function renderAdminItemsList() {
     const container = document.getElementById('admin-items-list');
     if (!container) return;
@@ -345,25 +524,25 @@ function renderAdminItemsList() {
 
     products.forEach(p => {
         const div = document.createElement('div');
-        div.className = "bg-slate-950 border border-slate-800 p-4 rounded-xl space-y-3";
+        div.className = "bg-slate-50 border border-slate-200 p-4 rounded-xl space-y-3";
         div.innerHTML = `
-            <div class="flex justify-between items-center border-b border-slate-800 pb-2">
-                <span class="text-xs uppercase bg-blue-500/10 text-blue-400 px-2 py-0.5 rounded font-bold">${p.category}</span>
-                <button onclick="deleteProduct(${p.id})" class="text-xs text-red-400 hover:text-red-300"><i class="fa-solid fa-trash mr-1"></i> Delete Product</button>
+            <div class="flex justify-between items-center border-b border-slate-200 pb-2">
+                <span class="text-xs uppercase bg-blue-50 text-blue-600 border border-blue-200 px-2 py-0.5 rounded font-bold">${p.category}</span>
+                <button onclick="deleteProduct(${p.id})" class="text-xs text-red-500 hover:text-red-600 font-medium"><i class="fa-solid fa-trash mr-1"></i> Delete Product</button>
             </div>
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
-                    <label class="block text-[10px] text-slate-400">Title</label>
-                    <input type="text" id="edit-title-${p.id}" value="${p.title}" class="w-full bg-slate-900 border border-slate-800 rounded px-2.5 py-1 text-xs text-white">
+                    <label class="block text-[10px] text-slate-500">Title</label>
+                    <input type="text" id="edit-title-${p.id}" value="${escapeHtml(p.title)}" class="w-full bg-white border border-slate-200 rounded px-2.5 py-1 text-xs text-slate-900">
                 </div>
                 <div>
-                    <label class="block text-[10px] text-slate-400">Price (₹)</label>
-                    <input type="number" id="edit-price-${p.id}" value="${p.price}" class="w-full bg-slate-900 border border-slate-800 rounded px-2.5 py-1 text-xs text-white">
+                    <label class="block text-[10px] text-slate-500">Price (₹)</label>
+                    <input type="number" id="edit-price-${p.id}" value="${p.price}" class="w-full bg-white border border-slate-200 rounded px-2.5 py-1 text-xs text-slate-900">
                 </div>
             </div>
             <div>
-                <label class="block text-[10px] text-slate-400">Google Drive Download Link</label>
-                <input type="text" id="edit-file-${p.id}" value="${p.fileLink}" class="w-full bg-slate-900 border border-slate-800 rounded px-2.5 py-1 text-xs text-white">
+                <label class="block text-[10px] text-slate-500">Download Link (APK / Drive URL)</label>
+                <input type="text" id="edit-file-${p.id}" value="${escapeHtml(p.fileLink)}" class="w-full bg-white border border-slate-200 rounded px-2.5 py-1 text-xs text-slate-900">
             </div>
             <button onclick="saveProductEdit(${p.id})" class="bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold px-4 py-1.5 rounded-lg transition w-full">Save Changes</button>
         `;
@@ -379,7 +558,7 @@ function saveProductEdit(id) {
         product.fileLink = document.getElementById(`edit-file-${id}`).value;
 
         saveDataToFirebase('products', products);
-        renderProducts('all');
+        renderProducts(currentFilterCategory);
         renderAdminItemsList();
         alert("प्रोडक्ट अपडेट हो गया!");
     }
@@ -389,7 +568,7 @@ function deleteProduct(id) {
     if (confirm("क्या आप वाकई इस प्रोडक्ट को डिलीट करना चाहते हैं?")) {
         products = products.filter(p => p.id !== id);
         saveDataToFirebase('products', products);
-        renderProducts('all');
+        renderProducts(currentFilterCategory);
         renderAdminItemsList();
     }
 }
@@ -458,13 +637,15 @@ function saveNewProductObject(category, title, price, desc, image, fileLink) {
         price,
         desc: desc || `New ${category} item.`,
         image,
-        fileLink: fileLink || "#"
+        fileLink: fileLink || "#",
+        likes: 0,
+        comments: []
     };
 
     products.unshift(newProd);
     try {
         saveDataToFirebase('products', products);
-        renderProducts('all');
+        renderProducts(currentFilterCategory);
         closeAdminModal();
         alert(`₹${price} का नया प्रोडक्ट सफलतापूर्वक पब्लिश हो गया!`);
     } catch (err) {
