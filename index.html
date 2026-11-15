@@ -12,9 +12,9 @@
     <link rel="stylesheet" href="style.css">
     <meta name="google-site-verification" content="o6ZaHXkyIAANN5kYZDy1PlJBICgb_xP2LDjwfIEbj-o" />
     <meta name="description" content="Official portfolio and digital store of Raman Kumar Baroliya (ROM Edutech) from Hatundi, Ajmer. Explore Android mobile applications, 3D Blender models, architectural renders, custom DIY electronics hardware projects, educational science books, Samsung Galaxy f56 3D model, vaultx file optimizer app, house 3D model, and Velora e-commerce products.">
-<meta name="keywords" content="Raman Kumar Baroliya, Raman Portfolio Store, ROM Edutech, Android apps development, 3D Blender models, 3D character design, architectural renders, DIY electronics projects, 10th science books, educational tutorials, Velora e-commerce, web development projects, Hatundi Ajmer, BTech IT student portfolio, C++ Python Java programming">
+    <meta name="keywords" content="Raman Kumar Baroliya, Raman Portfolio Store, ROM Edutech, Android apps development, 3D Blender models, 3D character design, architectural renders, DIY electronics projects, 10th science books, educational tutorials, Velora e-commerce, web development projects, Hatundi Ajmer, BTech IT student portfolio, C++ Python Java programming">
 </head>
-<body class="bg-slate-100 text-slate-900 font-sans antialiased selection:bg-blue-600 selection:text-white">
+<body class="bg-slate-100 text-slate-900 font-sans antialiased selection:bg-blue-600 selection:text-white" onload="loadSavedData()">
 
     <!-- Navbar -->
     <nav class="fixed top-0 left-0 right-0 z-50 bg-white/90 backdrop-blur-md border-b border-slate-200 shadow-sm">
@@ -313,10 +313,8 @@
             appId: "1:1046178826544:web:89560277b418d6440ca0f5"
         };
 
-        // Initialize Firebase
         const app = initializeApp(firebaseConfig);
         
-        // Global Binding for script.js
         window.db = getDatabase(app);
         window.ref = ref;
         window.set = set;
