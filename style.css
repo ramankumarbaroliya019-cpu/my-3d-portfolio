@@ -21,17 +21,17 @@ html {
     background: #94a3b8;
 }
 
-/* Stunning Blue to Pink Rainbow Gradient Buttons */
+/* Stunning Blue to Pink Rainbow Gradient Buttons (Forced with !important) */
 .gradient-btn {
-    background: linear-gradient(135deg, #3b82f6 0%, #ec4899 100%);
+    background: linear-gradient(135deg, #3b82f6 0%, #ec4899 100%) !important;
     transition: all 0.3s ease;
     box-shadow: 0 4px 15px rgba(236, 72, 153, 0.25);
-    color: #ffffff;
-    border: none;
+    color: #ffffff !important;
+    border: none !important;
 }
 
 .gradient-btn:hover {
-    background: linear-gradient(135deg, #2563eb 0%, #db2777 100%);
+    background: linear-gradient(135deg, #2563eb 0%, #db2777 100%) !important;
     box-shadow: 0 6px 20px rgba(236, 72, 153, 0.4);
     transform: translateY(-1px);
 }
