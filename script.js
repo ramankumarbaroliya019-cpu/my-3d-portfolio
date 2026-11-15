@@ -34,7 +34,7 @@ function initFirebaseSync() {
         }
     });
 
-    // 2. Real-time Products Sync (Includes Likes & Comments)
+    // 2. Real-time Products Sync
     window.onValue(window.ref(window.db, "products"), (snapshot) => {
         if (snapshot.exists()) {
             const val = snapshot.val();
@@ -139,7 +139,7 @@ function escapeHtml(text) {
     return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 }
 
-// Render Products Grid (Light Theme + Likes, Comments & Feedback)
+// Render Products Grid
 function renderProducts(filter = 'all') {
     currentFilterCategory = filter;
     const grid = document.getElementById('product-grid');
@@ -149,42 +149,47 @@ function renderProducts(filter = 'all') {
     const filtered = filter === 'all' ? products : products.filter(p => p.category === filter);
     
     if (filtered.length === 0) {
-        grid.innerHTML = `<div class="col-span-full text-center py-12 text-slate-500 bg-white border border-slate-200 rounded-2xl shadow-sm">
+        grid.innerHTML = `<div class="col-span-full text-center py-12 text-slate-500 bg-slate-900 border border-slate-800 rounded-2xl shadow-sm">
             <i class="fa-solid fa-box-open text-3xl mb-2 text-slate-400"></i>
             <p>No items found in this category. Use the Admin Panel to upload!</p>
         </div>`;
         return;
     }
 
+    // Check localStorage for liked items by this user browser
+    let likedProducts = JSON.parse(localStorage.getItem('raman_liked_products') || '[]');
+
     filtered.forEach(p => {
         const likes = p.likes || 0;
         const comments = Array.isArray(p.comments) ? p.comments : [];
         const categoryLabel = p.category === 'app' ? 'Android App' : p.category;
+        const hasLiked = likedProducts.includes(p.id);
 
         const commentsHtml = comments.length > 0
-            ? comments.map(c => `<div class="text-xs text-slate-700 py-1 border-b border-slate-100 last:border-0"><strong class="text-slate-900">User:</strong> ${escapeHtml(c.text)}</div>`).join('')
-            : `<p class="text-[11px] text-slate-400">No comments yet.</p>`;
+            ? comments.map(c => `<div class="text-xs text-slate-300 py-1 border-b border-slate-800 last:border-0"><strong class="text-white">${escapeHtml(c.user || 'User')}:</strong> ${escapeHtml(c.text)}</div>`).join('')
+            : `<p class="text-[11px] text-slate-500">No comments yet. Be the first one!</p>`;
 
         const card = document.createElement('div');
-        card.className = "product-card bg-white border border-slate-200 rounded-2xl overflow-hidden hover:border-blue-300 transition flex flex-col justify-between shadow-sm";
+        card.className = "product-card bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden hover:border-blue-500 transition flex flex-col justify-between shadow-lg";
         card.innerHTML = `
             <div>
-                <div class="h-48 overflow-hidden bg-slate-100 relative">
+                <div class="h-48 overflow-hidden bg-slate-950 relative">
                     <img src="${p.image}" alt="${escapeHtml(p.title)}" class="product-card-img w-full h-full object-cover">
                     <span class="absolute top-3 right-3 bg-blue-600 text-white text-[11px] font-semibold px-3 py-1 rounded-full uppercase tracking-wider shadow">${categoryLabel}</span>
                 </div>
                 <div class="p-5 pb-3">
-                    <h3 class="font-bold text-lg text-slate-900 mb-1">${escapeHtml(p.title)}</h3>
-                    <p class="text-slate-600 text-sm line-clamp-2 mb-3">${escapeHtml(p.desc)}</p>
+                    <h3 class="font-bold text-lg text-white mb-1">${escapeHtml(p.title)}</h3>
+                    <p class="text-slate-400 text-sm line-clamp-2 mb-3">${escapeHtml(p.desc)}</p>
                 </div>
             </div>
 
             <div class="px-5 pb-5 space-y-4 mt-auto">
                 <!-- Price & Action Row -->
-                <div class="flex items-center justify-between pt-3 border-t border-slate-100">
-                    <span class="text-xl font-bold text-blue-600">${p.price == 0 ? 'Free' : '₹' + p.price}</span>
+                <div class="flex items-center justify-between pt-3 border-t border-slate-800">
+                    <span class="text-xl font-bold text-blue-400">${p.price == 0 ? 'Free' : '₹' + p.price}</span>
                     <div class="flex items-center gap-2">
-                        <button onclick="likeProduct(${p.id})" class="bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 px-3 py-2 rounded-full text-xs font-semibold transition flex items-center gap-1">
+                        <!-- Like Button with active state -->
+                        <button onclick="likeProduct(${p.id})" class="px-3 py-2 rounded-full text-xs font-semibold transition flex items-center gap-1.5 ${hasLiked ? 'bg-rose-600 text-white shadow-md' : 'bg-slate-800 hover:bg-slate-700 text-rose-400 border border-slate-700'}">
                             <i class="fa-solid fa-heart"></i> <span>${likes}</span>
                         </button>
                         ${p.price == 0 
@@ -195,25 +200,28 @@ function renderProducts(filter = 'all') {
                 </div>
 
                 <!-- Interactive Comments & Feedback Box -->
-                <div class="bg-slate-50 border border-slate-200 rounded-2xl p-3 space-y-2.5">
+                <div class="bg-slate-950 border border-slate-800 rounded-2xl p-3 space-y-2.5">
                     <div class="flex justify-between items-center">
-                        <span class="text-[11px] font-bold text-slate-700"><i class="fa-regular fa-comments text-blue-600 mr-1"></i> Comments (${comments.length})</span>
-                        <button onclick="toggleFeedbackBox(${p.id})" class="text-[11px] font-semibold text-emerald-600 hover:underline"><i class="fa-regular fa-star mr-0.5"></i> Give Feedback</button>
+                        <span class="text-[11px] font-bold text-slate-300"><i class="fa-regular fa-comments text-blue-400 mr-1"></i> Comments (${comments.length})</span>
+                        <button onclick="toggleFeedbackBox(${p.id})" class="text-[11px] font-semibold text-emerald-400 hover:underline"><i class="fa-regular fa-star mr-0.5"></i> Give Feedback</button>
                     </div>
                     
-                    <div class="max-h-24 overflow-y-auto bg-white border border-slate-200 rounded-xl p-2 space-y-1">
+                    <div class="max-h-24 overflow-y-auto bg-slate-900 border border-slate-800 rounded-xl p-2 space-y-1">
                         ${commentsHtml}
                     </div>
 
-                    <!-- Add Comment Input -->
-                    <div class="flex gap-1.5">
-                        <input type="text" id="comment-input-${p.id}" placeholder="Write a comment..." class="flex-1 bg-white border border-slate-300 rounded-full px-3 py-1.5 text-xs text-slate-900 focus:outline-none focus:border-blue-500">
-                        <button onclick="addProductComment(${p.id})" class="bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold px-3.5 py-1.5 rounded-full transition">Post</button>
+                    <!-- Add Comment Input with Name -->
+                    <div class="space-y-1.5">
+                        <input type="text" id="comment-user-${p.id}" placeholder="Your Name" class="w-full bg-slate-900 border border-slate-800 rounded-lg px-2.5 py-1 text-xs text-white focus:outline-none focus:border-blue-500">
+                        <div class="flex gap-1.5">
+                            <input type="text" id="comment-input-${p.id}" placeholder="Write a comment..." class="flex-1 bg-slate-900 border border-slate-800 rounded-full px-3 py-1.5 text-xs text-white focus:outline-none focus:border-blue-500">
+                            <button onclick="addProductComment(${p.id})" class="bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold px-3.5 py-1.5 rounded-full transition">Post</button>
+                        </div>
                     </div>
 
                     <!-- Hidden Feedback Input Box -->
-                    <div id="feedback-box-${p.id}" class="hidden pt-2 border-t border-slate-200 space-y-1.5">
-                        <textarea id="feedback-input-${p.id}" rows="2" placeholder="Write your feedback for ${escapeHtml(p.title)}..." class="w-full bg-white border border-slate-300 rounded-xl p-2 text-xs text-slate-900 focus:outline-none focus:border-emerald-500"></textarea>
+                    <div id="feedback-box-${p.id}" class="hidden pt-2 border-t border-slate-800 space-y-1.5">
+                        <textarea id="feedback-input-${p.id}" rows="2" placeholder="Write your feedback for ${escapeHtml(p.title)}..." class="w-full bg-slate-900 border border-slate-800 rounded-xl p-2 text-xs text-white focus:outline-none focus:border-emerald-500"></textarea>
                         <button onclick="submitProductFeedback(${p.id})" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold py-1.5 rounded-full transition">Submit Feedback</button>
                     </div>
                 </div>
@@ -223,20 +231,35 @@ function renderProducts(filter = 'all') {
     });
 }
 
-// Like Product Function
+// Like Product Function (Prevent Multiple Likes from same browser)
 function likeProduct(id) {
+    let likedProducts = JSON.parse(localStorage.getItem('raman_liked_products') || '[]');
+    
+    if (likedProducts.includes(id)) {
+        alert("आपने इस प्रोडक्ट को पहले ही लाइक कर दिया है!");
+        return;
+    }
+
     const product = products.find(p => p.id === id);
     if (!product) return;
+
     product.likes = (product.likes || 0) + 1;
+    likedProducts.push(id);
+    
+    localStorage.setItem('raman_liked_products', JSON.stringify(likedProducts));
     saveDataToFirebase('products', products);
     renderProducts(currentFilterCategory);
 }
 
-// Add Comment Function
+// Add Comment Function (Permanent save to Firebase)
 function addProductComment(id) {
+    const userInput = document.getElementById(`comment-user-${id}`);
     const input = document.getElementById(`comment-input-${id}`);
-    if (!input) return;
+    if (!input || !userInput) return;
+    
+    const userName = userInput.value.trim() || "Visitor";
     const text = input.value.trim();
+    
     if (!text) {
         alert("कृपया पहले कमेंट लिखें!");
         return;
@@ -248,12 +271,14 @@ function addProductComment(id) {
         product.comments = [];
     }
     product.comments.push({
+        user: userName,
         text: text,
         timestamp: Date.now()
     });
 
     saveDataToFirebase('products', products);
     input.value = '';
+    userInput.value = '';
     renderProducts(currentFilterCategory);
 }
 
@@ -293,9 +318,9 @@ function submitProductFeedback(id) {
 function filterProducts(category, btnElement) {
     document.querySelectorAll('.filter-btn').forEach(btn => {
         btn.classList.remove('bg-blue-600', 'text-white');
-        btn.classList.add('bg-white', 'text-slate-700', 'border', 'border-slate-200');
+        btn.classList.add('bg-slate-900', 'text-slate-300', 'border', 'border-slate-800');
     });
-    btnElement.classList.remove('bg-white', 'text-slate-700', 'border', 'border-slate-200');
+    btnElement.classList.remove('bg-slate-900', 'text-slate-300', 'border', 'border-slate-800');
     btnElement.classList.add('bg-blue-600', 'text-white');
     renderProducts(category);
 }
@@ -434,16 +459,15 @@ function switchAdminTab(tabName) {
     document.querySelectorAll('.admin-tab-content').forEach(el => el.classList.add('hidden'));
     document.querySelectorAll('.admin-tab-btn').forEach(btn => {
         btn.classList.remove('bg-blue-600', 'text-white');
-        btn.classList.add('bg-transparent', 'text-slate-600');
+        btn.classList.add('bg-slate-950', 'text-slate-400');
     });
 
     document.getElementById(`admin-tab-${tabName}`).classList.remove('hidden');
     const activeBtn = document.getElementById(`tab-btn-${tabName}`);
-    activeBtn.classList.remove('bg-transparent', 'text-slate-600');
+    activeBtn.classList.remove('bg-slate-950', 'text-slate-400');
     activeBtn.classList.add('bg-blue-600', 'text-white');
 
     if (tabName === 'orders') {
-        // Mark unseen orders as seen when admin opens Orders tab
         let updated = false;
         orders.forEach(o => {
             if (o.isNewOrder) {
@@ -460,7 +484,7 @@ function switchAdminTab(tabName) {
     if (tabName === 'manage') renderAdminItemsList();
 }
 
-// Render Orders in Admin Panel (Light Theme)
+// Render Orders in Admin Panel
 function renderAdminOrdersList() {
     const listContainer = document.getElementById('admin-orders-list');
     if (!listContainer) return;
@@ -473,19 +497,19 @@ function renderAdminOrdersList() {
 
     orders.forEach(order => {
         const item = document.createElement('div');
-        item.className = "bg-slate-50 border border-slate-200 p-4 rounded-xl flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3";
+        item.className = "bg-slate-950 border border-slate-800 p-4 rounded-xl flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3";
         item.innerHTML = `
             <div>
-                <h5 class="text-sm font-bold text-slate-900">${escapeHtml(order.productTitle)} <span class="text-blue-600 font-semibold">₹${order.price}</span></h5>
-                <p class="text-xs text-slate-600 mt-0.5">UTR: <span class="text-emerald-600 font-mono font-bold">${escapeHtml(order.utr)}</span></p>
-                <p class="text-[10px] text-slate-500 mt-1">Status: <span class="${order.status === 'Approved' ? 'text-emerald-600' : 'text-amber-600'} font-semibold">${order.status}</span></p>
+                <h5 class="text-sm font-bold text-white">${escapeHtml(order.productTitle)} <span class="text-blue-400 font-semibold">₹${order.price}</span></h5>
+                <p class="text-xs text-slate-400 mt-0.5">UTR: <span class="text-emerald-400 font-mono font-bold">${escapeHtml(order.utr)}</span></p>
+                <p class="text-[10px] text-slate-500 mt-1">Status: <span class="${order.status === 'Approved' ? 'text-emerald-400' : 'text-amber-400'} font-semibold">${order.status}</span></p>
             </div>
             <div class="flex items-center gap-2">
                 ${order.status === 'Pending' 
                     ? `<button onclick="approveOrder(${order.orderId})" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold px-4 py-2 rounded-lg transition shadow">Approve & Unlock</button>`
-                    : `<span class="text-xs text-emerald-700 font-semibold bg-emerald-50 border border-emerald-200 px-3 py-1.5 rounded-lg">Approved</span>`
+                    : `<span class="text-xs text-emerald-400 font-semibold bg-emerald-500/10 border border-emerald-500/20 px-3 py-1.5 rounded-lg">Approved</span>`
                 }
-                <button onclick="deleteOrder(${order.orderId})" class="text-red-500 hover:text-red-600 text-xs px-2 py-1 font-medium">Delete</button>
+                <button onclick="deleteOrder(${order.orderId})" class="text-red-400 hover:text-red-300 text-xs px-2 py-1 font-medium">Delete</button>
             </div>
         `;
         listContainer.appendChild(item);
@@ -500,7 +524,7 @@ function approveOrder(orderId) {
         saveDataToFirebase('orders', orders);
         updateOrderNotificationBadge();
         renderAdminOrdersList();
-        alert(`आर्डर स्वीकृत कर दिया गया है! UTR: ${order.utr}`);
+        alert(`आर्डर स्वीकृत कर दिया गया है! UTR: ${order.orderId}`);
     }
 }
 
@@ -511,7 +535,7 @@ function deleteOrder(orderId) {
     renderAdminOrdersList();
 }
 
-// Render Catalog for Editing & Deleting (Light Theme)
+// Render Catalog for Editing & Deleting
 function renderAdminItemsList() {
     const container = document.getElementById('admin-items-list');
     if (!container) return;
@@ -524,25 +548,25 @@ function renderAdminItemsList() {
 
     products.forEach(p => {
         const div = document.createElement('div');
-        div.className = "bg-slate-50 border border-slate-200 p-4 rounded-xl space-y-3";
+        div.className = "bg-slate-950 border border-slate-800 p-4 rounded-xl space-y-3";
         div.innerHTML = `
-            <div class="flex justify-between items-center border-b border-slate-200 pb-2">
-                <span class="text-xs uppercase bg-blue-50 text-blue-600 border border-blue-200 px-2 py-0.5 rounded font-bold">${p.category}</span>
-                <button onclick="deleteProduct(${p.id})" class="text-xs text-red-500 hover:text-red-600 font-medium"><i class="fa-solid fa-trash mr-1"></i> Delete Product</button>
+            <div class="flex justify-between items-center border-b border-slate-800 pb-2">
+                <span class="text-xs uppercase bg-blue-500/10 text-blue-400 px-2 py-0.5 rounded font-bold">${p.category}</span>
+                <button onclick="deleteProduct(${p.id})" class="text-xs text-red-400 hover:text-red-300 font-medium"><i class="fa-solid fa-trash mr-1"></i> Delete Product</button>
             </div>
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
-                    <label class="block text-[10px] text-slate-500">Title</label>
-                    <input type="text" id="edit-title-${p.id}" value="${escapeHtml(p.title)}" class="w-full bg-white border border-slate-200 rounded px-2.5 py-1 text-xs text-slate-900">
+                    <label class="block text-[10px] text-slate-400">Title</label>
+                    <input type="text" id="edit-title-${p.id}" value="${escapeHtml(p.title)}" class="w-full bg-slate-900 border border-slate-800 rounded px-2.5 py-1 text-xs text-white">
                 </div>
                 <div>
-                    <label class="block text-[10px] text-slate-500">Price (₹)</label>
-                    <input type="number" id="edit-price-${p.id}" value="${p.price}" class="w-full bg-white border border-slate-200 rounded px-2.5 py-1 text-xs text-slate-900">
+                    <label class="block text-[10px] text-slate-400">Price (₹)</label>
+                    <input type="number" id="edit-price-${p.id}" value="${p.price}" class="w-full bg-slate-900 border border-slate-800 rounded px-2.5 py-1 text-xs text-white">
                 </div>
             </div>
             <div>
-                <label class="block text-[10px] text-slate-500">Download Link (APK / Drive URL)</label>
-                <input type="text" id="edit-file-${p.id}" value="${escapeHtml(p.fileLink)}" class="w-full bg-white border border-slate-200 rounded px-2.5 py-1 text-xs text-slate-900">
+                <label class="block text-[10px] text-slate-400">Download Link (APK / Drive URL)</label>
+                <input type="text" id="edit-file-${p.id}" value="${escapeHtml(p.fileLink)}" class="w-full bg-slate-900 border border-slate-800 rounded px-2.5 py-1 text-xs text-white">
             </div>
             <button onclick="saveProductEdit(${p.id})" class="bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold px-4 py-1.5 rounded-lg transition w-full">Save Changes</button>
         `;
