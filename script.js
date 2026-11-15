@@ -94,10 +94,8 @@ function saveDataToFirebase(path, data) {
 // Update Login UI State in Navbar
 function updateLoginUI() {
     const loginBtnText = document.getElementById('login-btn-text');
-    const userSection = document.getElementById('nav-user-section');
     if (loginBtnText && loggedInUser) {
         loginBtnText.innerText = loggedInUser.name || loggedInUser.email;
-        // Add logout option or style
     }
 }
 
@@ -107,17 +105,20 @@ function openLoginModal() {
         if (confirm(`आप पहले से ${loggedInUser.email} के रूप में लॉगिन हैं। क्या आप लॉगआउट करना चाहते हैं?`)) {
             localStorage.removeItem('raman_logged_in_user');
             loggedInUser = null;
-            document.getElementById('login-btn-text').innerText = "Login";
+            const btnText = document.getElementById('login-btn-text');
+            if (btnText) btnText.innerText = "Login";
             alert("आप सफलतापूर्वक लॉगआउट हो गए हैं।");
             renderProducts(currentFilterCategory);
         }
         return;
     }
-    document.getElementById('login-modal').classList.remove('hidden');
+    const modal = document.getElementById('login-modal');
+    if (modal) modal.classList.remove('hidden');
 }
 
 function closeLoginModal() {
-    document.getElementById('login-modal').classList.add('hidden');
+    const modal = document.getElementById('login-modal');
+    if (modal) modal.classList.add('hidden');
 }
 
 // Submit User Login
@@ -152,7 +153,7 @@ function checkLoginBeforeAction() {
     return true;
 }
 
-// Update Live Notification Badge (1, 2, 3...) for New/Pending Orders
+// Update Live Notification Badge for New/Pending Orders
 function updateOrderNotificationBadge() {
     const unseenCount = orders.filter(o => o.isNewOrder === true || o.status === 'Pending').length;
     const navBadge = document.getElementById('admin-order-badge');
@@ -256,7 +257,7 @@ function renderProducts(filter = 'all') {
                 <div class="flex items-center justify-between pt-3 border-t border-slate-100">
                     <span class="text-xl font-bold text-blue-600">${p.price == 0 ? 'Free' : '₹' + p.price}</span>
                     <div class="flex items-center gap-2">
-                        <!-- Like Button -->
+                        <!-- Like / Unlike Button -->
                         <button onclick="likeProduct(${p.id})" class="px-3 py-2 rounded-full text-xs font-semibold transition flex items-center gap-1.5 ${hasLiked ? 'bg-rose-600 text-white shadow-sm' : 'bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200'}">
                             <i class="fa-solid fa-heart"></i> <span>${likes}</span>
                         </button>
@@ -280,7 +281,7 @@ function renderProducts(filter = 'all') {
 
                     <!-- Add Comment Input -->
                     <div class="flex gap-1.5">
-                        <input type="text" id="comment-input-${p.id}" placeholder="Write a comment (Login required)..." class="flex-1 bg-white border border-slate-300 rounded-full px-3 py-1.5 text-xs text-slate-900 focus:outline-none focus:border-blue-500">
+                        <input type="text" id="comment-input-${p.id}" placeholder="Write a comment..." class="flex-1 bg-white border border-slate-300 rounded-full px-3 py-1.5 text-xs text-slate-900 focus:outline-none focus:border-blue-500">
                         <button onclick="addProductComment(${p.id})" class="bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold px-3.5 py-1.5 rounded-full transition">Post</button>
                     </div>
 
@@ -296,7 +297,7 @@ function renderProducts(filter = 'all') {
     });
 }
 
-// Like Product Function (Login Protected & Permanent Firebase Sync)
+// Like / Dislike Toggle Function (Login Protected & Instant UI Update)
 function likeProduct(id) {
     if (!checkLoginBeforeAction()) return;
 
@@ -307,15 +308,22 @@ function likeProduct(id) {
         product.likedUsers = [];
     }
 
-    if (product.likedUsers.includes(loggedInUser.email)) {
-        alert("आपने इस प्रोडक्ट को पहले ही लाइक कर दिया है!");
-        return;
+    const userIndex = product.likedUsers.indexOf(loggedInUser.email);
+
+    if (userIndex > -1) {
+        // यदि यूज़र पहले ही लाइक कर चुका है, तो दोबारा क्लिक करने पर लाइक हटा दें (Dislike / Unlike)
+        product.likedUsers.splice(userIndex, 1);
+        product.likes = Math.max(0, (product.likes || 1) - 1);
+    } else {
+        // नया लाइक जोड़ें
+        product.likedUsers.push(loggedInUser.email);
+        product.likes = (product.likes || 0) + 1;
     }
 
-    product.likedUsers.push(loggedInUser.email);
-    product.likes = product.likedUsers.length;
-
+    // Firebase और LocalStorage में तुरंत सेव करें
     saveDataToFirebase('products', products);
+    
+    // स्क्रीन पर तुरंत नंबर अपडेट करें
     renderProducts(currentFilterCategory);
 }
 
