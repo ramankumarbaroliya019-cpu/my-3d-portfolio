@@ -17,6 +17,7 @@ let feedbacks = [];
 let currentCheckoutProductId = null;
 let currentFilterCategory = 'all';
 let loggedInUser = null;
+let userSelectedRatings = {}; // यूज़र द्वारा चुनी गई स्टार रेटिंग को अस्थायी रूप से रखने के लिए
 
 // Firebase Sync Initialization (Real-time with onValue)
 function initFirebaseSync() {
@@ -207,7 +208,7 @@ function escapeHtml(text) {
     return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 }
 
-// Render Products Grid (Light Theme with Gradient Buy Now Buttons)
+// Render Products Grid (Light Theme with Interactive 5-Star Feedback Box)
 function renderProducts(filter = 'all') {
     currentFilterCategory = filter;
     const grid = document.getElementById('product-grid');
@@ -283,8 +284,16 @@ function renderProducts(filter = 'all') {
                         <button onclick="addProductComment(${p.id})" class="bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold px-3.5 py-1.5 rounded-full transition">Post</button>
                     </div>
 
-                    <!-- Hidden Feedback Input Box -->
-                    <div id="feedback-box-${p.id}" class="hidden pt-2 border-t border-slate-200 space-y-1.5">
+                    <!-- Hidden Feedback Input Box with 5 Star Rating -->
+                    <div id="feedback-box-${p.id}" class="hidden pt-2 border-t border-slate-200 space-y-2">
+                        <div class="flex items-center gap-1">
+                            <span class="text-[11px] font-semibold text-slate-700 mr-1">Rating:</span>
+                            <i class="fa-solid fa-star cursor-pointer text-slate-300 hover:text-amber-400 text-sm" onclick="setProductRating(${p.id}, 1)" id="star-${p.id}-1"></i>
+                            <i class="fa-solid fa-star cursor-pointer text-slate-300 hover:text-amber-400 text-sm" onclick="setProductRating(${p.id}, 2)" id="star-${p.id}-2"></i>
+                            <i class="fa-solid fa-star cursor-pointer text-slate-300 hover:text-amber-400 text-sm" onclick="setProductRating(${p.id}, 3)" id="star-${p.id}-3"></i>
+                            <i class="fa-solid fa-star cursor-pointer text-slate-300 hover:text-amber-400 text-sm" onclick="setProductRating(${p.id}, 4)" id="star-${p.id}-4"></i>
+                            <i class="fa-solid fa-star cursor-pointer text-slate-300 hover:text-amber-400 text-sm" onclick="setProductRating(${p.id}, 5)" id="star-${p.id}-5"></i>
+                        </div>
                         <textarea id="feedback-input-${p.id}" rows="2" placeholder="Write your feedback for ${escapeHtml(p.title)}..." class="w-full bg-white border border-slate-300 rounded-xl p-2 text-xs text-slate-900 focus:outline-none focus:border-emerald-500"></textarea>
                         <button onclick="submitProductFeedback(${p.id})" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold py-1.5 rounded-full transition">Submit Feedback</button>
                     </div>
@@ -293,6 +302,23 @@ function renderProducts(filter = 'all') {
         `;
         grid.appendChild(card);
     });
+}
+
+// Star Rating Selection Function
+function setProductRating(productId, rating) {
+    userSelectedRatings[productId] = rating;
+    for (let i = 1; i <= 5; i++) {
+        const star = document.getElementById(`star-${productId}-${i}`);
+        if (star) {
+            if (i <= rating) {
+                star.classList.remove('text-slate-300');
+                star.classList.add('text-amber-400');
+            } else {
+                star.classList.remove('text-amber-400');
+                star.classList.add('text-slate-300');
+            }
+        }
+    }
 }
 
 // Like / Dislike Toggle Function (Login Protected & Permanent Firebase Sync)
@@ -309,11 +335,9 @@ function likeProduct(id) {
     const userIndex = product.likedUsers.indexOf(loggedInUser.email);
 
     if (userIndex > -1) {
-        // यदि यूज़र पहले लाइक कर चुका है, तो लाइक हटा दें (Dislike / Unlike)
         product.likedUsers.splice(userIndex, 1);
         product.likes = Math.max(0, (product.likes || 1) - 1);
     } else {
-        // नया लाइक जोड़ें
         product.likedUsers.push(loggedInUser.email);
         product.likes = (product.likes || 0) + 1;
     }
@@ -357,23 +381,35 @@ function toggleFeedbackBox(id) {
     const box = document.getElementById(`feedback-box-${id}`);
     if (box) {
         box.classList.toggle('hidden');
+        // डिफ़ॉल्ट 5 स्टार सेट करें जब बॉक्स खुले
+        if (!box.classList.contains('hidden') && !userSelectedRatings[id]) {
+            setProductRating(id, 5);
+        }
     }
 }
 
-// Submit Feedback Function
+// Submit Feedback Function with Star Rating
 function submitProductFeedback(id) {
+    if (!checkLoginBeforeAction()) return;
+
     const input = document.getElementById(`feedback-input-${id}`);
     if (!input) return;
     const text = input.value.trim();
+    const rating = userSelectedRatings[id] || 5;
+
     if (!text) {
         alert("कृपया अपना फीडबैक लिखें!");
         return;
     }
+
     const product = products.find(p => p.id === id);
     const newFeedback = {
         id: Date.now(),
         productId: id,
         productTitle: product ? product.title : 'Store Item',
+        userEmail: loggedInUser.email,
+        userName: loggedInUser.name,
+        rating: rating,
         text: text,
         date: new Date().toLocaleDateString('hi-IN')
     };
@@ -381,8 +417,9 @@ function submitProductFeedback(id) {
     feedbacks.unshift(newFeedback);
     saveDataToFirebase('feedbacks', feedbacks);
     input.value = '';
+    userSelectedRatings[id] = 0;
     toggleFeedbackBox(id);
-    alert("धन्यवाद! आपका फीडबैक सफलतापूर्वक सबमिट हो गया है।");
+    alert(`धन्यवाद! ${rating} स्टार रेटिंग के साथ आपका फीडबैक सफलतापूर्वक सबमिट हो गया है।`);
 }
 
 function filterProducts(category, btnElement) {
