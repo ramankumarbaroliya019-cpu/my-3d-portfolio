@@ -2,36 +2,37 @@ html {
     scroll-behavior: smooth;
 }
 
+/* Light Theme Custom Scrollbar */
 ::-webkit-scrollbar {
     width: 8px;
     height: 8px;
 }
 
 ::-webkit-scrollbar-track {
-    background: #0f172a;
+    background: #f1f5f9;
 }
 
 ::-webkit-scrollbar-thumb {
-    background: #1e293b;
+    background: #cbd5e1;
     border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-    background: #334155;
+    background: #94a3b8;
 }
 
-/* Stunning Rainbow / Blue-to-Pink Gradient Buttons */
+/* Stunning Blue-to-Pink Gradient Buttons */
 .gradient-btn {
     background: linear-gradient(135deg, #3b82f6 0%, #ec4899 100%);
     transition: all 0.3s ease;
-    box-shadow: 0 4px 15px rgba(236, 72, 153, 0.3);
+    box-shadow: 0 4px 15px rgba(236, 72, 153, 0.25);
     color: #ffffff;
     border: none;
 }
 
 .gradient-btn:hover {
     background: linear-gradient(135deg, #2563eb 0%, #db2777 100%);
-    box-shadow: 0 6px 20px rgba(236, 72, 153, 0.5);
+    box-shadow: 0 6px 20px rgba(236, 72, 153, 0.4);
     transform: translateY(-1px);
 }
 
