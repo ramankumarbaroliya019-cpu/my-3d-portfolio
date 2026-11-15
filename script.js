@@ -75,6 +75,7 @@ function initFirebaseSync() {
         } else {
             feedbacks = [];
         }
+        renderProducts(currentFilterCategory);
     });
 }
 
@@ -208,7 +209,7 @@ function escapeHtml(text) {
     return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 }
 
-// Render Products Grid (Light Theme with Interactive 5-Star Feedback Box)
+// Render Products Grid (Light Theme with Interactive 5-Star Feedback Box & Full Image Modal support)
 function renderProducts(filter = 'all') {
     currentFilterCategory = filter;
     const grid = document.getElementById('product-grid');
@@ -231,23 +232,47 @@ function renderProducts(filter = 'all') {
         const likedUsers = Array.isArray(p.likedUsers) ? p.likedUsers : [];
         const categoryLabel = p.category === 'app' ? 'Android App' : p.category;
         
+        // Product specific feedbacks
+        const productFeedbacks = feedbacks.filter(f => f.productId === p.id);
+        const avgRating = productFeedbacks.length > 0 
+            ? (productFeedbacks.reduce((acc, curr) => acc + (curr.rating || 5), 0) / productFeedbacks.length).toFixed(1) 
+            : '5.0';
+
         const hasLiked = loggedInUser && likedUsers.includes(loggedInUser.email);
 
         const commentsHtml = comments.length > 0
             ? comments.map(c => `<div class="text-xs text-slate-700 py-1 border-b border-slate-100 last:border-0"><strong class="text-slate-900">${escapeHtml(c.user)}:</strong> ${escapeHtml(c.text)}</div>`).join('')
             : `<p class="text-[11px] text-slate-400">No comments yet. Be the first one!</p>`;
 
+        const feedbacksHtml = productFeedbacks.length > 0
+            ? productFeedbacks.map(f => `
+                <div class="text-xs text-slate-700 py-1.5 border-b border-slate-100 last:border-0">
+                    <div class="flex justify-between items-center">
+                        <strong class="text-slate-900">${escapeHtml(f.userName || f.userEmail)}</strong>
+                        <span class="text-amber-500 text-[10px]">⭐ ${f.rating}/5</span>
+                    </div>
+                    <p class="text-slate-600 mt-0.5">${escapeHtml(f.text)}</p>
+                </div>`).join('')
+            : `<p class="text-[11px] text-slate-400">No reviews yet. Give feedback!</p>`;
+
         const card = document.createElement('div');
         card.className = "product-card bg-white border border-slate-200 rounded-2xl overflow-hidden hover:border-pink-400 transition flex flex-col justify-between shadow-sm";
         card.innerHTML = `
             <div>
-                <div class="h-48 overflow-hidden bg-slate-100 relative">
-                    <img src="${p.image}" alt="${escapeHtml(p.title)}" class="product-card-img w-full h-full object-cover">
+                <div class="h-48 overflow-hidden bg-slate-100 relative cursor-pointer group" onclick="openImageModal('${p.image}', '${escapeHtml(p.title)}')">
+                    <img src="${p.image}" alt="${escapeHtml(p.title)}" class="w-full h-full object-contain group-hover:scale-105 transition duration-300">
+                    <div class="absolute inset-0 bg-slate-900/20 opacity-0 group-hover:opacity-100 transition flex items-center justify-center text-white text-xs font-semibold gap-1">
+                        <i class="fa-solid fa-expand"></i> Click to Zoom
+                    </div>
                     <span class="absolute top-3 right-3 gradient-btn text-white text-[11px] font-semibold px-3 py-1 rounded-full uppercase tracking-wider shadow">${categoryLabel}</span>
                 </div>
                 <div class="p-5 pb-3">
-                    <h3 class="font-bold text-lg text-slate-900 mb-1">${escapeHtml(p.title)}</h3>
-                    <p class="text-slate-600 text-sm line-clamp-2 mb-3">${escapeHtml(p.desc)}</p>
+                    <div class="flex justify-between items-center mb-1">
+                        <h3 class="font-bold text-lg text-slate-900">${escapeHtml(p.title)}</h3>
+                        <span class="text-xs font-semibold text-amber-500 bg-amber-50 px-2 py-0.5 rounded-full border border-amber-200">⭐ ${avgRating} (${productFeedbacks.length})</span>
+                    </div>
+                    <!-- डिस्क्रिप्शन अब बिना कटे पूरा दिखाई देगा -->
+                    <p class="text-slate-600 text-sm mb-3 leading-relaxed">${escapeHtml(p.desc)}</p>
                 </div>
             </div>
 
@@ -271,7 +296,7 @@ function renderProducts(filter = 'all') {
                 <div class="bg-slate-50 border border-slate-200 rounded-2xl p-3 space-y-2.5">
                     <div class="flex justify-between items-center">
                         <span class="text-[11px] font-bold text-slate-700"><i class="fa-regular fa-comments text-pink-600 mr-1"></i> Comments (${comments.length})</span>
-                        <button onclick="toggleFeedbackBox(${p.id})" class="text-[11px] font-semibold text-emerald-600 hover:underline"><i class="fa-regular fa-star mr-0.5"></i> Give Feedback</button>
+                        <button onclick="toggleFeedbackBox(${p.id})" class="text-[11px] font-semibold text-emerald-600 hover:underline"><i class="fa-regular fa-star mr-0.5"></i> Give Feedback (${productFeedbacks.length})</button>
                     </div>
                     
                     <div class="max-h-24 overflow-y-auto bg-white border border-slate-200 rounded-xl p-2 space-y-1">
@@ -284,10 +309,15 @@ function renderProducts(filter = 'all') {
                         <button onclick="addProductComment(${p.id})" class="bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold px-3.5 py-1.5 rounded-full transition">Post</button>
                     </div>
 
-                    <!-- Hidden Feedback Input Box with 5 Star Rating -->
-                    <div id="feedback-box-${p.id}" class="hidden pt-2 border-t border-slate-200 space-y-2">
+                    <!-- Hidden Feedback Input Box with 5 Star Rating & User Reviews Display -->
+                    <div id="feedback-box-${p.id}" class="hidden pt-2 border-t border-slate-200 space-y-2.5">
+                        <div class="bg-white border border-slate-200 rounded-xl p-2 max-h-28 overflow-y-auto space-y-1">
+                            <p class="text-[10px] font-bold text-slate-500 uppercase tracking-wide mb-1">All User Reviews & Ratings:</p>
+                            ${feedbacksHtml}
+                        </div>
+
                         <div class="flex items-center gap-1">
-                            <span class="text-[11px] font-semibold text-slate-700 mr-1">Rating:</span>
+                            <span class="text-[11px] font-semibold text-slate-700 mr-1">Your Rating:</span>
                             <i class="fa-solid fa-star cursor-pointer text-slate-300 hover:text-amber-400 text-sm" onclick="setProductRating(${p.id}, 1)" id="star-${p.id}-1"></i>
                             <i class="fa-solid fa-star cursor-pointer text-slate-300 hover:text-amber-400 text-sm" onclick="setProductRating(${p.id}, 2)" id="star-${p.id}-2"></i>
                             <i class="fa-solid fa-star cursor-pointer text-slate-300 hover:text-amber-400 text-sm" onclick="setProductRating(${p.id}, 3)" id="star-${p.id}-3"></i>
@@ -302,6 +332,34 @@ function renderProducts(filter = 'all') {
         `;
         grid.appendChild(card);
     });
+}
+
+// Image Zoom / Lightbox Modal Implementation
+function openImageModal(imgSrc, imgTitle) {
+    let modal = document.getElementById('image-lightbox-modal');
+    if (!modal) {
+        modal = document.createElement('div');
+        modal.id = 'image-lightbox-modal';
+        modal.className = 'fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md hidden flex items-center justify-center p-4';
+        modal.innerHTML = `
+            <div class="relative max-w-4xl w-full bg-white rounded-3xl overflow-hidden shadow-2xl p-4 text-center">
+                <button onclick="closeImageModal()" class="absolute top-4 right-4 bg-slate-100 hover:bg-slate-200 w-10 h-10 rounded-full flex items-center justify-center text-slate-700 text-lg transition z-10"><i class="fa-solid fa-xmark"></i></button>
+                <h4 id="lightbox-title" class="font-bold text-base text-slate-900 mb-3 px-8"></h4>
+                <div class="max-h-[75vh] overflow-auto flex items-center justify-center bg-slate-50 rounded-2xl p-2">
+                    <img id="lightbox-img" src="" alt="Zoomed Image" class="max-w-full max-h-[70vh] object-contain rounded-xl">
+                </div>
+            </div>
+        `;
+        document.body.appendChild(modal);
+    }
+    document.getElementById('lightbox-img').src = imgSrc;
+    document.getElementById('lightbox-title').innerText = imgTitle;
+    modal.classList.remove('hidden');
+}
+
+function closeImageModal() {
+    const modal = document.getElementById('image-lightbox-modal');
+    if (modal) modal.classList.add('hidden');
 }
 
 // Star Rating Selection Function
@@ -381,14 +439,13 @@ function toggleFeedbackBox(id) {
     const box = document.getElementById(`feedback-box-${id}`);
     if (box) {
         box.classList.toggle('hidden');
-        // डिफ़ॉल्ट 5 स्टार सेट करें जब बॉक्स खुले
         if (!box.classList.contains('hidden') && !userSelectedRatings[id]) {
             setProductRating(id, 5);
         }
     }
 }
 
-// Submit Feedback Function with Star Rating
+// Submit Feedback Function with Star Rating & User Info
 function submitProductFeedback(id) {
     if (!checkLoginBeforeAction()) return;
 
@@ -732,64 +789,65 @@ function saveAboutSettings() {
     profileData.education = document.getElementById('admin-input-education').value || profileData.education;
     profileData.skills = document.getElementById('admin-input-skills').value || profileData.skills;
     profileData.certifications = document.getElementById('admin-input-cert').value || profileData.certifications;
-
     saveDataToFirebase('profile', profileData);
     updateProfileUI();
-    alert("क्वालिफिकेशंस अपडेट हो गई हैं!");
+    alert("क्वालिफिकेशन और स्किल्स सफलतापूर्वक सेव हो गई हैं!");
+    closeAdminModal();
 }
 
-// Add New Product
+// Add New Product Function via Admin Panel
 function addNewProduct() {
     const category = document.getElementById('add-item-category').value;
-    const title = document.getElementById('add-item-title').value;
-    const price = parseFloat(document.getElementById('add-item-price').value);
-    const desc = document.getElementById('add-item-desc').value;
-    const fileLink = document.getElementById('add-item-file').value;
-    const imgFileInput = document.getElementById('add-item-file-img');
+    const title = document.getElementById('add-item-title').value.trim();
+    const price = parseFloat(document.getElementById('add-item-price').value) || 0;
+    const fileLink = document.getElementById('add-item-file').value.trim();
+    const desc = document.getElementById('add-item-desc').value.trim();
+    const fileInput = document.getElementById('add-item-file-img');
 
-    if (!title || isNaN(price)) {
-        alert("कृपया प्रोडक्ट का नाम और कीमत दर्ज करें।");
+    if (!title || !desc) {
+        alert("कृपया प्रोडक्ट का टाइटल और डिस्क्रिप्शन भरें!");
         return;
     }
 
-    if (imgFileInput.files && imgFileInput.files[0]) {
+    let imageUrl = "raman-profile.jpg"; // Default placeholder if image not uploaded
+    if (fileInput && fileInput.files && fileInput.files[0]) {
         const reader = new FileReader();
         reader.onload = function(e) {
-            const imageBase64 = e.target.result;
-            saveNewProductObject(category, title, price, desc, imageBase64, fileLink);
+            imageUrl = e.target.result;
+            saveNewProductData(category, title, price, fileLink, desc, imageUrl);
         };
-        reader.readAsDataURL(imgFileInput.files[0]);
+        reader.readAsDataURL(fileInput.files[0]);
     } else {
-        const defaultImage = "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&q=80&w=600";
-        saveNewProductObject(category, title, price, desc, defaultImage, fileLink);
+        saveNewProductData(category, title, price, fileLink, desc, imageUrl);
     }
 }
 
-function saveNewProductObject(category, title, price, desc, image, fileLink) {
-    const newProd = {
+function saveNewProductData(category, title, price, fileLink, desc, imageUrl) {
+    const newProduct = {
         id: Date.now(),
-        title,
-        category,
-        price,
-        desc: desc || `New ${category} item.`,
-        image,
-        fileLink: fileLink || "#",
+        category: category,
+        title: title,
+        price: price,
+        fileLink: fileLink,
+        desc: desc,
+        image: imageUrl,
         likes: 0,
         likedUsers: [],
         comments: []
     };
 
-    products.unshift(newProd);
-    try {
-        saveDataToFirebase('products', products);
-        renderProducts(currentFilterCategory);
-        closeAdminModal();
-        alert(`₹${price} का नया प्रोडक्ट सफलतापूर्वक पब्लिश हो गया!`);
-    } catch (err) {
-        alert("इमेज सेव करने में समस्या आई!");
-    }
-}
+    products.unshift(newProduct);
+    saveDataToFirebase('products', products);
+    renderProducts(currentFilterCategory);
+    renderAdminItemsList();
 
-window.onload = () => {
-    loadSavedData();
-};
+    // Clear form inputs
+    document.getElementById('add-item-title').value = '';
+    document.getElementById('add-item-price').value = '';
+    document.getElementById('add-item-file').value = '';
+    document.getElementById('add-item-desc').value = '';
+    if (document.getElementById('add-item-file-img')) document.getElementById('add-item-file-img').value = '';
+
+    alert("नया प्रोडक्ट सफलतापूर्वक पब्लिश हो गया है!");
+    switchAdminTab('manage');
+}
