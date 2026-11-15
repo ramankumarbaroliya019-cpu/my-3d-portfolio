@@ -21,7 +21,7 @@ html {
     background: #94a3b8;
 }
 
-/* Stunning Blue to Pink Rainbow Gradient Buttons (Forced with !important) */
+/* Stunning Blue to Pink Rainbow Gradient Buttons */
 .gradient-btn {
     background: linear-gradient(135deg, #3b82f6 0%, #ec4899 100%) !important;
     transition: all 0.3s ease;
@@ -50,7 +50,7 @@ html {
     color: #ffffff !important;
 }
 
-/* Smooth Image Hover Effect */
+/* Product Card Image Container & Hover Effect */
 .product-card-img {
     transition: transform 0.5s ease;
 }
