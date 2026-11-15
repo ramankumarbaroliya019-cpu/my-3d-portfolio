@@ -18,24 +18,26 @@
         }
     </style>
 </head>
-<body class="bg-slate-950 text-slate-100 font-sans antialiased selection:bg-blue-600 selection:text-white">
+<body class="bg-slate-50 text-slate-900 font-sans antialiased selection:bg-blue-600 selection:text-white">
 
     <!-- Navbar -->
-    <nav class="fixed top-0 left-0 right-0 z-50 bg-slate-950/80 backdrop-blur-md border-b border-slate-800/80">
+    <nav class="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-md border-b border-slate-200 shadow-sm">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
             <div class="flex items-center space-x-3">
                 <img id="nav-profile-img" src="raman-profile.jpg" alt="Raman" class="w-10 h-10 rounded-full object-cover border border-blue-500/50">
-                <span class="font-bold text-lg tracking-tight text-white">RAMAN BAROLIYA</span>
+                <span class="font-bold text-lg tracking-tight text-slate-900">RAMAN BAROLIYA</span>
             </div>
-            <div class="hidden md:flex items-center space-x-8 text-sm font-medium text-slate-300">
-                <a href="#home" class="hover:text-blue-400 transition">Home</a>
-                <a href="#store" class="hover:text-blue-400 transition">Store & Models</a>
-                <a href="#about" class="hover:text-blue-400 transition">About & Skills</a>
-                <a href="#contact" class="hover:text-blue-400 transition">Contact</a>
+            <div class="hidden md:flex items-center space-x-8 text-sm font-medium text-slate-600">
+                <a href="#home" class="hover:text-blue-600 transition">Home</a>
+                <a href="#store" class="hover:text-blue-600 transition">Store & Models</a>
+                <a href="#about" class="hover:text-blue-600 transition">About & Skills</a>
+                <a href="#contact" class="hover:text-blue-600 transition">Contact</a>
             </div>
             <div>
-                <button onclick="openAdminModal()" class="gradient-btn px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition shadow-lg flex items-center gap-2">
+                <button onclick="openAdminModal()" class="gradient-btn px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition shadow-lg flex items-center gap-2 relative">
                     <i class="fa-solid fa-lock"></i> Admin Panel
+                    <!-- Live Notification Badge for Orders -->
+                    <span id="admin-order-badge" class="hidden absolute -top-1.5 -right-1.5 bg-red-500 text-white text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center shadow">0</span>
                 </button>
             </div>
         </div>
@@ -45,19 +47,19 @@
     <section id="home" class="pt-32 pb-16 md:pt-40 md:pb-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
             <div class="space-y-6">
-                <h1 class="text-4xl sm:text-6xl font-extrabold tracking-tight text-white leading-tight">
-                    Hi, I'm <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-500" id="hero-name">Raman Kumar Baroliya</span>
+                <h1 class="text-4xl sm:text-6xl font-extrabold tracking-tight text-slate-900 leading-tight">
+                    Hi, I'm <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600" id="hero-name">Raman Kumar Baroliya</span>
                 </h1>
-                <p class="text-slate-400 text-base sm:text-lg leading-relaxed" id="hero-tagline">
+                <p class="text-slate-600 text-base sm:text-lg leading-relaxed" id="hero-tagline">
                     Crafting high-end 3D hard-surface models in Blender, developing responsive web applications, and building smart digital tools.
                 </p>
                 <div class="flex flex-wrap gap-4 pt-2">
                     <a href="#store" class="gradient-btn px-6 py-3 rounded-xl font-semibold transition shadow-lg">Explore Digital Store</a>
-                    <a href="#about" class="bg-slate-900 border border-slate-800 hover:border-slate-700 px-6 py-3 rounded-xl font-semibold transition text-slate-300">Qualifications</a>
+                    <a href="#about" class="bg-white border border-slate-200 hover:border-slate-300 px-6 py-3 rounded-xl font-semibold transition text-slate-700 shadow-sm">Qualifications</a>
                 </div>
             </div>
             <div class="flex justify-center">
-                <div class="relative w-64 h-64 sm:w-80 sm:h-80 rounded-3xl overflow-hidden border-2 border-slate-800 shadow-2xl bg-slate-900">
+                <div class="relative w-64 h-64 sm:w-80 sm:h-80 rounded-3xl overflow-hidden border-2 border-slate-200 shadow-2xl bg-white">
                     <img id="hero-profile-img" src="raman-profile.jpg" alt="Raman Kumar" class="w-full h-full object-cover">
                 </div>
             </div>
@@ -65,173 +67,174 @@
     </section>
 
     <!-- Store Section -->
-    <section id="store" class="py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 border-t border-slate-900">
+    <section id="store" class="py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 border-t border-slate-200">
         <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-10 gap-4">
             <div>
-                <h2 class="text-2xl sm:text-3xl font-bold tracking-tight text-white">Digital Store & Assets</h2>
-                <p class="text-slate-400 text-sm mt-1">Download Blender 3D models, e-books, and presentation files instantly.</p>
+                <h2 class="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900">Digital Store & Assets</h2>
+                <p class="text-slate-600 text-sm mt-1">Download Android Apps (APK), Blender 3D models, e-books, and files instantly.</p>
             </div>
-            <div class="flex flex-wrap gap-2 bg-slate-900 p-1.5 rounded-2xl border border-slate-800">
+            <div class="flex flex-wrap gap-2 bg-white p-1.5 rounded-2xl border border-slate-200 shadow-sm">
                 <button onclick="filterProducts('all', this)" class="filter-btn active-tab px-4 py-2 rounded-xl text-xs font-semibold bg-blue-600 text-white transition">All Items</button>
-                <button onclick="filterProducts('3d', this)" class="filter-btn px-4 py-2 rounded-xl text-xs font-semibold bg-slate-900 text-slate-300 border border-slate-800 transition">3D Models</button>
-                <button onclick="filterProducts('book', this)" class="filter-btn px-4 py-2 rounded-xl text-xs font-semibold bg-slate-900 text-slate-300 border border-slate-800 transition">Books & Guides</button>
-                <button onclick="filterProducts('file', this)" class="filter-btn px-4 py-2 rounded-xl text-xs font-semibold bg-slate-900 text-slate-300 border border-slate-800 transition">PPTs & Files</button>
+                <button onclick="filterProducts('app', this)" class="filter-btn px-4 py-2 rounded-xl text-xs font-semibold bg-white text-slate-700 border border-slate-200 transition">Android Apps</button>
+                <button onclick="filterProducts('3d', this)" class="filter-btn px-4 py-2 rounded-xl text-xs font-semibold bg-white text-slate-700 border border-slate-200 transition">3D Models</button>
+                <button onclick="filterProducts('book', this)" class="filter-btn px-4 py-2 rounded-xl text-xs font-semibold bg-white text-slate-700 border border-slate-200 transition">Books & Guides</button>
+                <button onclick="filterProducts('file', this)" class="filter-btn px-4 py-2 rounded-xl text-xs font-semibold bg-white text-slate-700 border border-slate-200 transition">PPTs & Files</button>
             </div>
         </div>
 
         <!-- Product Grid -->
         <div id="product-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            <!-- Dynamic Products loaded via script.js -->
+            <!-- Dynamic Products loaded via script.js with Likes, Comments & Feedback integration -->
         </div>
     </section>
 
     <!-- About & Skills Section -->
-    <section id="about" class="py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 border-t border-slate-900">
-        <h2 class="text-2xl sm:text-3xl font-bold tracking-tight text-white mb-8">About & Qualifications</h2>
+    <section id="about" class="py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 border-t border-slate-200">
+        <h2 class="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900 mb-8">About & Qualifications</h2>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div class="bg-slate-900 border border-slate-800 p-6 rounded-2xl">
-                <div class="w-10 h-10 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-400 mb-4"><i class="fa-solid fa-graduation-cap"></i></div>
-                <h3 class="font-bold text-lg mb-2">Education</h3>
-                <p id="display-education" class="text-slate-400 text-sm leading-relaxed">B.Tech IT at Government Engineering College Ajmer (BTU). 86% in 12th Senior Secondary.</p>
+            <div class="bg-white border border-slate-200 p-6 rounded-2xl shadow-sm">
+                <div class="w-10 h-10 rounded-xl bg-blue-50 border border-blue-100 flex items-center justify-center text-blue-600 mb-4"><i class="fa-solid fa-graduation-cap"></i></div>
+                <h3 class="font-bold text-lg mb-2 text-slate-900">Education</h3>
+                <p id="display-education" class="text-slate-600 text-sm leading-relaxed">B.Tech IT at Government Engineering College Ajmer (BTU). 86% in 12th Senior Secondary.</p>
             </div>
-            <div class="bg-slate-900 border border-slate-800 p-6 rounded-2xl">
-                <div class="w-10 h-10 rounded-xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-400 mb-4"><i class="fa-solid fa-code"></i></div>
-                <h3 class="font-bold text-lg mb-2">Technical Skills</h3>
-                <p id="display-skills" class="text-slate-400 text-sm leading-relaxed">Blender 3D Modeling, Hard-Surface Design, C++, Python, JavaScript, HTML/CSS, and Microcontroller projects.</p>
+            <div class="bg-white border border-slate-200 p-6 rounded-2xl shadow-sm">
+                <div class="w-10 h-10 rounded-xl bg-indigo-50 border border-indigo-100 flex items-center justify-center text-indigo-600 mb-4"><i class="fa-solid fa-code"></i></div>
+                <h3 class="font-bold text-lg mb-2 text-slate-900">Technical Skills</h3>
+                <p id="display-skills" class="text-slate-600 text-sm leading-relaxed">Blender 3D Modeling, Hard-Surface Design, C++, Python, JavaScript, HTML/CSS, and Microcontroller projects.</p>
             </div>
-            <div class="bg-slate-900 border border-slate-800 p-6 rounded-2xl">
-                <div class="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 mb-4"><i class="fa-solid fa-certificate"></i></div>
-                <h3 class="font-bold text-lg mb-2">Certifications</h3>
-                <p id="display-certifications" class="text-slate-400 text-sm leading-relaxed">Google Kubernetes, Canva Digital Design, SEO, Google Ads, and Embedded IoT Certification.</p>
+            <div class="bg-white border border-slate-200 p-6 rounded-2xl shadow-sm">
+                <div class="w-10 h-10 rounded-xl bg-emerald-50 border border-emerald-100 flex items-center justify-center text-emerald-600 mb-4"><i class="fa-solid fa-certificate"></i></div>
+                <h3 class="font-bold text-lg mb-2 text-slate-900">Certifications</h3>
+                <p id="display-certifications" class="text-slate-600 text-sm leading-relaxed">Google Kubernetes, Canva Digital Design, SEO, Google Ads, and Embedded IoT Certification.</p>
             </div>
         </div>
     </section>
 
     <!-- Contact Section -->
-    <section id="contact" class="py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 border-t border-slate-900 mb-12">
-        <h2 class="text-2xl sm:text-3xl font-bold tracking-tight text-white mb-8">Get In Touch</h2>
-        <div class="bg-slate-900 border border-slate-800 p-8 rounded-3xl grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
+    <section id="contact" class="py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 border-t border-slate-200 mb-12">
+        <h2 class="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900 mb-8">Get In Touch</h2>
+        <div class="bg-white border border-slate-200 p-8 rounded-3xl grid grid-cols-1 md:grid-cols-3 gap-6 text-center shadow-sm">
             <div class="p-4">
-                <i class="fa-solid fa-envelope text-blue-400 text-2xl mb-3"></i>
-                <h4 class="font-semibold text-white mb-1">Email</h4>
-                <a id="display-email" href="mailto:Lalr13031@gmail.com" class="text-slate-400 text-sm hover:text-blue-400">Lalr13031@gmail.com</a>
+                <i class="fa-solid fa-envelope text-blue-600 text-2xl mb-3"></i>
+                <h4 class="font-semibold text-slate-900 mb-1">Email</h4>
+                <a id="display-email" href="mailto:Lalr13031@gmail.com" class="text-slate-600 text-sm hover:text-blue-600">Lalr13031@gmail.com</a>
             </div>
             <div class="p-4">
-                <i class="fa-solid fa-phone text-emerald-400 text-2xl mb-3"></i>
-                <h4 class="font-semibold text-white mb-1">Phone / WhatsApp</h4>
-                <a id="display-phone" href="#" class="text-slate-400 text-sm hover:text-emerald-400">+91 7742987003</a>
+                <i class="fa-solid fa-phone text-emerald-600 text-2xl mb-3"></i>
+                <h4 class="font-semibold text-slate-900 mb-1">Phone / WhatsApp</h4>
+                <a id="display-phone" href="#" class="text-slate-600 text-sm hover:text-emerald-600">+91 7742987003</a>
             </div>
             <div class="p-4">
-                <i class="fa-solid fa-qrcode text-indigo-400 text-2xl mb-3"></i>
-                <h4 class="font-semibold text-white mb-1">UPI ID</h4>
-                <span id="display-upi-id" class="text-slate-400 text-sm font-mono">Lalr13031-1@oksbi</span>
+                <i class="fa-solid fa-qrcode text-indigo-600 text-2xl mb-3"></i>
+                <h4 class="font-semibold text-slate-900 mb-1">UPI ID</h4>
+                <span id="display-upi-id" class="text-slate-600 text-sm font-mono">Lalr13031-1@oksbi</span>
             </div>
         </div>
     </section>
 
-   <!-- Checkout Modal Content -->
-<div id="checkout-modal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
-    <div class="bg-slate-900 border border-slate-800 w-full max-w-md rounded-3xl p-6 relative shadow-2xl space-y-4">
-        <button onclick="closeCheckoutModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
-        <h3 class="text-xl font-bold text-white">Complete Purchase</h3>
-        
-        <div class="bg-slate-950 border border-slate-800 p-4 rounded-2xl flex flex-col sm:flex-row justify-between items-center gap-4">
+    <!-- Checkout Modal Content -->
+    <div id="checkout-modal" class="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <div class="bg-white border border-slate-200 w-full max-w-md rounded-3xl p-6 relative shadow-2xl space-y-4">
+            <button onclick="closeCheckoutModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-lg"></i></button>
+            <h3 class="text-xl font-bold text-slate-900">Complete Purchase</h3>
+            
+            <div class="bg-slate-50 border border-slate-200 p-4 rounded-2xl flex flex-col sm:flex-row justify-between items-center gap-4">
+                <div>
+                    <h4 id="modal-product-title" class="font-semibold text-slate-900 text-sm">Product Name</h4>
+                    <span id="modal-product-price" class="text-blue-600 font-bold text-lg">₹0</span>
+                    <p class="text-[11px] text-slate-500 mt-2">स्कैन करें या नीचे दिए गए बटन से सीधे पेमेंट करें:</p>
+                </div>
+                <!-- QR Code Box -->
+                <div class="bg-white p-2 rounded-xl border border-slate-200 shrink-0 shadow-sm">
+                    <img id="upi-qr-img" src="" alt="QR Code" class="w-24 h-24 object-contain">
+                </div>
+            </div>
+
+            <!-- Direct UPI App Pay Button -->
             <div>
-                <h4 id="modal-product-title" class="font-semibold text-white text-sm">Product Name</h4>
-                <span id="modal-product-price" class="text-blue-400 font-bold text-lg">₹0</span>
-                <p class="text-[11px] text-slate-400 mt-2">स्कैन करें या नीचे दिए गए बटन से सीधे पेमेंट करें:</p>
+                <a id="direct-upi-pay-btn" href="#" class="flex items-center justify-center gap-2 w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded-xl text-sm transition shadow-lg">
+                    <i class="fa-solid fa-mobile-screen-button"></i> Pay via GPay / PhonePe / Paytm
+                </a>
             </div>
-            <!-- QR Code Box -->
-            <div class="bg-white p-2 rounded-xl shrink-0">
-                <img id="upi-qr-img" src="" alt="QR Code" class="w-24 h-24 object-contain">
+
+            <p class="text-xs text-slate-500">पेमेंट पूरा करने के बाद अपनी 12-डिफ़िट UTR / Transaction ID नीचे दर्ज करें:</p>
+            <div>
+                <label class="block text-xs font-medium text-slate-700 mb-1">Enter UTR / Transaction ID</label>
+                <input type="text" id="user-utr-input" placeholder="e.g. 4321XXXXXXXX" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-slate-900 focus:outline-none focus:border-blue-500">
             </div>
-        </div>
-
-        <!-- Direct UPI App Pay Button (दोनों ऑप्शन साथ में) -->
-        <div>
-            <a id="direct-upi-pay-btn" href="#" class="flex items-center justify-center gap-2 w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded-xl text-sm transition shadow-lg">
-                <i class="fa-solid fa-mobile-screen-button"></i> Pay via GPay / PhonePe / Paytm
-            </a>
-        </div>
-
-        <p class="text-xs text-slate-400">पेमेंट पूरा करने के बाद अपनी 12-डिफ़िट UTR / Transaction ID नीचे दर्ज करें:</p>
-        <div>
-            <label class="block text-xs font-medium text-slate-300 mb-1">Enter UTR / Transaction ID</label>
-            <input type="text" id="user-utr-input" placeholder="e.g. 4321XXXXXXXX" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-blue-500">
-        </div>
-        <button onclick="submitOrderForApproval()" class="w-full gradient-btn py-3 rounded-xl font-semibold text-sm transition shadow-lg">Submit UTR for Verification</button>
-        <div id="order-status-msg" class="hidden text-xs text-amber-400 text-center font-medium">Order submitted! Pending admin verification.</div>
-        <div id="download-section" class="hidden pt-2 border-t border-slate-800 text-center">
-            <a id="file-download-link" href="#" target="_blank" class="inline-block bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold px-4 py-2.5 rounded-xl transition">Download File Now <i class="fa-solid fa-download ml-1"></i></a>
+            <button onclick="submitOrderForApproval()" class="w-full gradient-btn py-3 rounded-xl font-semibold text-sm transition shadow-lg">Submit UTR for Verification</button>
+            <div id="order-status-msg" class="hidden text-xs text-amber-600 text-center font-medium">Order submitted! Pending admin verification.</div>
+            <div id="download-section" class="hidden pt-2 border-t border-slate-200 text-center">
+                <a id="file-download-link" href="#" target="_blank" class="inline-block bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold px-4 py-2.5 rounded-xl transition">Download File / APK Now <i class="fa-solid fa-download ml-1"></i></a>
+            </div>
         </div>
     </div>
-</div>
-        
 
     <!-- Admin Panel Modal -->
-    <div id="admin-modal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
-        <div class="bg-slate-900 border border-slate-800 w-full max-w-2xl rounded-3xl p-6 relative shadow-2xl max-h-[90vh] overflow-y-auto">
-            <button onclick="closeAdminModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
+    <div id="admin-modal" class="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <div class="bg-white border border-slate-200 w-full max-w-2xl rounded-3xl p-6 relative shadow-2xl max-h-[90vh] overflow-y-auto">
+            <button onclick="closeAdminModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-lg"></i></button>
             
             <!-- Login View -->
             <div id="admin-login-view" class="space-y-4 py-6 text-center">
-                <div class="w-12 h-12 bg-blue-500/10 border border-blue-500/20 text-blue-400 rounded-2xl flex items-center justify-center mx-auto text-xl"><i class="fa-solid fa-lock"></i></div>
-                <h3 class="text-xl font-bold text-white">Admin Authentication</h3>
-                <p class="text-xs text-slate-400">Enter your admin password to manage store products and orders.</p>
+                <div class="w-12 h-12 bg-blue-50 border border-blue-100 text-blue-600 rounded-2xl flex items-center justify-center mx-auto text-xl"><i class="fa-solid fa-lock"></i></div>
+                <h3 class="text-xl font-bold text-slate-900">Admin Authentication</h3>
+                <p class="text-xs text-slate-500">Enter your admin password to manage store products and orders.</p>
                 <div class="max-w-xs mx-auto space-y-3">
-                    <input type="password" id="admin-pass-input" placeholder="Enter password (default: admin123)" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white text-center focus:outline-none focus:border-blue-500">
+                    <input type="password" id="admin-pass-input" placeholder="Enter password (default: admin123)" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-slate-900 text-center focus:outline-none focus:border-blue-500">
                     <button onclick="authenticateAdmin()" class="w-full gradient-btn py-2.5 rounded-xl font-semibold text-sm shadow-lg">Login to Admin</button>
                 </div>
             </div>
 
             <!-- Dashboard View -->
             <div id="admin-dashboard-view" class="hidden flex-col space-y-6">
-                <div class="flex justify-between items-center border-b border-slate-800 pb-4">
-                    <h3 class="text-lg font-bold text-white">Admin Dashboard</h3>
-                    <button onclick="logoutAdmin()" class="text-xs text-red-400 hover:text-red-300 font-semibold"><i class="fa-solid fa-right-from-bracket mr-1"></i> Logout</button>
+                <div class="flex justify-between items-center border-b border-slate-200 pb-4">
+                    <h3 class="text-lg font-bold text-slate-900">Admin Dashboard</h3>
+                    <button onclick="logoutAdmin()" class="text-xs text-red-500 hover:text-red-600 font-semibold"><i class="fa-solid fa-right-from-bracket mr-1"></i> Logout</button>
                 </div>
 
                 <!-- Tabs -->
-                <div class="flex gap-2 bg-slate-950 p-1.5 rounded-xl border border-slate-800">
+                <div class="flex gap-2 bg-slate-100 p-1.5 rounded-xl border border-slate-200">
                     <button onclick="switchAdminTab('add')" id="tab-btn-add" class="admin-tab-btn flex-1 py-2 rounded-lg text-xs font-semibold bg-blue-600 text-white transition">Add Product</button>
-                    <button onclick="switchAdminTab('manage')" id="tab-btn-manage" class="admin-tab-btn flex-1 py-2 rounded-lg text-xs font-semibold bg-slate-950 text-slate-400 transition">Manage Catalog</button>
-                    <button onclick="switchAdminTab('orders')" id="tab-btn-orders" class="admin-tab-btn flex-1 py-2 rounded-lg text-xs font-semibold bg-slate-950 text-slate-400 transition">Orders & UTR</button>
-                    <button onclick="switchAdminTab('settings')" id="tab-btn-settings" class="admin-tab-btn flex-1 py-2 rounded-lg text-xs font-semibold bg-slate-950 text-slate-400 transition">Settings</button>
+                    <button onclick="switchAdminTab('manage')" id="tab-btn-manage" class="admin-tab-btn flex-1 py-2 rounded-lg text-xs font-semibold bg-transparent text-slate-600 transition">Manage Catalog</button>
+                    <button onclick="switchAdminTab('orders')" id="tab-btn-orders" class="admin-tab-btn flex-1 py-2 rounded-lg text-xs font-semibold bg-transparent text-slate-600 transition relative">Orders & UTR <span id="tab-order-badge" class="hidden absolute top-1 right-2 bg-red-500 text-white text-[9px] w-4 h-4 rounded-full flex items-center justify-center">0</span></button>
+                    <button onclick="switchAdminTab('settings')" id="tab-btn-settings" class="admin-tab-btn flex-1 py-2 rounded-lg text-xs font-semibold bg-transparent text-slate-600 transition">Settings</button>
                 </div>
 
                 <!-- Add Product Tab -->
                 <div id="admin-tab-add" class="admin-tab-content space-y-4">
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
-                            <label class="block text-xs text-slate-400 mb-1">Category</label>
-                            <select id="add-item-category" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white">
+                            <label class="block text-xs text-slate-600 mb-1">Category</label>
+                            <select id="add-item-category" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900">
+                                <option value="app">Android App (APK)</option>
                                 <option value="3d">3D Model</option>
                                 <option value="book">Book & Guide</option>
                                 <option value="file">PPT & File</option>
                             </select>
                         </div>
                         <div>
-                            <label class="block text-xs text-slate-400 mb-1">Product Title</label>
-                            <input type="text" id="add-item-title" placeholder="e.g. Samsung Galaxy F56 3D Model" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white">
+                            <label class="block text-xs text-slate-600 mb-1">Product Title</label>
+                            <input type="text" id="add-item-title" placeholder="e.g. Maths Point App" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900">
                         </div>
                     </div>
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
-                            <label class="block text-xs text-slate-400 mb-1">Price (₹)</label>
-                            <input type="number" id="add-item-price" placeholder="1" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white">
+                            <label class="block text-xs text-slate-600 mb-1">Price (₹)</label>
+                            <input type="number" id="add-item-price" placeholder="0" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900">
                         </div>
                         <div>
-                            <label class="block text-xs text-slate-400 mb-1">Google Drive Download Link</label>
-                            <input type="text" id="add-item-file" placeholder="https://drive.google.com/..." class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white">
+                            <label class="block text-xs text-slate-600 mb-1">Download Link (Firebase Storage / Google Drive / Direct APK URL)</label>
+                            <input type="text" id="add-item-file" placeholder="https://..." class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900">
                         </div>
                     </div>
                     <div>
-                        <label class="block text-xs text-slate-400 mb-1">Description</label>
-                        <textarea id="add-item-desc" rows="3" placeholder="Product details..." class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white"></textarea>
+                        <label class="block text-xs text-slate-600 mb-1">Description</label>
+                        <textarea id="add-item-desc" rows="3" placeholder="Product details..." class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900"></textarea>
                     </div>
                     <div>
-                        <label class="block text-xs text-slate-400 mb-1">Upload Preview Image</label>
-                        <input type="file" id="add-item-file-img" accept="image/*" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-400 file:mr-4 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-blue-700">
+                        <label class="block text-xs text-slate-600 mb-1">Upload Preview Image</label>
+                        <input type="file" id="add-item-file-img" accept="image/*" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-600 file:mr-4 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-blue-700">
                     </div>
                     <button onclick="addNewProduct()" class="w-full gradient-btn py-2.5 rounded-xl font-semibold text-xs transition shadow-lg">Publish Product</button>
                 </div>
@@ -249,21 +252,21 @@
                 <!-- Settings Tab -->
                 <div id="admin-tab-settings" class="admin-tab-content hidden space-y-4">
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                        <div><label class="block text-[10px] text-slate-400">Name</label><input type="text" id="admin-input-name" class="w-full bg-slate-950 border border-slate-800 rounded px-2.5 py-1 text-xs text-white"></div>
-                        <div><label class="block text-[10px] text-slate-400">UPI ID</label><input type="text" id="admin-input-upi" class="w-full bg-slate-950 border border-slate-800 rounded px-2.5 py-1 text-xs text-white"></div>
-                        <div><label class="block text-[10px] text-slate-400">Phone</label><input type="text" id="admin-input-phone" class="w-full bg-slate-950 border border-slate-800 rounded px-2.5 py-1 text-xs text-white"></div>
-                        <div><label class="block text-[10px] text-slate-400">Email</label><input type="text" id="admin-input-email" class="w-full bg-slate-950 border border-slate-800 rounded px-2.5 py-1 text-xs text-white"></div>
-                        <div><label class="block text-[10px] text-slate-400">Profile Image Filename</label><input type="text" id="admin-input-photoname" class="w-full bg-slate-950 border border-slate-800 rounded px-2.5 py-1 text-xs text-white"></div>
-                        <div><label class="block text-[10px] text-slate-400">New Admin Password</label><input type="password" id="admin-input-newpass" placeholder="Leave blank to keep current" class="w-full bg-slate-950 border border-slate-800 rounded px-2.5 py-1 text-xs text-white"></div>
+                        <div><label class="block text-[10px] text-slate-500">Name</label><input type="text" id="admin-input-name" class="w-full bg-slate-50 border border-slate-200 rounded px-2.5 py-1 text-xs text-slate-900"></div>
+                        <div><label class="block text-[10px] text-slate-500">UPI ID</label><input type="text" id="admin-input-upi" class="w-full bg-slate-50 border border-slate-200 rounded px-2.5 py-1 text-xs text-slate-900"></div>
+                        <div><label class="block text-[10px] text-slate-500">Phone</label><input type="text" id="admin-input-phone" class="w-full bg-slate-50 border border-slate-200 rounded px-2.5 py-1 text-xs text-slate-900"></div>
+                        <div><label class="block text-[10px] text-slate-500">Email</label><input type="text" id="admin-input-email" class="w-full bg-slate-50 border border-slate-200 rounded px-2.5 py-1 text-xs text-slate-900"></div>
+                        <div><label class="block text-[10px] text-slate-500">Profile Image Filename</label><input type="text" id="admin-input-photoname" class="w-full bg-slate-50 border border-slate-200 rounded px-2.5 py-1 text-xs text-slate-900"></div>
+                        <div><label class="block text-[10px] text-slate-500">New Admin Password</label><input type="password" id="admin-input-newpass" placeholder="Leave blank to keep current" class="w-full bg-slate-50 border border-slate-200 rounded px-2.5 py-1 text-xs text-slate-900"></div>
                     </div>
-                    <div><label class="block text-[10px] text-slate-400">Tagline</label><textarea id="admin-input-tagline" rows="2" class="w-full bg-slate-950 border border-slate-800 rounded px-2.5 py-1 text-xs text-white"></textarea></div>
+                    <div><label class="block text-[10px] text-slate-500">Tagline</label><textarea id="admin-input-tagline" rows="2" class="w-full bg-slate-50 border border-slate-200 rounded px-2.5 py-1 text-xs text-slate-900"></textarea></div>
                     <button onclick="saveProfileSettings()" class="w-full bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold py-2 rounded-lg transition">Save Profile Changes</button>
                     
-                    <div class="border-t border-slate-800 pt-4 space-y-3">
-                        <h4 class="font-bold text-xs text-white">About & Qualifications Settings</h4>
-                        <div><label class="block text-[10px] text-slate-400">Education Details</label><textarea id="admin-input-education" rows="2" class="w-full bg-slate-950 border border-slate-800 rounded px-2.5 py-1 text-xs text-white"></textarea></div>
-                        <div><label class="block text-[10px] text-slate-400">Skills Details</label><textarea id="admin-input-skills" rows="2" class="w-full bg-slate-950 border border-slate-800 rounded px-2.5 py-1 text-xs text-white"></textarea></div>
-                        <div><label class="block text-[10px] text-slate-400">Certifications Details</label><textarea id="admin-input-cert" rows="2" class="w-full bg-slate-950 border border-slate-800 rounded px-2.5 py-1 text-xs text-white"></textarea></div>
+                    <div class="border-t border-slate-200 pt-4 space-y-3">
+                        <h4 class="font-bold text-xs text-slate-900">About & Qualifications Settings</h4>
+                        <div><label class="block text-[10px] text-slate-500">Education Details</label><textarea id="admin-input-education" rows="2" class="w-full bg-slate-50 border border-slate-200 rounded px-2.5 py-1 text-xs text-slate-900"></textarea></div>
+                        <div><label class="block text-[10px] text-slate-500">Skills Details</label><textarea id="admin-input-skills" rows="2" class="w-full bg-slate-50 border border-slate-200 rounded px-2.5 py-1 text-xs text-slate-900"></textarea></div>
+                        <div><label class="block text-[10px] text-slate-500">Certifications Details</label><textarea id="admin-input-cert" rows="2" class="w-full bg-slate-50 border border-slate-200 rounded px-2.5 py-1 text-xs text-slate-900"></textarea></div>
                         <button onclick="saveAboutSettings()" class="w-full bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold py-2 rounded-lg transition">Save Qualifications</button>
                     </div>
                 </div>
@@ -271,36 +274,35 @@
         </div>
     </div>
 
-<!-- Firebase SDK & Global Exporter -->
-<script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
-    import { getDatabase, ref, set, get, child } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-database.js";
+    <!-- Firebase SDK & Global Exporter -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
+        import { getDatabase, ref, set, get, child, onValue, update } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-database.js";
 
-    const firebaseConfig = {
-        apiKey: "AIzaSyASHajXHzthBKVBvKPAnJCnW5czbeVLT1w",
-        authDomain: "raman-portfolio-store.firebaseapp.com",
-        databaseURL: "https://raman-portfolio-store-default-rtdb.firebaseio.com",
-        projectId: "raman-portfolio-store",
-        storageBucket: "raman-portfolio-store.firebasestorage.app",
-        messagingSenderId: "1046178826544",
-        appId: "1:1046178826544:web:89560277b418d6440ca0f5"
-    };
+        const firebaseConfig = {
+            apiKey: "AIzaSyASHajXHzthBKVBvKPAnJCnW5czbeVLT1w",
+            authDomain: "raman-portfolio-store.firebaseapp.com",
+            databaseURL: "https://raman-portfolio-store-default-rtdb.firebaseio.com",
+            projectId: "raman-portfolio-store",
+            storageBucket: "raman-portfolio-store.firebasestorage.app",
+            messagingSenderId: "1046178826544",
+            appId: "1:1046178826544:web:89560277b418d6440ca0f5"
+        };
 
-    // Initialize Firebase
-    const app = initializeApp(firebaseConfig);
-    
-    // Global Binding for script.js
-    window.db = getDatabase(app);
-    window.ref = ref;
-    window.set = set;
-    window.get = get;
-    window.child = child;
-    
-    console.log("Firebase Connected Successfully to:", firebaseConfig.projectId);
-</script>
-
-<!-- Main JavaScript File -->
-<script src="script.js"></script>
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        
+        // Global Binding for script.js
+        window.db = getDatabase(app);
+        window.ref = ref;
+        window.set = set;
+        window.get = get;
+        window.child = child;
+        window.onValue = onValue;
+        window.update = update;
+        
+        console.log("Firebase Connected Successfully to:", firebaseConfig.projectId);
+    </script>
 
     <!-- Main JavaScript File -->
     <script src="script.js"></script>
