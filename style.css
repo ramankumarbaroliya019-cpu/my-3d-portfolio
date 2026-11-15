@@ -21,31 +21,32 @@ html {
     background: #94a3b8;
 }
 
-/* Stunning Blue Gradient Buttons */
+/* Stunning Blue to Pink Rainbow Gradient Buttons */
 .gradient-btn {
-    background: linear-gradient(135deg, #2563eb 0%, #4f46e5 100%);
+    background: linear-gradient(135deg, #3b82f6 0%, #ec4899 100%);
     transition: all 0.3s ease;
-    box-shadow: 0 4px 15px rgba(37, 99, 235, 0.25);
+    box-shadow: 0 4px 15px rgba(236, 72, 153, 0.25);
     color: #ffffff;
     border: none;
 }
 
 .gradient-btn:hover {
-    background: linear-gradient(135deg, #1d4ed8 0%, #4338ca 100%);
-    box-shadow: 0 6px 20px rgba(37, 99, 235, 0.4);
+    background: linear-gradient(135deg, #2563eb 0%, #db2777 100%);
+    box-shadow: 0 6px 20px rgba(236, 72, 153, 0.4);
     transform: translateY(-1px);
 }
 
 /* Active Category Filter Tab */
 .active-tab {
-    background: linear-gradient(135deg, #2563eb 0%, #4f46e5 100%) !important;
+    background: linear-gradient(135deg, #3b82f6 0%, #ec4899 100%) !important;
     color: #ffffff !important;
     border: none !important;
+    box-shadow: 0 4px 15px rgba(236, 72, 153, 0.25);
 }
 
 /* Active Admin Panel Tab */
 .active-admin-tab {
-    background: linear-gradient(135deg, #2563eb 0%, #4f46e5 100%) !important;
+    background: linear-gradient(135deg, #3b82f6 0%, #ec4899 100%) !important;
     color: #ffffff !important;
 }
 
